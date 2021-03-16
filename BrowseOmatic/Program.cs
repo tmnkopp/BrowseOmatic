@@ -11,31 +11,93 @@ using System.Text;
 using Newtonsoft.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using BOM.CORE;
-namespace BrowseOmatic
+using BOM.CORE;  
+using BOM.CS;
+
+namespace BOM
 {
     class Program
     {
         static void Main(string[] args)
-        {
+        { 
             ServiceProvider serviceProvider = RegisterServices(args);
 
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
-            IAppSettingProvider<Profile> profileProvider = serviceProvider.GetService<IAppSettingProvider<Profile>>();
-            IAppSettingProvider<Task> taskProvider = serviceProvider.GetService<IAppSettingProvider<Task>>();
+            IAppSettingProvider<SessionContext> ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
+            IAppSettingProvider<BTask> tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
+            ITypeParamProvider typeParamProvider = serviceProvider.GetService<ITypeParamProvider>();
+            ITypeProvider typeProvider = serviceProvider.GetService<ITypeProvider>();
+            IBScriptParser bomScriptParser = serviceProvider.GetService<IBScriptParser>();
+             
+            var exit = Parser.Default.ParseArguments<ExeOptions, TaskOptions, CommandOptions>(args)
+                .MapResult(
+                (ExeOptions o) => {
 
-            var exit = Parser.Default.ParseArguments<ExeOptions, TaskOptions>(args)
-            .MapResult(
-              (IOptions o) => { 
-                  return 0;
-              },
-             (TaskOptions o) => { 
-                 return 0;
-             },
-              errs => 1);
+                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o)); 
+                     
+                    var t = AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(assm => assm.GetTypes())
+                            .Where(t => t.Name.Contains(o.Type) && t.IsClass == true)
+                            .FirstOrDefault();
+
+                    Type type = Type.GetType($"{t.FullName}, {t.Namespace}");
+                    var oparam = typeParamProvider.Prompt(type);
+                    ICommand obj = (ICommand)Activator.CreateInstance(Type.GetType($"{t.FullName}, {t.Namespace}"), oparam);
+
+                    var objctx = obj.GetType().GetCustomAttribute<CommandMeta>()?.Context;
+                    ISessionContext ctx = (from c in ctxs.Items where c.Name == objctx select c).FirstOrDefault();
+                     
+                    obj.Execute(ctx);
+                    return 0;
+
+                }, (TaskOptions o) => { 
+
+                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
+                    var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();   
+                    var ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
+
+                    var taskpro = new TaskProcessor(task, logger);
+                    taskpro.Execute(ctx); 
+                    return 0;
+
+                }, (CommandOptions o) => {
+
+                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
+                    var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();  
+                    var ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
+                    ctx.SessionDriver.Connect();
+                    foreach (var taskstep in task.TaskSteps)
+                    {
+                        var t = AppDomain.CurrentDomain.GetAssemblies()
+                                .SelectMany(assm => assm.GetTypes())
+                                .Where(t => t.Name.Contains(taskstep.Cmd) && t.IsClass == true)
+                                .FirstOrDefault();
+
+                        Type tCmd = Type.GetType($"{t.FullName}, {t.Namespace}");
+                        ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
+                        List<object> oparms = new List<object>();
+                        int parmcnt = 0;
+                        foreach (ParameterInfo parm in PI)
+                        {
+                            string value = taskstep.Args[parmcnt];
+                            parmcnt++;
+                            if (parm.ParameterType.Name.Contains("Int"))
+                                oparms.Add(Convert.ToInt32(value));
+                            else if (parm.ParameterType.Name.Contains("Bool"))
+                                oparms.Add(Convert.ToBoolean(value));
+                            else
+                                oparms.Add(value);
+                        }
+                        ICommand obj = (ICommand)Activator.CreateInstance(tCmd, oparms.ToArray());
+                        obj.Execute(ctx);
+                    }
+                    return 0; 
+                },
+                errs => 1);
             serviceProvider.Dispose();
         }
+
         private static ServiceProvider RegisterServices(string[] args)
         {
             var path = Assembly.GetExecutingAssembly().Location.Replace("BOM.dll", "");
@@ -49,9 +111,13 @@ namespace BrowseOmatic
 
             var services = new ServiceCollection();
             services.AddLogging(cfg => cfg.AddConsole());
+            services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());
             services.AddSingleton(configuration);
-            services.AddTransient<IAppSettingProvider<Profile>, ProfileProvider>();
-            services.AddTransient<IAppSettingProvider<Task>, TaskProvider>();
+            services.AddTransient<IAppSettingProvider<SessionContext>, ContextProvider>();
+            services.AddTransient<IAppSettingProvider<BTask>, YmlTaskProvider>();
+            services.AddTransient<ITypeParamProvider, TypeParamProvider>();
+            services.AddTransient<ITypeProvider, TypeProvider>();
+            services.AddTransient<IBScriptParser, BScriptParser>(); 
             return services.BuildServiceProvider();
         }
     }

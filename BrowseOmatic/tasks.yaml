@@ -1,0 +1,64 @@
+tasks:
+  - task: ebilCopy
+    context: ebil
+    steps:
+    - Click:  ['A444']
+    - Click:  ['btnCopyTimeSheet'] 
+    - Click:  ['btn_green'] 
+  - task: ebilSubo
+    context: ebil
+    steps:
+    - Click:  ['viewlink']
+    - Click:  ['submitTimeButton']
+  - task: rtimeCopy
+    context: rtime
+    steps:
+    - Click:  ['body']            
+  - task: unittest
+    context: bomdriver
+    steps:
+    - GetUrl: ['https://www.indeed.com/jobs?q=asp.net+$100,000+-clearance&l=Washington+DC&jt=fulltime&start=0'] 
+  - task: AgAdAss
+    context: csadmin
+    steps:
+    - Click: ['lnkAddAssm']
+    - Click: ['cmdAddNewAssessment']
+  - task: AgEdAss
+    context: csadmin
+    steps:
+    - Click: ['EditButton']
+    - Click: ['cmdAddNewAssessment']
+  - task: Remplan
+    context: csagency
+    steps:
+    - ToTab: ['Remediation Plans']   
+    - Click: ['_Launch']  
+    - Click: ['btnEdit']
+    - NaiveFormFill: [''] 
+    - Click: ['btnSave']
+    - SetOption: ["ddl_Sections", 1]    
+    - Click: ['Expand,.gtActivity input[id*="EditButton"]']    
+  #  - RadFormFill: [1]
+  #  - Click: ['Insert']       
+  - task: CIO
+    context: csagency
+    steps:
+    - ToTab: ['CIO 2021 Q2']
+    - Click: ['_Launch']
+    - FismaForm: [3] 
+    - SetOption: ["ddl_Sections", 1] # section 3   
+    - InvGrid: [''] # section 1 
+    - Click: ['btnSave'] 
+    - SetOption: ["ddl_Sections", 2]    
+    - Click: ['btnEdit']
+    - CloudGrid: ['']
+    - Click: ['btnSave']
+    - FismaForm: [3] 
+#    - FismaForm: [5]         
+#    - FismaForm: [6] 
+#    - FismaForm: [8]   
+#    - FismaForm: [9] 
+#    - FismaForm: [10] 
+#    - FismaForm: [11]                 
+#    - FismaForm: [12]     
+#    - FismaForm: [13]    

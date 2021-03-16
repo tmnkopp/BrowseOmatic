@@ -7,7 +7,6 @@ namespace BOM.CORE
 {
     public interface IAppSettingProvider<T>
     {
-        IEnumerable<T> Items { get; }
-        IEnumerable<T> Get(Expression<Func<T, bool>> predicate);
+        IEnumerable<T> Items { get; } 
     }
 }
