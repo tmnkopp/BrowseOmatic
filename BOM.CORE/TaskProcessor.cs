@@ -2,12 +2,16 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
 namespace BOM.CORE
-{  
-    public class TaskProcessor : ICommand
+{
+    public interface IProcessor {
+        void Execute(ISessionContext ctx);
+    }
+    public class TaskProcessor : IProcessor
     {
         private BTask task;
         private ILogger logger; 
@@ -18,32 +22,38 @@ namespace BOM.CORE
         }
         public void Execute(ISessionContext ctx)
         {
-            var d = ctx.SessionDriver;
-            d.Connect();
+            ctx.SessionDriver.Connect();
             logger.LogInformation("{task}", JsonConvert.SerializeObject(task));
-            logger.LogInformation("{SessionDriver}", d );
+
             foreach (var step in task.TaskSteps)
             {
-                MethodInfo methodInfo = d.GetType().GetMethod(step.Cmd);
-                int parmcnt = 0;
+                var typ = AppDomain.CurrentDomain.GetAssemblies()
+                             .SelectMany(assm => assm.GetTypes())
+                             .Where(t => t.Name.Contains(step.Cmd) && t.IsClass == true)
+                             .FirstOrDefault();
+
+                Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");
+                ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                 List<object> oparms = new List<object>();
-                foreach (ParameterInfo parm in methodInfo.GetParameters())
+                int parmcnt = 0;
+                foreach (ParameterInfo parm in PI)
                 {
                     string value = step.Args[parmcnt];
-                    parmcnt++;
                     if (value.Contains("-p"))
-                    { 
+                    {
                         Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
                         value = Console.ReadLine();
                     }
+                    parmcnt++;
                     if (parm.ParameterType.Name.Contains("Int"))
                         oparms.Add(Convert.ToInt32(value));
                     else if (parm.ParameterType.Name.Contains("Bool"))
                         oparms.Add(Convert.ToBoolean(value));
                     else
-                        oparms.Add(value); 
+                        oparms.Add(value);
                 }
-                var result = methodInfo.Invoke(d, oparms.ToArray()); 
+                ICommand obj = (ICommand)Activator.CreateInstance(tCmd, oparms.ToArray());
+                obj.Execute(ctx);
             }
         }
     }

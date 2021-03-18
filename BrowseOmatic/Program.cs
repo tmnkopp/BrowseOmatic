@@ -30,51 +30,23 @@ namespace BOM
             ITypeProvider typeProvider = serviceProvider.GetService<ITypeProvider>();
             IBScriptParser bomScriptParser = serviceProvider.GetService<IBScriptParser>();
              
-            var exit = Parser.Default.ParseArguments<ExeOptions, TaskOptions, CommandOptions>(args)
+            var exit = Parser.Default.ParseArguments<ExeOptions,  CommandOptions>(args)
                 .MapResult(
-                (ExeOptions o) => {
-
-                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o)); 
-                     
-                    var t = AppDomain.CurrentDomain.GetAssemblies()
-                            .SelectMany(assm => assm.GetTypes())
-                            .Where(t => t.Name.Contains(o.Type) && t.IsClass == true)
-                            .FirstOrDefault();
-
-                    Type type = Type.GetType($"{t.FullName}, {t.Namespace}");
-                    var oparam = typeParamProvider.Prompt(type);
-                    ICommand obj = (ICommand)Activator.CreateInstance(Type.GetType($"{t.FullName}, {t.Namespace}"), oparam);
-
-                    var objctx = obj.GetType().GetCustomAttribute<CommandMeta>()?.Context;
-                    ISessionContext ctx = (from c in ctxs.Items where c.Name == objctx select c).FirstOrDefault();
-                     
-                    obj.Execute(ctx);
-                    return 0;
-
-                }, (TaskOptions o) => { 
-
+                (CommandOptions o) =>
+                { 
                     logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
-                    var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();   
-                    var ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
-
-                    var taskpro = new TaskProcessor(task, logger);
-                    taskpro.Execute(ctx); 
-                    return 0;
-
-                }, (CommandOptions o) => {
-
-                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
-                    var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();  
+                    var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();
                     var ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
                     ctx.SessionDriver.Connect();
+                    
                     foreach (var taskstep in task.TaskSteps)
                     {
-                        var t = AppDomain.CurrentDomain.GetAssemblies()
+                        var typ = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(assm => assm.GetTypes())
                                 .Where(t => t.Name.Contains(taskstep.Cmd) && t.IsClass == true)
                                 .FirstOrDefault();
 
-                        Type tCmd = Type.GetType($"{t.FullName}, {t.Namespace}");
+                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");
                         ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                         List<object> oparms = new List<object>();
                         int parmcnt = 0;
@@ -92,7 +64,26 @@ namespace BOM
                         ICommand obj = (ICommand)Activator.CreateInstance(tCmd, oparms.ToArray());
                         obj.Execute(ctx);
                     }
-                    return 0; 
+                    return 0;
+                },
+                (ExeOptions o) => {
+
+                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o)); 
+                     
+                    var t = AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(assm => assm.GetTypes())
+                            .Where(t => t.Name.Contains(o.Type) && t.IsClass == true)
+                            .FirstOrDefault();
+
+                    Type type = Type.GetType($"{t.FullName}, {t.Namespace}");
+                    var oparam = typeParamProvider.Prompt(type);
+                    ICommand obj = (ICommand)Activator.CreateInstance(Type.GetType($"{t.FullName}, {t.Namespace}"), oparam);
+
+                    var objctx = obj.GetType().GetCustomAttribute<CommandMeta>()?.Context;
+                    ISessionContext ctx = (from c in ctxs.Items where c.Name == objctx select c).FirstOrDefault();
+                    obj.Execute(ctx);
+                    return 0;
+                     
                 },
                 errs => 1);
             serviceProvider.Dispose();
