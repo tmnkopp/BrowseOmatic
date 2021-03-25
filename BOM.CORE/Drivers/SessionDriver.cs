@@ -55,7 +55,7 @@ namespace BOM.CORE
                 if (driver == null)
                 {
                     ChromeOptions options = new ChromeOptions();
-                    var path = configuration.GetSection("paths")["chromedriver"];
+                    var path = configuration.GetSection("paths")["chromedriver"].Replace("chromedriver.exe", ""); 
                     var chromeDriverService = ChromeDriverService.CreateDefaultService(path);
                     chromeDriverService.HideCommandPromptWindow = true;
                     chromeDriverService.SuppressInitialDiagnosticInformation = true;

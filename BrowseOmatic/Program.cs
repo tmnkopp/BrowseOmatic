@@ -36,17 +36,23 @@ namespace BOM
                 { 
                     logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
                     var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();
-                    var ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
+                    ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
                     ctx.SessionDriver.Connect();
                     
                     foreach (var taskstep in task.TaskSteps)
                     {
+                        if (taskstep.Cmd == "Connect")
+                        {
+                            ctx = (from c in ctxs.Items where c.Name == taskstep.Args[0] select c).FirstOrDefault();
+                            ctx.SessionDriver.Connect();
+                            continue;
+                        } 
                         var typ = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(assm => assm.GetTypes())
                                 .Where(t => t.Name.Contains(taskstep.Cmd) && t.IsClass == true)
                                 .FirstOrDefault();
 
-                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}"); 
+                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");
                         ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                         List<object> oparms = new List<object>();
                         int parmcnt = 0;
@@ -57,9 +63,7 @@ namespace BOM
                             if (parm.ParameterType.Name.Contains("Int"))
                                 oparms.Add(Convert.ToInt32(value));
                             else if (parm.ParameterType.Name.Contains("Bool"))
-                                oparms.Add(Convert.ToBoolean(value));                            
-                            else if (parm.ParameterType.Name.Contains("IBScriptParser"))
-                                oparms.Add(bomScriptParser);
+                                oparms.Add(Convert.ToBoolean(value));     
                             else
                                 oparms.Add(value);
                         }
@@ -90,14 +94,22 @@ namespace BOM
 
         private static ServiceProvider RegisterServices(string[] args)
         {
-            var path = Assembly.GetExecutingAssembly().Location.Replace("BOM.dll", "");
+            var exeassmloc = Assembly.GetExecutingAssembly().Location.Replace("BOM.dll", "");
+            var bomloc = Environment.GetEnvironmentVariable("bom")?.Replace("BOM.exe", "");
+            if (exeassmloc.Contains("\\AppData\\") && bomloc != null)
+            {
+                File.Copy($"{bomloc}appsettings.json", $"{exeassmloc}appsettings.json");
+            }
+            Console.WriteLine($"Assembly.GetExecutingAssembly : {Assembly.GetExecutingAssembly().Location}");   
+            Console.WriteLine($"Environment.GetEnvironmentVariable(bom) : {bomloc}");
 
             IConfiguration configuration = new ConfigurationBuilder()
-                  .SetBasePath(path)
+                  .SetBasePath(exeassmloc)
                   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                   .AddEnvironmentVariables()
                   .AddCommandLine(args)
                   .Build();
+
 
             var services = new ServiceCollection();
             services.AddLogging(cfg => cfg.AddConsole());

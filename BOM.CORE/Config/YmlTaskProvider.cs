@@ -35,7 +35,13 @@ namespace BOM.CORE
         { 
             var paths = configuration.GetSection("paths");
             var yamltasks = paths.GetSection("yamltasks").Value;
-            logger.LogInformation( "{paths}", paths);
+          
+            logger.LogInformation("conDbConnectionfig {p}", configuration.GetConnectionString("DbConnection"));
+            logger.LogInformation("paths {p}", paths);
+            logger.LogInformation("paths.Value {p}", paths.Value);
+            logger.LogInformation("paths:yamltasks {p}", configuration.GetSection("paths:yamltasks"));
+            logger.LogInformation("paths:yamltasks .Value {p}", configuration.GetSection("paths:yamltasks").Value);
+
             var yaml = new YamlStream();
             using (TextReader tr = File.OpenText(yamltasks))
                 yaml.Load(tr);

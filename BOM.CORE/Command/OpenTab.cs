@@ -16,7 +16,7 @@ namespace BOM.CORE
         public void Execute(ISessionContext ctx)
         {
             var driver = ctx.SessionDriver.Driver;
-            driver.FindElement(By.CssSelector("body")).SendKeys(Keys.Control + "t");
+            ((IJavaScriptExecutor)driver).ExecuteScript("window.open();");
             driver.SwitchTo().Window(driver.WindowHandles.Last());
             ctx.SessionDriver.GetUrl(this.url).Pause(20);
         }

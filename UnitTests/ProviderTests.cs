@@ -21,7 +21,7 @@ namespace UnitTests
         public void YMLProvider_Provides()
         {
             var yaml = new YamlStream();
-            using (TextReader tr = File.OpenText(@"C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\tasks.yaml"))
+            using (TextReader tr = File.OpenText(@"C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\config.yaml"))
                 yaml.Load(tr); 
 
             var root = (YamlMappingNode)yaml.Documents[0].RootNode;

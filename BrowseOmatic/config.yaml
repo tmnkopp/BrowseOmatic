@@ -17,11 +17,13 @@ tasks:
   - task: indeed
     context: bomdriver
     steps:
-    - OpenTab: ['https://www.indeed.com/jobs?q=asp.net+$100,000+-clearance&l=Washington+DC&radius=10&jt=fulltime&start=0']
+    - OpenTab: ['https://www.indeed.com/jobs?q=asp.net+$100,000+-clearance&l=Washington+DC&radius=5&jt=fulltime&start=0&sort=date']
+    - OpenTab: ['https://www.indeed.com/jobs?q=asp.net+$100,000+-clearance&l=Washington+DC&radius=25&jt=fulltime&start=0&sort=date']
+    - OpenTab: ['https://www.glassdoor.com/Job/jobs.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword=ASP.NET&sc.keyword=ASP.NET&locT=C&locId=1138213&jobType=']
   - task: unittest
     context: bomdriver
     steps:
-    - Click: ['body'] 
+    - OpenTab: ['https://github.com/tmnkopp/BrowseOmatic']
   - task: AgAdAss
     context: csadmin
     steps:
