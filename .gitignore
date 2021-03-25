@@ -5,6 +5,7 @@
 *.config
 *.settings
 *.json
+config.*
 appsettings.*
 # User-specific files
 *.rsuser

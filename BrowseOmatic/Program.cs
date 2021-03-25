@@ -94,14 +94,23 @@ namespace BOM
 
         private static ServiceProvider RegisterServices(string[] args)
         {
-            var exeassmloc = Assembly.GetExecutingAssembly().Location.Replace("BOM.dll", "");
-            var bomloc = Environment.GetEnvironmentVariable("bom")?.Replace("BOM.exe", "");
+            var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
+            var bomloc = Environment.GetEnvironmentVariable("bom")?.ToLower().Replace("bom.exe", "");
             if (exeassmloc.Contains("\\AppData\\") && bomloc != null)
             {
-                File.Copy($"{bomloc}appsettings.json", $"{exeassmloc}appsettings.json");
+                try
+                {
+                    File.Delete($"{exeassmloc}appsettings.json");
+                    File.Copy($"{bomloc}appsettings.json", $"{exeassmloc}appsettings.json");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Assembly.GetExecutingAssembly : {Assembly.GetExecutingAssembly().Location}");
+                    Console.WriteLine($"Environment.GetEnvironmentVariable(bom) : {bomloc}");
+                    Console.Write($"appsettings migration failed : {ex.Message}");
+                } 
             }
-            Console.WriteLine($"Assembly.GetExecutingAssembly : {Assembly.GetExecutingAssembly().Location}");   
-            Console.WriteLine($"Environment.GetEnvironmentVariable(bom) : {bomloc}");
+
 
             IConfiguration configuration = new ConfigurationBuilder()
                   .SetBasePath(exeassmloc)
