@@ -18,17 +18,17 @@ Use config.yaml to configure test automation steps
 
 ### config.yaml 
 
-**task** defines a test automation task
+- **task** defines a test automation task
 
-**context** associates the task to the appropriate browser driver context defined in the appsettings.json
+- **context** associates the task to the appropriate browser driver context defined in the appsettings.json
 
-**steps** defines a list of test automation steps
+- **steps** defines a list of test automation steps
 
 ### config yaml commands
 
-Click: one argument element to be clicked
-OpenTab: one argument URL to open
-NaiveFormFill: no arguments - fills a form
-Key: 2 arguments element and keys to send
-Url: one argument the URL
-SetOption: 2 arguments select element and index to select
+- Click: one argument - element to be clicked
+- Key: 2 arguments - element and keys to send
+- Url: one argument - the URL
+- SetOption: 2 arguments - select element and index to select 
+- NaiveFormFill: no arguments - fills a form
+- OpenTab: one argument - URL to open
