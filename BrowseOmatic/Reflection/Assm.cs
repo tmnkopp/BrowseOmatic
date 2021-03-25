@@ -7,13 +7,11 @@ using System.Text;
 namespace BOM
 {
     public static class Assm
-    {
-        public static string NS = Assembly.GetExecutingAssembly().GetName().Name;
-        public static string Path = Assembly.GetExecutingAssembly().Location.Replace("BOM.dll", "");
-        public static string AQF(this Type t)
+    { 
+        public static IEnumerable<Type> GetTypes()
         {
-            var assm = Assembly.GetExecutingAssembly();
-            return $"{t.FullName}, {t.Namespace}";  
+            return AppDomain.CurrentDomain.GetAssemblies()
+                            .SelectMany(assm => assm.GetTypes()).Where(t=>t.IsClass); 
         }  
     }
 }

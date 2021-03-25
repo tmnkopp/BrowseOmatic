@@ -10,36 +10,47 @@ tasks:
     steps:
     - Click:  ['viewlink']
     - Click:  ['submitTimeButton']
-  - task: rtimeCopy
+  - task: rtime
     context: rtime
     steps:
-    - Click:  ['body']            
+    - Click:  ['body']   
+  - task: indeed
+    context: bomdriver
+    steps:
+    - OpenTab: ['https://www.indeed.com/jobs?q=asp.net+$100,000+-clearance&l=Washington+DC&radius=10&jt=fulltime&start=0']
   - task: unittest
     context: bomdriver
     steps:
-    - GetUrl: ['https://www.indeed.com/jobs?q=asp.net+$100,000+-clearance&l=Washington+DC&jt=fulltime&start=0'] 
+    - Click: ['body'] 
   - task: AgAdAss
     context: csadmin
     steps:
     - Click: ['lnkAddAssm']
     - Click: ['cmdAddNewAssessment']
   - task: AgEdAss
-    context: csadmin
+    context: dayman
     steps:
-    - Click: ['EditButton']
-    - Click: ['cmdAddNewAssessment']
+    - ToTab: ['Remediation Plans']  
+    - Click: ['lnkAddAssm']       
+    - Click: ['GECBtnExpandColumn'] 
   - task: Remplan
     context: csagency
     steps:
     - ToTab: ['Remediation Plans']   
     - Click: ['_Launch']  
+    - SetOption: ["ddl_Sections", 2] 
     - Click: ['btnEdit']
-    - NaiveFormFill: [''] 
-    - Click: ['btnSave']
+    - NaiveFormFill: [] 
+    - Click: ['btnSave'] 
+    - SetOption: ["ddl_Sections", 0] 
+    - Click: ['btnEdit']
+    - NaiveFormFill: [] 
+    - Click: ['btnSave'] 
     - SetOption: ["ddl_Sections", 1]    
     - Click: ['Expand,.gtActivity input[id*="EditButton"]']    
   #  - RadFormFill: [1]
-  #  - Click: ['Insert']       
+  #  - Click: ['Insert']   
+  #  - SessionDispose: []   
   - task: CIO
     context: csagency
     steps:

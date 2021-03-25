@@ -23,21 +23,27 @@ namespace BOM.CORE
         public bool ElementExists(string ElementSelector);
         public string connstr { get; set; }
         public bool Connected { get; set; }
+        public ILogger Log{ get;  }
         public void Connect(); 
+        public void Dispose(); 
     }
     public class SessionDriver: ISessionDriver
     {
         public string connstr { get; set; }
         private readonly IBScriptParser scriptParser;
         private readonly IConfiguration configuration;
+        private readonly ILogger logger;
+        public ILogger Log => logger; 
         public SessionDriver(
             IConfiguration configuration,
+            ILogger logger,
             IBScriptParser scriptParser,
             string ConnectionString  )
         {
             connstr = ConnectionString;
             this.scriptParser = scriptParser;
             this.configuration = configuration;
+            this.logger = logger;
         }
         public bool Connected { get; set; }
 
@@ -55,6 +61,7 @@ namespace BOM.CORE
                     chromeDriverService.SuppressInitialDiagnosticInformation = true;
                     options.AddArgument("log-level=3");
                     driver = new ChromeDriver(chromeDriverService, options);
+ 
                 }
                 return driver;
             }
@@ -71,11 +78,11 @@ namespace BOM.CORE
                     {
                         if (spr.QualifiedCommand=="GetUrl")  Driver.Navigate().GoToUrl($"{spr.Arguments[0]}");
                         if (spr.QualifiedCommand=="SendKeys") SendKeys(spr.Arguments[0], spr.Arguments[1]); 
-                        if (spr.QualifiedCommand == "Click") Click(spr.Arguments[0] );
+                        if (spr.QualifiedCommand=="Click") Click(spr.Arguments[0] );
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        throw;
+                        logger.LogError("Connection failed {0} {1}", connstr, ex.Message); 
                     }
                 }
                 Connected = true;

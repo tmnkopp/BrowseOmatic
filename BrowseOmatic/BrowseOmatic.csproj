@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Reflection\Assm.cs" />
+    <Compile Remove="CS\CsDriver.cs" />
     <Compile Remove="TaskOptionProcessor.cs" />
   </ItemGroup>
 

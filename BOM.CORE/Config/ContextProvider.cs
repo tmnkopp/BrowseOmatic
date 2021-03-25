@@ -15,11 +15,11 @@ namespace BOM.CORE
         #region CTOR 
         private readonly IConfiguration configuration;
         private readonly IBScriptParser bomScriptParser;
-        private readonly ILogger<ContextProvider> logger;
+        private readonly ILogger logger;
         public ContextProvider(
             IConfiguration configuration,
             IBScriptParser bomScriptParser,
-            ILogger<ContextProvider> logger)
+            ILogger logger)
         {
             this.configuration = configuration;
             this.bomScriptParser = bomScriptParser;
@@ -53,6 +53,7 @@ namespace BOM.CORE
                     var driver = (ISessionDriver)Activator.CreateInstance(
                         t, new object[] {
                               configuration
+                            , logger
                             , bomScriptParser
                             , connectionstring
                         }

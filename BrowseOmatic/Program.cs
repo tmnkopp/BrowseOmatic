@@ -30,7 +30,7 @@ namespace BOM
             ITypeProvider typeProvider = serviceProvider.GetService<ITypeProvider>();
             IBScriptParser bomScriptParser = serviceProvider.GetService<IBScriptParser>();
              
-            var exit = Parser.Default.ParseArguments<ExeOptions,  CommandOptions>(args)
+            var exit = Parser.Default.ParseArguments<ExeOptions, CommandOptions>(args)
                 .MapResult(
                 (CommandOptions o) =>
                 { 
@@ -46,7 +46,7 @@ namespace BOM
                                 .Where(t => t.Name.Contains(taskstep.Cmd) && t.IsClass == true)
                                 .FirstOrDefault();
 
-                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");
+                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}"); 
                         ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                         List<object> oparms = new List<object>();
                         int parmcnt = 0;
@@ -57,7 +57,9 @@ namespace BOM
                             if (parm.ParameterType.Name.Contains("Int"))
                                 oparms.Add(Convert.ToInt32(value));
                             else if (parm.ParameterType.Name.Contains("Bool"))
-                                oparms.Add(Convert.ToBoolean(value));
+                                oparms.Add(Convert.ToBoolean(value));                            
+                            else if (parm.ParameterType.Name.Contains("IBScriptParser"))
+                                oparms.Add(bomScriptParser);
                             else
                                 oparms.Add(value);
                         }
@@ -70,20 +72,17 @@ namespace BOM
 
                     logger.LogInformation("{o}", JsonConvert.SerializeObject(o)); 
                      
-                    var t = AppDomain.CurrentDomain.GetAssemblies()
-                            .SelectMany(assm => assm.GetTypes())
-                            .Where(t => t.Name.Contains(o.Type) && t.IsClass == true)
-                            .FirstOrDefault();
+                    var typ = Assm.GetTypes().Where(t => t.Name.Contains(o.Type)).FirstOrDefault();
 
-                    Type type = Type.GetType($"{t.FullName}, {t.Namespace}");
+                    Type type = Type.GetType($"{typ.FullName}, {typ.Namespace}");
+                    if (type==null) type = Type.GetType($"{typ.FullName}, BOM");
                     var oparam = typeParamProvider.Prompt(type);
-                    ICommand obj = (ICommand)Activator.CreateInstance(Type.GetType($"{t.FullName}, {t.Namespace}"), oparam);
+                    ICommand obj = (ICommand)Activator.CreateInstance(Type.GetType($"{typ.FullName}, {typ.Namespace}"), oparam);
 
                     var objctx = obj.GetType().GetCustomAttribute<CommandMeta>()?.Context;
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == objctx select c).FirstOrDefault();
                     obj.Execute(ctx);
-                    return 0;
-                     
+                    return 0; 
                 },
                 errs => 1);
             serviceProvider.Dispose();
