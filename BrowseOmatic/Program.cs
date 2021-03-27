@@ -19,22 +19,22 @@ namespace BOM
     class Program
     {
         static void Main(string[] args)
-        { 
+        {
             ServiceProvider serviceProvider = RegisterServices(args);
-
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
-            IAppSettingProvider<SessionContext> ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
-            IAppSettingProvider<BTask> tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
-            ITypeParamProvider typeParamProvider = serviceProvider.GetService<ITypeParamProvider>();
-            ITypeProvider typeProvider = serviceProvider.GetService<ITypeProvider>();
-            IBScriptParser bomScriptParser = serviceProvider.GetService<IBScriptParser>();
+            IAppSettingProvider<SessionContext> ctxs;
+            IAppSettingProvider<BTask> tasks;
+            ITypeParamProvider typeParamProvider; 
              
-            var exit = Parser.Default.ParseArguments<ExeOptions, CommandOptions>(args)
+            var exit = Parser.Default.ParseArguments<ExeOptions, CommandOptions, ConfigOptions>(args)
                 .MapResult(
                 (CommandOptions o) =>
-                { 
+                {
                     logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o));
+                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
+                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
+                     
                     var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
                     ctx.SessionDriver.Connect();
@@ -75,6 +75,8 @@ namespace BOM
                 },
                 (ExeOptions o) => {
 
+                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>(); 
+                    typeParamProvider = serviceProvider.GetService<ITypeParamProvider>();
                     logger.LogInformation("{o}", JsonConvert.SerializeObject(o)); 
                      
                     var typ = Assm.GetTypes().Where(t => t.Name.Contains(o.Type)).FirstOrDefault();
@@ -87,8 +89,16 @@ namespace BOM
                     var objctx = obj.GetType().GetCustomAttribute<CommandMeta>()?.Context;
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == objctx select c).FirstOrDefault();
                     obj.Execute(ctx);
-                    return 0; 
-                },
+                    return 0;
+
+                }, (ConfigOptions o) => {
+
+                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
+                    logger.LogInformation("EnvironmentVar {o}", Environment.GetEnvironmentVariable("bom"));
+                    logger.LogInformation("ExecutingAssemblyLoc {o}", Assembly.GetExecutingAssembly().Location);
+
+                    return 0;
+            },
                 errs => 1);
             serviceProvider.Dispose();
         }
@@ -97,31 +107,28 @@ namespace BOM
         {
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
             var bomloc = Environment.GetEnvironmentVariable("bom")?.ToLower().Replace("bom.exe", "");
-            if (exeassmloc.Contains("\\AppData\\") && bomloc != null)
-            {
+            Console.WriteLine($"exeassmloc {exeassmloc}");
+            Console.WriteLine($"exeassmloc {bomloc}");
+            if (exeassmloc.Contains("\\appdata\\") && bomloc != null)
+            { 
                 try
                 {
                     File.Delete($"{exeassmloc}appsettings.json");
                     File.Copy($"{bomloc}appsettings.json", $"{exeassmloc}appsettings.json");
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Assembly.GetExecutingAssembly : {Assembly.GetExecutingAssembly().Location}");
-                    Console.WriteLine($"Environment.GetEnvironmentVariable(bom) : {bomloc}");
-                    Console.Write($"appsettings migration failed : {ex.Message}");
+                catch (Exception)
+                { 
                     throw;
                 } 
             }
-
-
+             
             IConfiguration configuration = new ConfigurationBuilder()
                   .SetBasePath(exeassmloc)
                   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                   .AddEnvironmentVariables()
                   .AddCommandLine(args)
                   .Build();
-
-
+             
             var services = new ServiceCollection();
             services.AddLogging(cfg => cfg.AddConsole());
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());

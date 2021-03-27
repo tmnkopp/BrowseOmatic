@@ -11,7 +11,7 @@ namespace BOM.CS
         private string _report = null;
         public CQProcessor(string ReportName)
         {
-            _report = (string.IsNullOrEmpty(ReportName)) ? "HVA Activities" : ReportName;
+            _report = (string.IsNullOrEmpty(ReportName)) ? "" : ReportName;
         }
         public void Execute(ISessionContext ctx)
         {

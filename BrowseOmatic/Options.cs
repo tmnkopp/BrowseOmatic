@@ -36,5 +36,16 @@ namespace BOM
         public string Assembly { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
-    } 
+    }
+    [Serializable]
+    [Verb("config", HelpText = "Config setter.")]
+    public class ConfigOptions
+    {
+        [Option('p', "Path")]
+        public bool Path { get; set; }
+        [Option('r', "Resource")]
+        public bool Resource { get; set; }
+        [Option('v', "Verbose", HelpText = "Print details during execution.")]
+        public bool Verbose { get; set; }
+    }
 }

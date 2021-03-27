@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CS\CsDriver.cs" />
+    <Compile Remove="Telerik\CsDriver.cs" />
     <Compile Remove="TaskOptionProcessor.cs" />
   </ItemGroup>
 

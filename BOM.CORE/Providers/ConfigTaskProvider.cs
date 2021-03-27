@@ -32,7 +32,9 @@ namespace BOM.CORE
         private IEnumerable<BTask> GetItems()
         { 
             var tasksection = configuration.GetSection("tasks");
-            logger.LogInformation( "{tasksection}", tasksection);
+            if (tasksection == null) 
+                logger.LogError("config.GetSection {o}", tasksection); 
+ 
             return tasksection.GetChildren()
                  .Select(
                     cs => new BTask

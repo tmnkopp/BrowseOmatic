@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using YamlDotNet.RepresentationModel;
 
@@ -28,14 +29,20 @@ namespace BOM.CORE
         public IEnumerable<BTask> Items
         {
             get { return GetItems(); }
-        } 
-        #endregion 
+        }
+        #endregion
         #region Methods 
         private IEnumerable<BTask> GetItems()
-        { 
+        {
             var paths = configuration.GetSection("paths");
-            var yamltasks = paths.GetSection("yamltasks").Value; 
-
+            if (paths == null)
+                logger.LogError("YmlTaskProvider config.GetSection null: {o}", paths);
+            var yamltasks = paths.GetSection("yamltasks").Value;
+            if (yamltasks == null) {  
+                logger.LogError("task path null : {o}", yamltasks);
+                logger.LogError("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
+                throw new Exception("Invalid task path enviornment");
+            }
             var yaml = new YamlStream();
             using (TextReader tr = File.OpenText(yamltasks))
                 yaml.Load(tr);
