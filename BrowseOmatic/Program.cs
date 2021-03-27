@@ -34,7 +34,7 @@ namespace BOM
                 .MapResult(
                 (CommandOptions o) =>
                 { 
-                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
+                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o));
                     var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
                     ctx.SessionDriver.Connect();
@@ -53,6 +53,7 @@ namespace BOM
                                 .FirstOrDefault();
 
                         Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");
+                        if (tCmd == null) tCmd = Type.GetType($"{typ.FullName}, BOM");
                         ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                         List<object> oparms = new List<object>();
                         int parmcnt = 0;
@@ -108,6 +109,7 @@ namespace BOM
                     Console.WriteLine($"Assembly.GetExecutingAssembly : {Assembly.GetExecutingAssembly().Location}");
                     Console.WriteLine($"Environment.GetEnvironmentVariable(bom) : {bomloc}");
                     Console.Write($"appsettings migration failed : {ex.Message}");
+                    throw;
                 } 
             }
 

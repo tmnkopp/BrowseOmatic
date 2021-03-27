@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BOM.CS
+namespace BOM
 {
     public static class ControlPopulate
     {

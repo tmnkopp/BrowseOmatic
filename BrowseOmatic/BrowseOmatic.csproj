@@ -19,7 +19,7 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None> 
     <None Update="chromedriver.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </None>
     <None Update="config.yaml">
