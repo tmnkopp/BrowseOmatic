@@ -27,85 +27,9 @@ Use `config.yaml` to configure test automation steps
 `context` associates the task to the appropriate context defined in the appsettings.json 
 
 `steps` defines a list of test automation steps
-
-## Appsettings.JSON CONFIG
-
-Customize naive form auto-fill using regular expressions
-
-``` json
-
-  "NaiveInputDefaults": {
-    "(email)": "UseyMcUseFace@Domain.com",
-    "(phone)": "555-123-4567",
-    "(address)": "123 Anywhere USA",
-    "(city)": "Washington",
-    "(state)": "DC",
-    "(zip|postal)": "20000",
-    "(firstname|fname|name)": "Testy",
-    "(lastname|lname|name)": "McTestFace",
-    "(search|query)": "SEARCH TERM",
-    "(ipaddress)": "255.255.255.255"
-  }
-
-```
-### Multi-Enviornment Configuration
-
-``` json
-
-    {
-      "name": "dev",
-      "conn": "driver:BOM.CORE.SessionDriver, BOM.CORE;https://DEV_Enviornment.com/;s:UserName,MyLogin;s:Password,MyLogin;c:LoginButton;"
-    },
-    {
-      "name": "stage",
-      "conn": "driver:BOM.CORE.SessionDriver, BOM.CORE;https://DEV_STAGE.com/;s:UserName,MyLogin;s:Password,MyLogin;c:LoginButton;"
-    },
-    {
-      "name": "stage",
-      "conn": "driver:BOM.CORE.SessionDriver, BOM.CORE;https://DEV_PRODUCTION.com/;s:UserName,MyLogin;s:Password,MyLogin;c:LoginButton;"
-    },
-
-```
-***
-###   Extending ICommand to expose ISessionContext for access to browser driver commands
-
-#### 
-#### 
-``` csharp
-namespace BOM.CORE
-{
-    public interface ICommand
-    {
-        public void Execute(ISessionContext SessionContext);
-    }
-    public class MyCustomAutomator : ICommand
-    {
-        private string MyConfigArg = "";
-        private int MyConfiArg2 = 0;
-        public MyCustomAutomator(string MyConfigArg, int MyConfiArg2)
-        {
-            this.MyConfigArg = MyConfigArg;
-            this.MyConfiArg2 = MyConfiArg2;
-        }
-        public void Execute(ISessionContext SessionContext)
-        {
-            var ctx = SessionContext;
-            ctx.SessionDriver
-                .GetUrl($"http://domainname.com/page-number/{MyConfiArg2.ToString()}")
-                .Click("Element")
-                .SendKeys("Element", "Type This") 
-                .Click("Element")
-                .SendKeys($"{MyConfigArg}", $"Type This"); 
-        }
-    }
-}
-```
-
-
-***
-### YAML CONFIG
  
-### YAML config commands (just a few)
+ 
+### Browser Driver Commands (just a few)
 
 - `Click`: one argument - element to be clicked
 - `Key`: 2 arguments - element and keys to send
@@ -164,5 +88,88 @@ tasks:
     - NaiveFormFill: []      
     - Click: ['save_button']
 ```
+***
+
+
+## Appsettings.JSON CONFIG
+
+Customize naive form auto-fill using regular expressions
+
+``` json
+
+  "NaiveInputDefaults": {
+    "(email)": "UseyMcUseFace@Domain.com",
+    "(phone)": "555-123-4567",
+    "(address)": "123 Anywhere USA",
+    "(city)": "Washington",
+    "(state)": "DC",
+    "(zip|postal)": "20000",
+    "(firstname|fname|name)": "Testy",
+    "(lastname|lname|name)": "McTestFace",
+    "(search|query)": "SEARCH TERM",
+    "(ipaddress)": "255.255.255.255"
+  }
+
+```
+### Multi-Enviornment Configuration
+
+``` json
+
+    {
+      "name": "dev",
+      "conn": "driver:BOM.CORE.SessionDriver, BOM.CORE;https://DEV_Enviornment.com/;s:UserName,MyLogin;s:Password,MyLogin;c:LoginButton;"
+    },
+    {
+      "name": "stage",
+      "conn": "driver:BOM.CORE.SessionDriver, BOM.CORE;https://DEV_STAGE.com/;s:UserName,MyLogin;s:Password,MyLogin;c:LoginButton;"
+    },
+    {
+      "name": "prod",
+      "conn": "driver:BOM.CORE.SessionDriver, BOM.CORE;https://DEV_PRODUCTION.com/;s:UserName,MyLogin;s:Password,MyLogin;c:LoginButton;"
+    },
+
+```
+***
+###   Extending ICommand to expose ISessionContext for access to browser driver commands
+
+#### 
+#### 
+``` csharp
+namespace BOM.CORE
+{
+    public interface ICommand
+    {
+        public void Execute(ISessionContext SessionContext);
+    }
+    public class MyCustomAutomator : ICommand
+    {
+        private string MyConfigArg = "";
+        private int MyConfiArg2 = 0;
+        public MyCustomAutomator(string MyConfigArg, int MyConfiArg2)
+        {
+            this.MyConfigArg = MyConfigArg;
+            this.MyConfiArg2 = MyConfiArg2;
+        }
+        public void Execute(ISessionContext SessionContext)
+        {
+            var ctx = SessionContext;
+            ctx.SessionDriver
+                .GetUrl($"http://domainname.com/page-number/{MyConfiArg2.ToString()}")
+                .Click("Element")
+                .SendKeys("Element", "Type This") 
+                .Click("Element")
+                .SendKeys($"{MyConfigArg}", $"Type This"); 
+        }
+    }
+}
+```
+
+
+***
+
+Like Browse-O-matic? 
+
+Check out [Sledge-O-Matic](https://github.com/tmnkopp/sledgeomatic)
+
 
  
