@@ -1,23 +1,39 @@
  
 ![alt text](https://the80port.com/cdn/logos/som75-4.png "bom") 
-# Browse-O-matic 
-## BOM automates browsers. Built on Selenium WebDriver technology, BOM simplifies automated testing by using a combination of YAML configuration and extendable code to configure test scripts. Extendable C# libraries support custom coded execution tasks. No code/low code supported: coding is not required to build and run automated test scripts. Support for both naive form auto-fillers and direct access to form elements allows for flexible automation procedures. Multi-environment support, naive form value detection, and more are configurable using JSON.  
+# Browse-O-Matic 
+### BOM automates browsers. Built on Selenium WebDriver technology, BOM simplifies automated testing by using a combination of YAML configuration and extendable C# to configure test scripts. No code/low code supported - coding is not required to build and run automated test scripts. Extendable libraries support custom coded execution routines. Support for both naive form auto-fillers and direct access to form elements allows for flexible automation procedures. Multi-environment support (Production, Stage, Dev), naive form value detection, and more are configurable using JSON.  
 
-## Browse-O-matic is actively maintained by a busy but dedicated coder determined to unsuck sucky coding tasks. 
+***
+
+#### Browse-O-matic is a member of the "O-Matics" family, a suite of coding projects actively maintained by a busy but dedicated coder determined to unsuck sucky coding tasks.  
+
+![alt text](https://the80port.com/cdn/logos/som.png "som") [Sledge-O-Matic](https://github.com/tmnkopp/sledgeomatic) (takes the suck out of code generation) 
+
+![alt text](https://the80port.com/cdn/logos/som4.png "som") [Pie-O-Matic](https://github.com/tmnkopp/PieOMatic) (Sledge-O-Matic for Python) 
 
 ***
 ## Get Started
 
-1. Create a bom environment variable (name = bom, path = x:\path\to\bom.exe)
-2. Open command line
+1. [Get Latest Release](https://github.com/tmnkopp/BrowseOmatic/releases)
+2. Create a bom environment variable (name = bom, path = c:\bom\bom.exe)
 3. %bom% cmd -t unittest
+
+### Or use Powershell
+
+1. Run bominstaller.ps1
+bominstaller will install bom dependencies and keep your bom up-to-date with the latest release.
+
 
 ***
 ## Configuration
 
-Use `appsettings.json` to configure desired settings that involve passwords and connection information 
+[Get Config Starter Files](https://github.com/tmnkopp/BrowseOmatic/releases)
 
-Use `config.yaml` to configure test automation steps
+Use `appsettings.json` to configure bom settings. Here you can configure different automation environments (dev, stage, prod), browser drivers (chrome, firefox), automation task file locations (c:\My-Staging-Test-Procedures.yaml, c:\Fill-My-Timesheets.yaml, c:\Update-My-JIRA-Stuff.yaml), and more. 
+
+Use `appsettings.json` to configure login routines that involve passwords and connection information.  
+
+Use `config.yaml` files to configure test automation steps.
 
 ### Config.YAML 
 
@@ -50,11 +66,7 @@ tasks:
   - task: unittest
     context: bomdriver
     steps:
-    - OpenTab: ['https://github.com/tmnkopp/BrowseOmatic']
-    - Script:  window.scrollTo(0,600);    
-    - Pause: 2000
-    - Script:  window.scrollTo(0,2400);    
-    - Pause: 2000
+    - OpenTab: ['https://github.com/tmnkopp/BrowseOmatic'] 
     - Script:  window.scrollTo(0,600);    
     - Pause: 1000
     - OpenTab: ['http://automationpractice.com/index.php?controller=authentication&back=identity']  

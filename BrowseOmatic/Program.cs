@@ -109,9 +109,7 @@ namespace BOM
         private static ServiceProvider RegisterServices(string[] args)
         {
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
-            var bomloc = Environment.GetEnvironmentVariable("bom")?.ToLower().Replace("bom.exe", "");
-            Console.WriteLine($"exeassmloc {exeassmloc}");
-            Console.WriteLine($"exeassmloc {bomloc}");
+            var bomloc = Environment.GetEnvironmentVariable("bom")?.ToLower().Replace("bom.exe", ""); 
             if (exeassmloc.Contains("\\appdata\\") && bomloc != null)
             { 
                 try
