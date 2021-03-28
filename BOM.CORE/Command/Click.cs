@@ -16,7 +16,8 @@ namespace BOM.CORE
         {
             foreach (string ele in element.Split(","))
             {
-                ctx.SessionDriver.Click(ele).Pause(75);
+                ctx.SessionDriver.Pause(0);
+                ctx.SessionDriver.Click(ele);
             } 
         }
     } 

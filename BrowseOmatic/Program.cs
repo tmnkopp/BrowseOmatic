@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BOM.CORE;  
-using BOM.CS;
+ 
 
 namespace BOM
 {
@@ -44,12 +44,15 @@ namespace BOM
                         if (taskstep.Cmd == "Connect")
                         {
                             ctx = (from c in ctxs.Items where c.Name == taskstep.Args[0] select c).FirstOrDefault();
-                            ctx.SessionDriver.Connect();
-                            continue;
+                            ctx.SessionDriver.Connect(); continue;
+                        }
+                        if (taskstep.Cmd == "SetWait")
+                        {
+                            ctx.SessionDriver.SetWait(Convert.ToInt32(taskstep.Args[0] ?? "750")); continue;
                         } 
                         var typ = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(assm => assm.GetTypes())
-                                .Where(t => t.Name.Contains(taskstep.Cmd) && t.IsClass == true)
+                                .Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand).IsAssignableFrom(t))
                                 .FirstOrDefault();
 
                         Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");

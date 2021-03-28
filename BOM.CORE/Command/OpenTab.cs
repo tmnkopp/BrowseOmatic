@@ -16,9 +16,11 @@ namespace BOM.CORE
         public void Execute(ISessionContext ctx)
         {
             var driver = ctx.SessionDriver.Driver;
+            ctx.SessionDriver.Pause(0);
             ((IJavaScriptExecutor)driver).ExecuteScript("window.open();");
             driver.SwitchTo().Window(driver.WindowHandles.Last());
             ctx.SessionDriver.GetUrl(this.url).Pause(20);
+            
         }
     }  
 }

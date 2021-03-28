@@ -7,9 +7,9 @@
 
 1. Create a bom environment variable (name = bom, path = x:\path\to\bom.exe)
 2. Open command line
-3. %bom% cmd -t unitest
+3. %bom% cmd -t unittest
 
-## More
+## Configuration
 
 Use `appsettings.json` to configure desired settings that involve passwords and connection information
 

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BOM.CS
+namespace BOM
 { 
     public class CQProcessor : ICommand
     {
@@ -16,8 +16,7 @@ namespace BOM.CS
         public void Execute(ISessionContext ctx)
         {
             var sd = ctx.SessionDriver;
-            sd.Connect();
-            sd.Driver.Navigate().GoToUrl("https://localhost/Reports/CustomQueries.aspx");
+            sd.Connect(); 
             ControlPopulate.RadDDL(ctx, "ddl_ReportList", $"{_report}");
             ControlPopulate.RadDDL(ctx, "ddl_Agency", "Justice");
             ControlPopulate.RadDDL(ctx, "ddl_Bureau", 1);

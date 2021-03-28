@@ -22,12 +22,11 @@ namespace UnitTests
         {
             var yaml = new YamlStream();
             using (TextReader tr = File.OpenText(@"C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\config.yaml"))
-                yaml.Load(tr); 
-
+                yaml.Load(tr);
+             
             var root = (YamlMappingNode)yaml.Documents[0].RootNode;
-            var ytasks = (YamlSequenceNode)root.Children[new YamlScalarNode("tasks")];
-            string[] args = null;
-            List<BTask> tasks = new List<BTask>();  
+            var ytasks = (YamlSequenceNode)root.Children[new YamlScalarNode("tasks")]; 
+            List<BTask> tasks = new List<BTask>();
             foreach (YamlMappingNode ytask in ytasks)
             {
                 string name = ytask[new YamlScalarNode("task")].ToString();
@@ -36,20 +35,23 @@ namespace UnitTests
                 var TaskSteps = new List<TaskStep>();
                 foreach (YamlMappingNode step in ysteps)
                 {
-                    var ars = ((YamlSequenceNode)step.Children.FirstOrDefault().Value).Children;
-                    args = (from n in ars select ((YamlScalarNode)n).Value).ToArray();
+                    var argument = step.Children.FirstOrDefault().Value;
+                    List<string> args = new List<string>();
+                    if (argument.GetType() == typeof(YamlSequenceNode))
+                    {
+                        var ars = ((YamlSequenceNode)step.Children.FirstOrDefault().Value).Children;
+                        args = (from n in ars select ((YamlScalarNode)n).Value).ToList();
+                    }
+                    if (argument.GetType() == typeof(YamlScalarNode))
+                    { 
+                        args.Add(((YamlScalarNode)argument).Value.ToString());
+                    }
                     string cmd = step.Children.FirstOrDefault().Key.ToString(); 
-                    TaskSteps.Add(new TaskStep(cmd, args));
-  
+                    TaskSteps.Add(new TaskStep(cmd, args.ToArray())); 
                 }
                 tasks.Add(
-                      new BTask()
-                      {
-                          Name = name,
-                          Context = context,
-                          TaskSteps = TaskSteps
-                      }
-                  );
+                      new BTask() { Name = name, Context = context, TaskSteps = TaskSteps }
+                );
             }
             Assert.IsTrue(tasks.Count > 0); 
         }

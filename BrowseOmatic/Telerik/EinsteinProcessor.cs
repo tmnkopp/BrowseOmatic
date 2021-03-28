@@ -33,14 +33,12 @@ namespace BOM
                     break;
                 }
             }
-            System.Threading.Thread.Sleep(400); 
-            sd.Click("_hl_Launch"); 
+            sd.Pause(550).Click("_hl_Launch"); 
             for (int i = _sectionFrom; i <= _sectionTo; i++)
             {
                 sd.Pause(_pause);
                 SelectElement sections = new SelectElement(sd.Select("ctl00_ddl_Sections"));
-                sections.SelectByIndex(i);
-
+                sections.SelectByIndex(i); 
                 int recs = 0;
                 while (recs < _records)
                 {
@@ -49,12 +47,28 @@ namespace BOM
                     sd.Pause(_pause).Click("_PerformInsertButton");
                     recs++;
                 }
-                sd.Pause(_pause).Click("_EditButton");
-                ControlPopulate.GenericForm(ctx);
-                sd.Pause(_pause).Click("_UpdateButton");
-                sd.Driver.FindElement(By.CssSelector("a[title*='delete']")).Click();
-                IAlert alert = sd.Pause(550).Driver.SwitchTo().Alert();
-                alert.Accept();
+
+                try
+                {
+                    sd.Pause(_pause).Click("_EditButton");
+                    ControlPopulate.GenericForm(ctx);
+                    sd.Pause(_pause).Click("_UpdateButton");
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine($"EinsteinProcess: {ex.Message}");
+                }
+                try
+                {
+                    sd.Driver.FindElement(By.CssSelector("a[title*='delete']")).Click();
+                    IAlert alert = sd.Pause(550).Driver.SwitchTo().Alert();
+                    alert.Accept();
+                }
+                catch (Exception ex)
+                { 
+                    Console.WriteLine($"EinsteinProcess: {ex.Message}");
+                } 
             }
         }
     }

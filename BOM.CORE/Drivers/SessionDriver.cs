@@ -19,10 +19,12 @@ namespace BOM.CORE
         public SessionDriver Click(string Element);
         public SessionDriver GetUrl(string Url);
         public SessionDriver Pause(int Time);
+        public void SetWait(int Wait); 
         public IWebElement Select(string ElementSelector);
         public bool ElementExists(string ElementSelector);
         public string connstr { get; set; }
         public bool Connected { get; set; }
+        public IConfiguration config { get; }
         public ILogger Log{ get;  }
         public void Connect(); 
         public void Dispose(); 
@@ -46,7 +48,11 @@ namespace BOM.CORE
             this.logger = logger;
         }
         public bool Connected { get; set; }
-
+        private int timeout = 0;
+        public void SetWait(int Timeout) {
+            timeout = Timeout;
+        }
+        public IConfiguration config => configuration;
         public ChromeDriver driver;
         public ChromeDriver Driver
         {
@@ -66,6 +72,8 @@ namespace BOM.CORE
                 return driver;
             }
         }
+
+        
         #region Methods
         public virtual void Connect() {  
             if (!Connected)
@@ -88,8 +96,11 @@ namespace BOM.CORE
                 Connected = true;
             } 
         }
-        public SessionDriver Pause(int Time = 500)
+         
+        public SessionDriver Pause(int Time)
         {
+            if (Time < 5) 
+                Time = timeout; 
             System.Threading.Thread.Sleep(Time);
             return this;
         }

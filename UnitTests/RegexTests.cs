@@ -11,6 +11,20 @@ namespace UnitTests
     public class RegexTests
     {
         [TestMethod]
+        public void NaiveInputDefaultsDefaults()
+        {
+            var config = new UnitTestManager().Configuration;
+            var match = false;
+            var inputs = config.GetSection("NaiveInputDefaults"); 
+            foreach (var item in inputs.GetChildren())
+            {
+                match = Regex.Match("postalcode", item.Key).Success;
+            }
+ 
+            Assert.IsTrue(match);
+
+        }
+        [TestMethod]
         public void TestMethod1()
         {
             var input = "driver:BOM.CORE.SessionDriver, BOM.CORE;s:username,tim.kopp;s:password,passexpect;c:submit;https://dayman.cyber-balance.com/jira/login.jsp;";

@@ -15,9 +15,10 @@ namespace BOM.CORE
             this.index = index;
         }
 
-        public void Execute(ISessionContext SessionContext)
+        public void Execute(ISessionContext ctx)
         {
-            var dvr = SessionContext.SessionDriver; 
+            var dvr = ctx.SessionDriver;
+            ctx.SessionDriver.Pause(0);
             SelectElement sections = new SelectElement(dvr.Select(Element));
             if (sections != null)
             {
