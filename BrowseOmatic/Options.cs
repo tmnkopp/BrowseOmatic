@@ -7,20 +7,15 @@ using System.Text;
 
 namespace BOM
 { 
-    [Serializable]
-    [Verb("task", HelpText = "Task Runner.")]
-    public class TaskOptions {  
-        [Option('t', "Task")]
-        public string Task { get; set; } 
-        [Option('v', "Verbose", HelpText = "Print details during execution.")]
-        public bool Verbose { get; set; }
-    }
+ 
     [Serializable]
     [Verb("cmd", HelpText = "Command Runner.")]
     public class CommandOptions
     {
-        [Option('t', "Task")]
+        [Option('t', "Task", HelpText ="Executes A Task")]
         public string Task { get; set; }
+        [Option('p', "Path",Default="", HelpText = "Sets task file path")]
+        public string Path { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
     }
@@ -28,11 +23,11 @@ namespace BOM
     [Verb("exe", HelpText = "Type executor.")]
     public class ExeOptions
     { 
-        [Option('p', "Prompt")]
+        [Option('p', "Prompt", HelpText = "Prompt for Param")]
         public bool Prompt { get; set; }
-        [Option('t', "Type")]
+        [Option('t', "Type", HelpText = "Execute an ICommand")]
         public string Type { get; set; }
-        [Option('a', "Assembly")]
+        [Option('a', "Assembly", HelpText = "Sets an Assembly")]
         public string Assembly { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
@@ -41,10 +36,8 @@ namespace BOM
     [Verb("config", HelpText = "Config setter.")]
     public class ConfigOptions
     {
-        [Option('p', "Path")]
-        public bool Path { get; set; }
-        [Option('r', "Resource")]
-        public bool Resource { get; set; }
+        [Option('p', "Path", HelpText = "Sets task file path", Default="")]
+        public string Path { get; set; } 
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
     }

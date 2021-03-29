@@ -32,23 +32,31 @@ namespace BOM
                 (CommandOptions o) =>
                 {
                     logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o));
+                    if (o.Path.ToString().EndsWith("yaml"))
+                    {
+                        if (!o.Path.Contains(":\\"))
+                            o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path); 
+                        configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
+                        logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
+                    }
+
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
                      
-                    var task = (from t in tasks.Items where t.Name.Contains(o.Task) select t).FirstOrDefault();
+                    var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
                     ctx.SessionDriver.Connect();
                     
                     foreach (var taskstep in task.TaskSteps)
                     {
-                        if (taskstep.Cmd == "Connect")
+                        if (taskstep.Cmd.ToLower() == "connect")
                         {
                             ctx = (from c in ctxs.Items where c.Name == taskstep.Args[0] select c).FirstOrDefault();
                             ctx.SessionDriver.Connect(); continue;
                         }
-                        if (taskstep.Cmd == "SetWait")
+                        if (taskstep.Cmd.ToLower() == "setwait")
                         {
-                            ctx.SessionDriver.SetWait(Convert.ToInt32(taskstep.Args[0] ?? "750")); continue;
+                            ctx.SessionDriver.SetWait(Convert.ToInt32(taskstep.Args[0] ?? "500")); continue;
                         } 
                         var typ = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(assm => assm.GetTypes())
@@ -96,12 +104,33 @@ namespace BOM
 
                 }, (ConfigOptions o) => {
 
+                    if (o.Path.ToString().EndsWith("yaml"))
+                    {
+                        if (!o.Path.Contains(":\\")) 
+                            o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path);
+                     
+                        configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
+                        logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
+                    }
+   
                     logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
-                    logger.LogInformation("EnvironmentVar {o}", Environment.GetEnvironmentVariable("bom"));
-                    logger.LogInformation("ExecutingAssemblyLoc {o}", Assembly.GetExecutingAssembly().Location);
+                    logger.LogInformation("EnVar {o}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
+                    logger.LogInformation("AssmLoc {o}", Assembly.GetExecutingAssembly().Location);
+                    var paths = configuration.GetSection("paths");
+                    if (paths == null)
+                        logger.LogWarning(" TaskProvider config.GetSection null: {o}", paths);
+                    else
+                        logger.LogInformation(" TaskProvider paths : {o}", paths.GetChildren().Count().ToString());
+                     
+                    var yamltasks = configuration.GetSection("paths:yamltasks");
+                    if (yamltasks == null)
+                        logger.LogWarning(" TaskProvider config.GetSection null: {o}", yamltasks);
+                    else
+                        logger.LogInformation(" TaskProvider yamltasks : {o}", yamltasks.Value);
 
+                
                     return 0;
-            },
+                },
                 errs => 1);
             serviceProvider.Dispose();
         }
@@ -109,9 +138,7 @@ namespace BOM
         private static ServiceProvider RegisterServices(string[] args)
         {
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
-            var bomloc = Environment.GetEnvironmentVariable("bom")?.ToLower().Replace("bom.exe", "");
-            Console.WriteLine($"exeassmloc {exeassmloc}");
-            Console.WriteLine($"exeassmloc {bomloc}");
+            var bomloc = Environment.GetEnvironmentVariable("bom")?.ToLower().Replace("bom.exe", ""); 
             if (exeassmloc.Contains("\\appdata\\") && bomloc != null)
             { 
                 try
