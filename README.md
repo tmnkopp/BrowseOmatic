@@ -48,6 +48,7 @@ Use `config.yaml` files to configure test automation steps.
 ### Browser Driver Commands (just a few)
 
 - `Click`: one argument - element to be clicked
+- `ClickByContent`: element container, content/regex pattern, true/false (is regex)
 - `Key`: 2 arguments - element and keys to send
 - `Url`: one argument - the URL
 - `Script`: one argument - Javascript
