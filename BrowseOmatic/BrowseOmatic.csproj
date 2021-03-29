@@ -6,6 +6,9 @@
     <RootNamespace>BOM</RootNamespace>
     <AssemblyName>BOM</AssemblyName>
     <StartupObject>BOM.Program</StartupObject>
+    <Description>-p config.yaml</Description>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

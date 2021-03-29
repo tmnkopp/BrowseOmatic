@@ -33,23 +33,30 @@ namespace BOM.CORE
         #endregion
         #region Methods 
         private IEnumerable<BTask> GetItems()
-        {
-            var paths = configuration.GetSection("paths");
-            if (paths == null)
-                logger.LogError("YmlTaskProvider config.GetSection null: {o}", paths);
-            var yamltasks = paths.GetSection("yamltasks").Value;
+        { 
+            var yamltasks = configuration.GetSection("paths:yamltasks")?.Value;
             if (yamltasks == null) {  
-                logger.LogError("task path null : {o}", yamltasks);
-                logger.LogError("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
+                logger.LogWarning("task path null : {o}", yamltasks);
+                logger.LogWarning("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
                 throw new Exception("Invalid task path enviornment");
             }
+            List<BTask> tasks = new List<BTask>();
             var yaml = new YamlStream();
-            using (TextReader tr = File.OpenText(yamltasks))
-                yaml.Load(tr);
-
+            try
+            {
+                using (TextReader tr = File.OpenText(yamltasks))
+                    yaml.Load(tr);
+            }
+            catch (Exception )
+            {
+                logger.LogError("paths:yamltasks : {o}", yamltasks);
+                logger.LogError("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
+                throw new Exception("YamlStream Open Fail");
+            }
+             
             var root = (YamlMappingNode)yaml.Documents[0].RootNode;
             var ytasks = (YamlSequenceNode)root.Children[new YamlScalarNode("tasks")];
-            List<BTask> tasks = new List<BTask>();
+            
             foreach (YamlMappingNode ytask in ytasks)
             {
                 string name = ytask[new YamlScalarNode("task")].ToString();
