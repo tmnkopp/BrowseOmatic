@@ -34,25 +34,18 @@ function BOMInstaller {
     }
 
     [System.Environment]::SetEnvironmentVariable('bom', $InstallPath + 'bom.exe',[System.EnvironmentVariableTarget]::User)
-    $webClient = [System.Net.WebClient]::new()
-     
+    $webClient = [System.Net.WebClient]::new() 
     try {
        $WebClient.DownloadFile( $BOMURL , $InstallPath + "BOM.exe"  )
     }
     catch [System.Net.WebException],[System.IO.IOException] {
         "Unable to download bom.exe"
-    } 
-
-    try {
-       $WebClient.DownloadFile( $CDURL  , $InstallPath + "chromedriver.exe"  )
-    }
-    catch [System.Net.WebException],[System.IO.IOException] {
-        "Unable to Download chromedriver"
-    }
+    }  
+ 
      
-    if($WithUnitTest ){
+    if($WithUnitTest ){ 
         $exe = [System.Environment]::GetEnvironmentVariable('bom', 'User')  
-        & $exe  cmd -t unittest -p config.yaml
+        & $exe  cmd -t unittest -p config.yaml 
     } 
 
 }
