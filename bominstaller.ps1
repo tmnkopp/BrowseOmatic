@@ -52,7 +52,7 @@ function BOMInstaller {
      
     if($WithUnitTest ){
         $exe = [System.Environment]::GetEnvironmentVariable('bom', 'User')  
-        & $exe  cmd -t unittest
+        & $exe  cmd -t unittest -p config.yaml
     } 
 
 }
