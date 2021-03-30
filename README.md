@@ -1,4 +1,5 @@
  
+###### Browse-O-Matic Readme 
 ![alt text](https://the80port.com/cdn/logos/som75-4.png "bom") 
 # Browse-O-Matic 
 ### BOM automates browsers. Built on Selenium WebDriver technology, BOM simplifies automated testing by using a combination of YAML configuration and extendable C# to configure test scripts. No code/low code supported - coding is not required to build and run automated test scripts. Extendable libraries support custom coded execution routines. Support for both naive form auto-fillers and direct access to form elements allows for flexible automation procedures. Multi-environment support (Production, Stage, Dev), naive form value detection, and more are configurable using JSON.  

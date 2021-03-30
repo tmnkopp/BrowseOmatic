@@ -11,8 +11,8 @@ using System.Text;
 using Newtonsoft.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using BOM.CORE;  
- 
+using BOM.CORE;
+using System.Diagnostics;
 
 namespace BOM
 {
@@ -32,6 +32,7 @@ namespace BOM
                 (CommandOptions o) =>
                 {
                     logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o));
+   
                     if (o.Path.ToString().EndsWith("yaml"))
                     {
                         if (!o.Path.Contains(":\\"))
@@ -41,8 +42,7 @@ namespace BOM
                     }
 
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
-                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
-                     
+                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();  
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
                     ctx.SessionDriver.Connect();
@@ -53,15 +53,20 @@ namespace BOM
                         {
                             ctx = (from c in ctxs.Items where c.Name == taskstep.Args[0] select c).FirstOrDefault();
                             ctx.SessionDriver.Connect(); continue;
-                        }
+                        } 
                         if (taskstep.Cmd.ToLower() == "setwait")
                         {
-                            ctx.SessionDriver.SetWait(Convert.ToInt32(taskstep.Args[0] ?? "500")); continue;
+                            string value = taskstep.Args[0];
+                            if (value.Contains("-p"))
+                            {
+                                Console.Write($"\nSetWait (Int):");
+                                value = Regex.Replace(Console.ReadLine(), "[^\\d]","");
+                            }
+                            ctx.SessionDriver.SetWait(Convert.ToInt32(value ?? "500")); continue;
                         } 
-                        var typ = AppDomain.CurrentDomain.GetAssemblies()
-                                .SelectMany(assm => assm.GetTypes())
-                                .Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand).IsAssignableFrom(t))
-                                .FirstOrDefault();
+
+                        var typ = Assm.GetTypes()
+                        .Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand).IsAssignableFrom(t)).FirstOrDefault();
 
                         Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");
                         if (tCmd == null) tCmd = Type.GetType($"{typ.FullName}, BOM");
@@ -71,6 +76,11 @@ namespace BOM
                         foreach (ParameterInfo parm in PI)
                         {
                             string value = taskstep.Args[parmcnt];
+                            if (value.Contains("-p"))
+                            {
+                                Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
+                                value = Console.ReadLine();
+                            }
                             parmcnt++;
                             if (parm.ParameterType.Name.Contains("Int"))
                                 oparms.Add(Convert.ToInt32(value));
@@ -79,9 +89,19 @@ namespace BOM
                             else
                                 oparms.Add(value);
                         }
-                        ICommand obj = (ICommand)Activator.CreateInstance(tCmd, oparms.ToArray());
-                        obj.Execute(ctx);
-                    }
+                        try
+                        {
+                            ICommand obj = (ICommand)Activator.CreateInstance(tCmd, oparms.ToArray());
+                            obj.Execute(ctx);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogError("ICommand:CreateInstance {o}", ex.Message);
+                        } 
+                    } 
+                    Console.Write($"Automation Routine Complete.\n[k]ill session\n");
+                    string result = Console.ReadLine();
+                    ctx.SessionDriver.Dispose();  
                     return 0;
                 },
                 (ExeOptions o) => {
@@ -112,7 +132,8 @@ namespace BOM
                         configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
                         logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
                     }
-   
+                  
+                    
                     logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
                     logger.LogInformation("EnVar {o}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
                     logger.LogInformation("AssmLoc {o}", Assembly.GetExecutingAssembly().Location);
@@ -169,6 +190,11 @@ namespace BOM
             services.AddTransient<ITypeProvider, TypeProvider>();
             services.AddTransient<IBScriptParser, BScriptParser>(); 
             return services.BuildServiceProvider();
+        }
+
+        private static string Prompt(ParameterInfo parm) { 
+            Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
+            return Console.ReadLine(); 
         }
     }
 }
