@@ -13,6 +13,8 @@
         dotnet build --configuration Release;
         dotnet publish -p:PublishProfile=FolderProfile   
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination c:\bom\BOM.exe -Force 
+        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\bominstaller.ps1 -Destination c:\bom\bominstaller.ps1 -Force 
+        
     }
     if ($with -match ' release | commit ' ){
         cd 'C:\Users\Tim\source\repos\BrowseOmatic'; 

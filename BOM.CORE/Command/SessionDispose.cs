@@ -6,14 +6,14 @@ namespace BOM.CORE
 {
     public class SessionDispose : ICommand
     {
-        public SessionDispose()
+        private int timeOut = 0;
+        public SessionDispose(int TimeOut = 0)
         {
+            this.timeOut = TimeOut;
         }
         public void Execute(ISessionContext ctx)
-        {
-            Console.WriteLine("Session End");
-            var response = Console.ReadLine();
-            ctx.SessionDriver.Dispose();
+        { 
+            ctx.SessionDriver.Pause(timeOut).Dispose();
         }
     }
 }
