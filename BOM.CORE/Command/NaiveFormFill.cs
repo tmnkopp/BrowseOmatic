@@ -9,9 +9,11 @@ using System.Text.RegularExpressions;
 namespace BOM.CORE 
 {
     public class NaiveFormFill : ICommand
-    {  
-        public NaiveFormFill( )
-        { 
+    {
+        private string container = "";
+        public NaiveFormFill(string Container )
+        {
+            this.container = Container;
         }
         public void Execute(ISessionContext ctx)
         {
@@ -21,7 +23,7 @@ namespace BOM.CORE
                 , DateTime.Now.TimeOfDay.Minutes.ToString()) ;
             IList<IWebElement> inputs;
             var dvr = ctx.SessionDriver.Driver;
-            string[] elements = new string[] { "*[type='text']", "textarea", "*[type='password']"};
+            string[] elements = new string[] { $"{this.container} *[type='text']", $"{this.container} textarea", $"{this.container} *[type='password']" };
             foreach (string el in elements)
             {
                 inputs = dvr.FindElements(By.CssSelector(el));
@@ -62,7 +64,7 @@ namespace BOM.CORE
                     } 
                 }
             }
-            var selements = dvr.FindElements(By.TagName("select")); 
+            var selements = dvr.FindElements(By.TagName($"{this.container} select")); 
             foreach (var el in selements)
             {
                 ctx.SessionDriver.Pause(0);
@@ -86,7 +88,7 @@ namespace BOM.CORE
                     } 
                 }
             }  
-            foreach (string el in new string[] { "input[type='radio'], input[type='checkbox']" })
+            foreach (string el in new string[] { $"{this.container} input[type='radio'], {this.container}  input[type='checkbox']" })
             {
                 inputs = dvr.FindElements(By.CssSelector(el));
                 foreach (IWebElement input in inputs)
@@ -105,13 +107,14 @@ namespace BOM.CORE
                 }
             } 
         
-            inputs = dvr.FindElements(By.CssSelector("input[type='file']"));
+            inputs = dvr.FindElements(By.CssSelector($"{this.container}  input[type='file']"));
             foreach (IWebElement input in inputs)
             {
                 ctx.SessionDriver.Pause(0);
                 try
                 { 
-                    input.SendKeys(@"C:\Users\Tim\Documents\upload.txt");
+                    //TODO: Configure Uploader Doc
+                    input.SendKeys(@" ");
                 }
                 catch (Exception ex)
                 {
@@ -119,7 +122,7 @@ namespace BOM.CORE
                 }
             }
 
-            inputs = dvr.FindElements(By.CssSelector("button[type='submit']"));
+            inputs = dvr.FindElements(By.CssSelector($"{this.container}  button[type='submit']"));
             foreach (IWebElement input in inputs)
             {
                 ctx.SessionDriver.Pause(0);

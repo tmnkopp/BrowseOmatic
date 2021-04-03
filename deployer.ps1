@@ -9,6 +9,7 @@
     )
     cd 'C:\Users\Tim\source\repos\BrowseOmatic';   
     if ($with -match ' release ' ){
+        taskkill /IM "BOM.exe" /F
         dotnet build --configuration Debug;
         dotnet build --configuration Release;
         dotnet publish BrowseOmatic -p:PublishProfile=FolderProfile   
@@ -18,7 +19,7 @@
         Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.pdb -Force
         
     }
-    if ($with -match ' release | commit ' ){
+    if ($with -match ' commit ' ){
         cd 'C:\Users\Tim\source\repos\BrowseOmatic'; 
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
         $message = $message + $m  
@@ -27,5 +28,5 @@
         #Write-Host 'foo'
     } 
 } 
-Invoke-BOM-Workflow -with " release " 
+Invoke-BOM-Workflow -with " release commit " 
 

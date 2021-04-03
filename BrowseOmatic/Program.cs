@@ -49,10 +49,11 @@ namespace BOM
                     
                     foreach (var taskstep in task.TaskSteps)
                     {
-                        if (taskstep.Cmd.ToLower() == "connect")
+                        if (taskstep.Cmd.ToLower() == "subtask")
                         {
-                            ctx = (from c in ctxs.Items where c.Name == taskstep.Args[0] select c).FirstOrDefault();
-                            ctx.SessionDriver.Connect(); continue;
+                            var parenttask = task;
+                            var subtask = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
+                            task = subtask;
                         } 
                         if (taskstep.Cmd.ToLower() == "setwait")
                         {
@@ -75,19 +76,23 @@ namespace BOM
                         int parmcnt = 0;
                         foreach (ParameterInfo parm in PI)
                         {
-                            string value = taskstep.Args[parmcnt];
-                            if (value.Contains("-p"))
+                            string value = null;
+                            if (taskstep.Args.Count() >= parmcnt)
                             {
-                                Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
-                                value = Console.ReadLine();
-                            }
+                                value = taskstep.Args[parmcnt];
+                                if (value.Contains("-p"))
+                                {
+                                    Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
+                                    value = Console.ReadLine();
+                                }
+                            } 
                             parmcnt++;
                             if (parm.ParameterType.Name.Contains("Int"))
-                                oparms.Add(Convert.ToInt32(value));
+                                oparms.Add(Convert.ToInt32(value ?? "0"));
                             else if (parm.ParameterType.Name.Contains("Bool"))
-                                oparms.Add(Convert.ToBoolean(value));     
+                                oparms.Add(Convert.ToBoolean(value ?? "false"));     
                             else
-                                oparms.Add(value);
+                                oparms.Add(value ?? "");
                         }
                         try
                         {
@@ -95,8 +100,10 @@ namespace BOM
                             obj.Execute(ctx);
                         }
                         catch (Exception ex)
-                        {
-                            logger.LogError("ICommand:CreateInstance {o}", ex.Message);
+                        { 
+                            logger.LogWarning("ICommand:CreateInstance {c}\n", tCmd );
+                            logger.LogWarning("oparms: {o}", JsonConvert.SerializeObject(oparms));
+                            logger.LogError("\n{o}", ex.Message);
                         } 
                     } 
                     Console.Write($"Automation Routine Complete.\n[k]ill session\n");

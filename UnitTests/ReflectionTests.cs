@@ -27,7 +27,7 @@ namespace UnitTests
         public void ICommand_Provides()
         {
             var ctx = new SessionContext();
-            var rad = new RadFormFill();
+            var rad = new RadFormFill("");
             //.Where(t => t.Name.Contains("RadForm") && typeof(ICommand).IsAssignableFrom(t))
             var typ = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assm => assm.GetTypes())

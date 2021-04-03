@@ -7,9 +7,11 @@ using OpenQA.Selenium;
 namespace BOM
 {
     public class RadFormFill : ICommand
-    { 
-        public RadFormFill()
-        { 
+    {
+        private string container = "";
+        public RadFormFill(string Container)
+        {
+            this.container = Container;
         }
         public void Execute(ISessionContext ctx)
         {
@@ -20,28 +22,28 @@ namespace BOM
             IList<IWebElement> inputs; 
             try
             {
-                inputs = dvr.Driver.FindElements(By.CssSelector(".RadDropDownList"));
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadDropDownList"));
                 foreach (var input in inputs) { 
                     input.Click();
                     dvr.Pause(250).Click("ul[class*='rddlList'] li:nth-child(2)");
                     dvr.Click("body").Pause(50);
                 }
-                inputs = dvr.Driver.FindElements(By.CssSelector(".RadComboBox"));
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadComboBox"));
                 foreach (var input in inputs)
                 {
                     input.Click();
                     dvr.Pause(450).Click("ul[class*='rcbList'] li:nth-child(2)");
                     dvr.Click("body").Pause(150);
                 } 
-                inputs = dvr.Driver.FindElements(By.CssSelector("input[id*='date']"));
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[id*='date']"));
                 foreach (var input in inputs)
                     if (input.GetAttribute("value") == "") input.SendKeys($"{DateTime.Now.ToShortDateString()}");
 
-                inputs = dvr.Driver.FindElements(By.CssSelector("input[type='text']"));
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[type='text']"));
                 foreach (var input in inputs)
                     if (input.GetAttribute("value") == "") input.SendKeys($"1");
 
-                inputs = dvr.Driver.FindElements(By.CssSelector(".RadGrid textarea"));
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadGrid textarea"));
                 foreach (var input in inputs)
                     if (input.GetAttribute("value") == "") input.SendKeys($"{rnd}");
                  

@@ -2,12 +2,14 @@ using BOM.CORE;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.Collections.Generic;
 
 namespace UnitTests
-{
+{ 
     [TestClass]
     public class CommandTests
     {
+  
         [TestMethod]
         public void OpenTab_Opens()
         {
