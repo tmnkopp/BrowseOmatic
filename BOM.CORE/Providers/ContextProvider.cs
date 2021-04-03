@@ -36,12 +36,15 @@ namespace BOM.CORE
         private IEnumerable<SessionContext> GetItems()
         { 
             var sections = configuration.GetSection("contexts").GetChildren().AsEnumerable();
-            var SessionContexts = (from s in sections 
-                        let driver = s["conn"].Split("driver:")[1].Split(";")[0] 
-                        select new 
-                        {
-                            name = s["name"], conn = s["conn"], driver = driver 
-                        }); 
+            var SessionContexts = (
+                from s in sections  
+                let driver = (s["conn"].Contains("driver:")) 
+                    ? s["conn"].Split("driver:")[1].Split(";")[0] 
+                    : "BOM.CORE.SessionDriver, BOM.CORE"
+                select new 
+                {
+                    name = s["name"], conn = s["conn"], driver = driver 
+                }); 
             List<SessionContext> contexts = new List<SessionContext>();
             foreach (var item in SessionContexts)
             {

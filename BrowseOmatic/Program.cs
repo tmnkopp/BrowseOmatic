@@ -48,21 +48,10 @@ namespace BOM
                     ctx.SessionDriver.Connect();
                     
                     foreach (var taskstep in task.TaskSteps)
-                    {
-                        if (taskstep.Cmd.ToLower() == "subtask")
-                        {
-                            var parenttask = task;
-                            var subtask = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
-                            task = subtask;
-                        } 
+                    { 
                         if (taskstep.Cmd.ToLower() == "setwait")
                         {
-                            string value = taskstep.Args[0];
-                            if (value.Contains("-p"))
-                            {
-                                Console.Write($"\nSetWait (Int):");
-                                value = Regex.Replace(Console.ReadLine(), "[^\\d]","");
-                            }
+                            string value = taskstep.Args[0]; 
                             ctx.SessionDriver.SetWait(Convert.ToInt32(value ?? "500")); continue;
                         } 
 
@@ -80,7 +69,7 @@ namespace BOM
                             if (taskstep.Args.Count() >= parmcnt)
                             {
                                 value = taskstep.Args[parmcnt];
-                                if (value.Contains("-p"))
+                                if (value.StartsWith("-p"))
                                 {
                                     Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
                                     value = Console.ReadLine();

@@ -24,7 +24,7 @@
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
         $message = $message + $m  
         $message = $message + $m
-        git add .; git commit -m $message; git push;
+        git add .; git commit -m 'resolves #1 #2 #3'; git push;
         #Write-Host 'foo'
     } 
 } 

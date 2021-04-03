@@ -18,7 +18,7 @@ namespace BOM.CORE
         {
             List<string> args = new List<string>();
             var match = Regex.Match(BomScript + ";", "driver:(.*?);");
-            var driver = match.Groups[1].Value;
+            var driver = match?.Groups[1]?.Value;
             BomScript = BomScript.Replace(match.Groups[0].Value, "");
             foreach (string cmd in BomScript.Trim().Split(";").TakeWhile(s => s.Trim().Contains(":")))
             {
@@ -28,7 +28,7 @@ namespace BOM.CORE
                 yield return new BScriptParseResult
                 {
                     Command = command,
-                    Driver = driver,  
+                    Driver = driver ?? "driver:BOM.CORE.SessionDriver, BOM.CORE;",  
                     Arguments = command switch
                     { 
                         string s when s.Contains("http") => new string[] {$"{command}:{args[0]}"},
