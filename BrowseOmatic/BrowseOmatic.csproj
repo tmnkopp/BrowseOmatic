@@ -7,15 +7,13 @@
     <AssemblyName>BOM</AssemblyName>
     <StartupObject>BOM.Program</StartupObject>
     <Description>-p config.yaml</Description>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <Version>1.0.3</Version>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <Version>1.0.5</Version>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Telerik\CsDriver.cs" />
     <Compile Remove="TaskOptionProcessor.cs" />
-    <Compile Remove="Telerik\ToTab.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +44,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BOM.CORE\BOM.CORE.csproj" />
+    <ProjectReference Include="..\TelerikAutomator\TelerikAutomator.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

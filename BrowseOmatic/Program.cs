@@ -12,7 +12,9 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BOM.CORE;
+using TelerikAutomator;
 using System.Diagnostics;
+ 
 
 namespace BOM
 {
@@ -20,13 +22,15 @@ namespace BOM
     {
         static void Main(string[] args)
         {
+             
             ServiceProvider serviceProvider = RegisterServices(args);
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             IAppSettingProvider<SessionContext> ctxs;
             IAppSettingProvider<BTask> tasks;
-            ITypeParamProvider typeParamProvider; 
-             
+            ITypeParamProvider typeParamProvider;
+ 
+
             var exit = Parser.Default.ParseArguments<ExeOptions, CommandOptions, ConfigOptions>(args)
                 .MapResult(
                 (CommandOptions o) =>
@@ -50,9 +54,8 @@ namespace BOM
                     foreach (var taskstep in task.TaskSteps)
                     { 
                         if (taskstep.Cmd.ToLower() == "setwait")
-                        {
-                            string value = taskstep.Args[0]; 
-                            ctx.SessionDriver.SetWait(Convert.ToInt32(value ?? "500")); continue;
+                        {  
+                            ctx.SessionDriver.SetWait(Convert.ToInt32(taskstep.Args[0] ?? "500")); continue;
                         } 
 
                         var typ = Assm.GetTypes()
@@ -69,19 +72,12 @@ namespace BOM
                             if (taskstep.Args.Count() >= parmcnt)
                             {
                                 value = taskstep.Args[parmcnt];
-                                if (value.StartsWith("-p"))
-                                {
-                                    Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
-                                    value = Console.ReadLine();
-                                }
+                                if (value.StartsWith("-p")) value = Prompt(parm); 
                             } 
                             parmcnt++;
-                            if (parm.ParameterType.Name.Contains("Int"))
-                                oparms.Add(Convert.ToInt32(value ?? "0"));
-                            else if (parm.ParameterType.Name.Contains("Bool"))
-                                oparms.Add(Convert.ToBoolean(value ?? "false"));     
-                            else
-                                oparms.Add(value ?? "");
+                            if (parm.ParameterType.Name.Contains("Int")) oparms.Add(Convert.ToInt32(value ?? "0"));
+                            else if (parm.ParameterType.Name.Contains("Bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));     
+                            else oparms.Add(value ?? "");
                         }
                         try
                         {
@@ -154,6 +150,15 @@ namespace BOM
 
         private static ServiceProvider RegisterServices(string[] args)
         {
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            var loadedPaths = loadedAssemblies.Select(a => a.Location).ToArray();
+
+            var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
+
+            toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
+
+
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
             var bomloc = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User)?.ToLower().Replace("bom.exe", ""); 
             if (exeassmloc.Contains("\\appdata\\") && bomloc != null)

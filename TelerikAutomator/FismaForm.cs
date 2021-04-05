@@ -5,7 +5,7 @@ using BOM.CORE;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace BOM
+namespace TelerikAutomator
 {
     public class FismaForm : ICommand
     {

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BOM
+namespace TelerikAutomator
 { 
     public class CQProcessor : ICommand
     {

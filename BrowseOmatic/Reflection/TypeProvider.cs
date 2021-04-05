@@ -9,13 +9,12 @@ namespace BOM
 {
 
     public interface ITypeProvider
-    {
-        IEnumerable<Type> GetTypesByName(string Name);
-        IEnumerable<Type> GetProcessorTypes(string Context);
+    { 
+        IEnumerable<Type> GetCommands(string Context);
     }
     public class TypeProvider : ITypeProvider
     {  
-        public IEnumerable<Type> GetProcessorTypes(string Context)  
+        public IEnumerable<Type> GetCommands(string Context)  
         { 
                 return AppDomain.CurrentDomain.GetAssemblies()
                  .SelectMany(assm => assm.GetTypes())
@@ -25,15 +24,8 @@ namespace BOM
                         )
                  ).ToList();
           
-        } 
-        public IEnumerable<Type> GetTypesByName(string Name)  
-        { 
-            return AppDomain.CurrentDomain.GetAssemblies()
-             .SelectMany(assm => assm.GetTypes())
-             .Where(t => t.Name.Contains("Ein") && t.IsClass == true).ToList();
-        }
-
-        public void PrintExecutingAssembly() { 
+        }  
+        public void WriteExecutingAssembly() { 
             var q = from t in Assembly.GetExecutingAssembly().GetTypes()
                     where t.IsClass
                     select t;

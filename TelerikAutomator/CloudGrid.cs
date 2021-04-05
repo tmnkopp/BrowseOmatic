@@ -4,7 +4,7 @@ using System.Text;
 using BOM.CORE;
 using OpenQA.Selenium;
 
-namespace BOM
+namespace TelerikAutomator
 {
     public class CloudGrid : ICommand
     {
