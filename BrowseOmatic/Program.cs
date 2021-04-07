@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BOM.CORE;
-using TelerikAutomator;
+using TelerikCommands;
 using System.Diagnostics;
  
 
@@ -124,8 +124,9 @@ namespace BOM
                         configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
                         logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
                     }
+                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
+                    logger.LogInformation("{p} tasks: {t}", o.Path,  string.Join(", ", (from t in tasks.Items select t.Name)));
                   
-                    
                     logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
                     logger.LogInformation("EnVar {o}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
                     logger.LogInformation("AssmLoc {o}", Assembly.GetExecutingAssembly().Location);
@@ -150,15 +151,33 @@ namespace BOM
 
         private static ServiceProvider RegisterServices(string[] args)
         {
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-            var loadedPaths = loadedAssemblies.Select(a => a.Location).ToArray();
-
-            var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
-            var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
-
-            toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
-
-
+            
+            try
+            {
+                var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+                Console.WriteLine($"loadedAssemblies {loadedAssemblies}");
+                var loadedPaths = loadedAssemblies.Select(a => a.Location).ToArray();
+                Console.WriteLine($"loadedPaths {loadedPaths}");
+                var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*Commands.dll");
+                Console.WriteLine($"referencedPaths {referencedPaths}");
+                var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
+             
+                toLoad.ForEach(
+                    path => loadedAssemblies.Add(
+                        AppDomain.CurrentDomain.Load(
+                            AssemblyName.GetAssemblyName(path)
+                            )
+                        )
+                );
+                Console.WriteLine("Assemblies.Added");
+                Console.Clear();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Assembly Load Fail: " + ex.Message);
+                throw;
+            }
+             
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
             var bomloc = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User)?.ToLower().Replace("bom.exe", ""); 
             if (exeassmloc.Contains("\\appdata\\") && bomloc != null)

@@ -9,7 +9,7 @@
     <Description>-p config.yaml</Description>
     <AssemblyVersion>1.0.5.0</AssemblyVersion>
     <Version>1.0.5</Version>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,7 +44,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BOM.CORE\BOM.CORE.csproj" />
-    <ProjectReference Include="..\TelerikAutomator\TelerikAutomator.csproj" />
+    <ProjectReference Include="..\TelerikCommands\TelerikCommands.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

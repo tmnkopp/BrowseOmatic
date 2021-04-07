@@ -9,14 +9,14 @@
     )
     cd 'C:\Users\Tim\source\repos\BrowseOmatic';   
     if ($with -match ' release ' ){
-        taskkill /IM "BOM.exe" /F
+        # taskkill /IM "BOM.exe" /F
         dotnet build --configuration Debug;
         dotnet build --configuration Release;
         dotnet publish BrowseOmatic -p:PublishProfile=FolderProfile   
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination c:\bom\BOM.exe -Force 
-        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\bominstaller.ps1 -Destination c:\bom\bominstaller.ps1 -Force
-        Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.CORE.pdb -Force
-        Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.pdb -Force
+        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\bominstaller.ps1 -Destination c:\bom\bominstaller.ps1 -Force 
+        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\bominstaller.ps1 -Destination C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\installer.ps1 -Force 
+        Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\*.pdb -Force
         
     }
     if ($with -match ' commit ' ){
@@ -24,9 +24,9 @@
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
         $message = $message + $m  
         $message = $message + $m
-        git add .; git commit -m 'resolves #1 #2 #3'; git push;
+        git add .; git commit -m 'resolves #4 #5 #6 '; git push;
         #Write-Host 'foo'
     } 
 } 
-Invoke-BOM-Workflow -with " release commit " 
+Invoke-BOM-Workflow -with " release commit  " 
 
