@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.Support.UI;
+﻿using Microsoft.Extensions.Logging;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,10 +25,12 @@ namespace BOM.CORE
             {
                 try
                 {
+                    ctx.SessionDriver.Log.LogInformation("SetOption {o}", Element);
                     sections.SelectByIndex(index);
                 }
                 catch (Exception e)
                 {
+                    ctx.SessionDriver.Log.LogWarning("SetOption {o}", e.Message);
                     Console.WriteLine($"sections.SelectByIndex index out of range {e.Message}");
                 }
             }  
