@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BOM.CORE
 {
@@ -19,35 +20,26 @@ namespace BOM.CORE
         public SessionDriver Click(string Element);
         public SessionDriver GetUrl(string Url);
         public SessionDriver Pause(int Time);
-        public void SetWait(int Wait); 
+        public void SetWait(int Wait);
         public IWebElement Select(string ElementSelector);
         public bool ElementExists(string ElementSelector);
-        public string connstr { get; set; }
-        public bool Connected { get; set; }
         public IConfiguration config { get; }
-        public ILogger Log{ get;  }
-        public void Connect(); 
+        public ILogger Log { get; } 
+        public void Connect(string ConnectionString); 
         public void Dispose(); 
     }
     public class SessionDriver: ISessionDriver
-    {
-        public string connstr { get; set; }
-        private readonly IBScriptParser scriptParser;
+    { 
         private readonly IConfiguration configuration;
         private readonly ILogger logger;
         public ILogger Log => logger; 
         public SessionDriver(
             IConfiguration configuration,
-            ILogger logger,
-            IBScriptParser scriptParser,
-            string ConnectionString  )
-        {
-            connstr = ConnectionString;
-            this.scriptParser = scriptParser;
+            ILogger logger  )
+        { 
             this.configuration = configuration;
             this.logger = logger;
-        }
-        public bool Connected { get; set; }
+        } 
         private int timeout = 0;
         public void SetWait(int Timeout) {
             timeout = Timeout;
@@ -66,8 +58,7 @@ namespace BOM.CORE
                     chromeDriverService.HideCommandPromptWindow = true;
                     chromeDriverService.SuppressInitialDiagnosticInformation = true;
                     options.AddArgument("log-level=3");
-                    driver = new ChromeDriver(chromeDriverService, options);
- 
+                    driver = new ChromeDriver(chromeDriverService, options); 
                 }
                 return driver;
             }
@@ -75,26 +66,30 @@ namespace BOM.CORE
 
         
         #region Methods
-        public virtual void Connect() {  
-            if (!Connected)
+        public virtual void Connect(string ConnectionString) {   
+            if (string.IsNullOrEmpty(ConnectionString))
+                throw new ArgumentNullException("driver connection string empty");
+                 
+            List<string> args = new List<string>();
+            var match = Regex.Match(ConnectionString + ";", "driver:(.*?);"); 
+            ConnectionString = ConnectionString.Replace(match.Groups[0].Value, "");
+            foreach (string cmd in ConnectionString.Trim().Split(";").TakeWhile(s => s.Trim().Contains(":")))
             {
-                if (string.IsNullOrEmpty(connstr))
-                    throw new ArgumentNullException("driver connection string empty"); 
-                foreach (var spr in scriptParser.Parse(connstr))
-                {  
-                    try
-                    {
-                        if (spr.QualifiedCommand=="GetUrl")  Driver.Navigate().GoToUrl($"{spr.Arguments[0]}");
-                        if (spr.QualifiedCommand=="SendKeys") SendKeys(spr.Arguments[0], spr.Arguments[1]); 
-                        if (spr.QualifiedCommand=="Click") Click(spr.Arguments[0] );
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError("Connection failed {0} {1}", connstr, ex.Message); 
-                    }
+                args = new List<string>();
+                var command = cmd.Split(":")[0].Trim();
+                args.AddRange(cmd.Split(":")[1].Trim().Split(",")); 
+                try
+                {
+                    logger.LogError("connect {0} [{1}]", command, string.Join(",",args));
+                    if (command.Contains("http")) GetUrl($"{command}:{args[0]}");
+                    if (command == "s") SendKeys(args[0], args[1]); 
+                    if (command == "c") Click(args[0]);
                 }
-                Connected = true;
-            } 
+                catch (Exception ex)
+                {
+                    logger.LogError("Connection failed {0} {1}", ConnectionString, ex.Message); 
+                } 
+            }   
         }
          
         public SessionDriver Pause(int Time)

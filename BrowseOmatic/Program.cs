@@ -35,8 +35,7 @@ namespace BOM
                 .MapResult(
                 (CommandOptions o) =>
                 {
-                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o));
-   
+                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o)); 
                     if (o.Path.ToString().EndsWith("yaml"))
                     {
                         if (!o.Path.Contains(":\\"))
@@ -49,7 +48,7 @@ namespace BOM
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();  
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
-                    ctx.SessionDriver.Connect();
+                    ctx.SessionDriver.Connect(ctx.configContext.conn);
                     
                     foreach (var taskstep in task.TaskSteps)
                     { 
@@ -59,10 +58,10 @@ namespace BOM
                         } 
 
                         var typ = Assm.GetTypes()
-                        .Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand).IsAssignableFrom(t)).FirstOrDefault();
+                        .Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand)
+                        .IsAssignableFrom(t)).FirstOrDefault();
 
-                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}");
-                        if (tCmd == null) tCmd = Type.GetType($"{typ.FullName}, BOM");
+                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}") ?? Type.GetType($"{typ.FullName}, BOM");
                         ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                         List<object> oparms = new List<object>();
                         int parmcnt = 0;
@@ -169,15 +168,21 @@ namespace BOM
                             )
                         )
                 );
-                Console.WriteLine("Assemblies.Added");
+                Console.WriteLine("Assemblies.Added"); 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Assembly Load Fail: " + ex.Message); 
+            }
+            try
+            { 
                 Console.Clear();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Assembly Load Fail: " + ex.Message);
-                throw;
+                Console.WriteLine("Console.Clear(): " + ex.Message); 
             }
-             
+
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
             var bomloc = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User)?.ToLower().Replace("bom.exe", ""); 
             if (exeassmloc.Contains("\\appdata\\") && bomloc != null)
@@ -207,8 +212,7 @@ namespace BOM
             services.AddTransient<IAppSettingProvider<SessionContext>, ContextProvider>();
             services.AddTransient<IAppSettingProvider<BTask>, YmlTaskProvider>();
             services.AddTransient<ITypeParamProvider, TypeParamProvider>();
-            services.AddTransient<ITypeProvider, TypeProvider>();
-            services.AddTransient<IBScriptParser, BScriptParser>(); 
+            services.AddTransient<ITypeProvider, TypeProvider>(); 
             return services.BuildServiceProvider();
         }
 

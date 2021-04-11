@@ -25,30 +25,13 @@ namespace UnitTests
             var mockp = new Mock<ILogger<ContextProvider>>();
             ILogger<ContextProvider> loggerp = mockp.Object;
 
-            IBScriptParser bomScriptParser = new BScriptParser();
+  
 
-            var context = new ContextProvider(configuration, bomScriptParser, loggerp)
+            var context = new ContextProvider(configuration,  loggerp)
                 .Items.Where((t) => t.Name.Contains("unittest")).FirstOrDefault();
 
             // task -c rtime 
             Assert.IsNotNull(context); 
-        }
-        [TestMethod]
-        public void TaskProcessor_Processes()
-        { 
-            var configuration = new UnitTestManager().Configuration;
-
-            var mock = new Mock<ILogger<ConfigTaskProvider>>();
-            ILogger<ConfigTaskProvider> logger = mock.Object;  
-       
-            var task = (from t in new ConfigTaskProvider(configuration, logger).Items 
-                        where t.Name.Contains("unittest") select t).FirstOrDefault();
- 
-            var taskProcessor = new TaskProcessor(task, logger); 
-            Assert.IsNotNull(taskProcessor); 
-        }
-    }
- 
-
-
+        } 
+    } 
 }

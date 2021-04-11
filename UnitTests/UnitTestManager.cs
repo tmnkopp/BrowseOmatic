@@ -14,11 +14,10 @@ namespace UnitTests
         { 
             var config = new UnitTestManager().Configuration;
             var mock = new Mock<ILogger<ContextProvider>>();
-            ILogger<ContextProvider> logger = mock.Object;
-            IBScriptParser bomScriptParser = new BScriptParser();
+            ILogger<ContextProvider> logger = mock.Object; 
             SessionContext ctx = new SessionContext();
-            ctx.SessionDriver = new SessionDriver(config, logger, bomScriptParser, "driver:BOM.CORE.SessionDriver, BOM.CORE;https://dayman.cyber-balance.com/jira/login.jsp;s:username,xxxxxxx;s:password,xxxxxxx;c:submit;");
-            ctx.SessionDriver.Connect(); 
+            ctx.SessionDriver = new SessionDriver(config, logger );
+            ctx.SessionDriver.Connect(ctx.configContext.conn); 
             return ctx;
         }
     }

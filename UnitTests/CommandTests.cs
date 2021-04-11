@@ -15,19 +15,17 @@ namespace UnitTests
         {
             var config = new UnitTestManager().Configuration; 
             ILogger<ContextProvider> logger = new Mock<ILogger<ContextProvider>>().Object;
-            IBScriptParser bomScriptParser = new BScriptParser();
+ 
             ICommand cmd = new OpenTab("https://gist.github.com/safebear/a550c4094811993f3c223e1d2f8a8eb5");
             ICommand url = new Url("https://gist.github.com/safebear/a550c4094811993f3c223e1d2f8a8eb5");
             ISessionDriver dvr = new SessionDriver(
                 config
-                , logger
-                , bomScriptParser
-                , "driver:BOM.CORE.SessionDriver, BOM.CORE;"
+                , logger 
                 ); 
             ISessionContext ctx = new SessionContext();
             ctx.Name = "unittest";
             ctx.SessionDriver = dvr;
-            ctx.SessionDriver.Connect();
+            ctx.SessionDriver.Connect(ctx.configContext.conn);
             url.Execute(ctx);
             cmd.Execute(ctx);
 

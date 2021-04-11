@@ -15,8 +15,7 @@ namespace TelerikCommands
         }
         public void Execute(ISessionContext ctx)
         {
-            var sd = ctx.SessionDriver;
-            sd.Connect(); 
+            var sd = ctx.SessionDriver; 
             ControlPopulate.RadDDL(ctx, "ddl_ReportList", $"{_report}");
             ControlPopulate.RadDDL(ctx, "ddl_Agency", "Justice");
             ControlPopulate.RadDDL(ctx, "ddl_Bureau", 1);

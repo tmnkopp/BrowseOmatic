@@ -57,41 +57,7 @@ namespace UnitTests
             }
             Assert.IsTrue(tasks.Count > 0); 
         }
-        [TestMethod]
-        public void ContextProvider_ProvidesSessionDriver()
-        {
-            var configuration = new UnitTestManager().Configuration;
-            var mock = new Mock<ILogger<ContextProvider>>();
-            ILogger<ContextProvider> logger = mock.Object;
-            IBScriptParser bomScriptParser = new BScriptParser();
-            var provider = new ContextProvider(
-                  configuration
-                , bomScriptParser
-                , logger);
-            var isnull = false;
-            foreach (var item in provider.Items)
-            {
-                if (item.SessionDriver == null)
-                {
-                    isnull = true;
-                    break;
-                }
-            } 
-            Assert.IsNotNull(isnull);
-        }
-
-        [TestMethod]
-        public void BomScriptParser_Parses()
-        {
-            var strparse = "driver:BOM.CORE.SessionDriver, BOM.CORE;https://dayman.cyber-balance.com/jira/login.jsp; s:username,userexpected; s:password,expected; c:submit;";
-            var parser = new BScriptParser();
-            BScriptParseResult result = new BScriptParseResult();
-            foreach (var item in parser.Parse(strparse))
-            {
-                result = item;
-            };
-            Assert.IsTrue(result.QualifiedCommand == "Click"); 
-        }
+ 
 
         [TestMethod]
         public void Provider_Provides()

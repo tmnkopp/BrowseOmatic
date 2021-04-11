@@ -22,8 +22,8 @@ namespace TelerikCommands
         }
         public void Execute(ISessionContext ctx)
         {
-            var sd = ctx.SessionDriver;
-            sd.Connect();
+            var dvr = ctx.SessionDriver;
+            dvr.Connect(ctx.configContext.conn);
             IList<IWebElement> elements = ctx.SessionDriver.Driver.FindElements(By.CssSelector("*[id*='_Surveys'] li"));
             foreach (IWebElement element in elements)
             {
@@ -33,26 +33,26 @@ namespace TelerikCommands
                     break;
                 }
             }
-            sd.Pause(550).Click("_hl_Launch"); 
+            dvr.Pause(550).Click("_hl_Launch"); 
             for (int i = _sectionFrom; i <= _sectionTo; i++)
             {
-                sd.Pause(_pause);
-                SelectElement sections = new SelectElement(sd.Select("ctl00_ddl_Sections"));
+                dvr.Pause(_pause);
+                SelectElement sections = new SelectElement(dvr.Select("ctl00_ddl_Sections"));
                 sections.SelectByIndex(i); 
                 int recs = 0;
                 while (recs < _records)
                 {
-                    sd.Pause(_pause).Click("AddNewRecordButton_input");
+                    dvr.Pause(_pause).Click("AddNewRecordButton_input");
                     ControlPopulate.GenericForm(ctx);
-                    sd.Pause(_pause).Click("_PerformInsertButton");
+                    dvr.Pause(_pause).Click("_PerformInsertButton");
                     recs++;
                 }
 
                 try
                 {
-                    sd.Pause(_pause).Click("_EditButton");
+                    dvr.Pause(_pause).Click("_EditButton");
                     ControlPopulate.GenericForm(ctx);
-                    sd.Pause(_pause).Click("_UpdateButton");
+                    dvr.Pause(_pause).Click("_UpdateButton");
                 }
                 catch (Exception ex)
                 {
@@ -61,8 +61,8 @@ namespace TelerikCommands
                 }
                 try
                 {
-                    sd.Driver.FindElement(By.CssSelector("a[title*='delete']")).Click();
-                    IAlert alert = sd.Pause(550).Driver.SwitchTo().Alert();
+                    dvr.Driver.FindElement(By.CssSelector("a[title*='delete']")).Click();
+                    IAlert alert = dvr.Pause(550).Driver.SwitchTo().Alert();
                     alert.Accept();
                 }
                 catch (Exception ex)

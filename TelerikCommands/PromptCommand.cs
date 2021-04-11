@@ -13,7 +13,7 @@ namespace TelerikCommands
         public void Execute(ISessionContext ctx)
         {
             var sd = ctx.SessionDriver;
-            sd.Connect(); 
+            sd.Connect(ctx.configContext.conn); 
         }
     }
 }

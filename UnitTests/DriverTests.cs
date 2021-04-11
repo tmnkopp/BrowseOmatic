@@ -19,13 +19,10 @@ namespace UnitTests
             var cons = _typeof.GetConstructors();
             Item item = new Item();
             var t = Type.GetType("BOM.CORE.SessionDriver, BOM.CORE");
-
-            IBScriptParser bomScriptParser = new BScriptParser();
+ 
             string connectionstring = item.conn;
             var driver = (ISessionDriver)Activator.CreateInstance(
-                t , new object[] {
-                    bomScriptParser
-                    , connectionstring
+                t , new object[] { 
                 } 
                 );
             Assert.IsNotNull(driver);

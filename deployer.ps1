@@ -24,9 +24,9 @@
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
         $message = $message + $m  
         $message = $message + $m
-        git add .; git commit -m 'resolves #4 #5 #6 '; git push;
+        git add .; git commit -m 'Depreciate script parser resolves #7'; git push;
         #Write-Host 'foo'
     } 
 } 
-Invoke-BOM-Workflow -with " release commit  " 
+Invoke-BOM-Workflow -with " release   " 
 

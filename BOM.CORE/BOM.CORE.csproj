@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Remove="Command\UnittestCommand.cs" />
+    <Compile Remove="TaskProcessor.cs" />
   </ItemGroup>
 
   <ItemGroup>

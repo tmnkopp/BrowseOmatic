@@ -13,16 +13,13 @@ namespace BOM.CORE
     public class ContextProvider : IAppSettingProvider<SessionContext>
     {
         #region CTOR 
-        private readonly IConfiguration configuration;
-        private readonly IBScriptParser bomScriptParser;
+        private readonly IConfiguration configuration; 
         private readonly ILogger logger;
         public ContextProvider(
-            IConfiguration configuration,
-            IBScriptParser bomScriptParser,
+            IConfiguration configuration, 
             ILogger logger)
         {
-            this.configuration = configuration;
-            this.bomScriptParser = bomScriptParser;
+            this.configuration = configuration; 
             this.logger = logger;
         }
         #endregion 
@@ -37,36 +34,23 @@ namespace BOM.CORE
         { 
             var sections = configuration.GetSection("contexts").GetChildren().AsEnumerable();
             var SessionContexts = (
-                from s in sections  
-                let driver = (s["conn"].Contains("driver:")) 
-                    ? s["conn"].Split("driver:")[1].Split(";")[0] 
-                    : "BOM.CORE.SessionDriver, BOM.CORE"
-                select new 
-                {
-                    name = s["name"], conn = s["conn"], driver = driver 
-                }); 
+                    from s in sections   
+                    select new BomConfigContext {name=s["name"], conn=s["conn"]}
+                ); 
             List<SessionContext> contexts = new List<SessionContext>();
             foreach (var item in SessionContexts)
             {
                 logger.LogInformation("{o}", JsonConvert.SerializeObject(item));
                 try
                 {
-                    var t = Type.GetType(item.driver); 
-                    string connectionstring = item.conn;
-                    var driver = (ISessionDriver)Activator.CreateInstance(
-                        t, new object[] {
-                              configuration
-                            , logger
-                            , bomScriptParser
-                            , connectionstring
-                        }
-                    );
+                    var t = Type.GetType("BOM.CORE.SessionDriver, BOM.CORE");  
+                    var driver = (ISessionDriver)Activator.CreateInstance( t, new object[] { configuration, logger });
                     contexts.Add(new SessionContext
                     {
                         Name = item.name,
+                        configContext= item,
                         SessionDriver = driver
-                    });
-                    
+                    }); 
                 } 
                 catch (Exception e)
                 {
@@ -74,8 +58,7 @@ namespace BOM.CORE
                     logger.LogError("{e}", e.Message);
                     Console.Write($" {e.Message} {e.StackTrace} ");
                     throw e; 
-                } 
-                Console.WriteLine( $"{item.driver}" ); 
+                }  
             }  
             return contexts.ToList();
         }

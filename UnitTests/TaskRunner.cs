@@ -29,7 +29,7 @@ namespace UnitTests
             task.TaskSteps.Add(new BOM.CORE.TaskStep("Keys", new string[] { "Password", "pass" }));
 
             SessionContext ctx = new SessionContext();
-            ctx.SessionDriver.Connect(); 
+            ctx.SessionDriver.Connect(ctx.configContext.conn); 
 
             // task runner 
             foreach (var taskstep in task.TaskSteps)
