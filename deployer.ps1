@@ -20,10 +20,10 @@
         
     }
     if ($with -match ' commit ' ){
-        cd 'C:\Users\Tim\source\repos\BrowseOmatic'; 
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
         $message = $message + $m  
         $message = $message + $m
+        cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
         git add .; git commit -m 'resolves #8'; git push;
         #Write-Host 'foo'
     } 
