@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BOM.CORE", "BOM.CORE\BOM.CO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{67B2ED56-E5A9-4788-8D97-F009773661A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelerikCommands", "TelerikCommands\TelerikCommands.csproj", "{D7411645-0502-4317-B651-C777FE654ACA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelerikCommands", "TelerikCommands\TelerikCommands.csproj", "{D7411645-0502-4317-B651-C777FE654ACA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -80,7 +80,7 @@ namespace BOM.CORE
                 args.AddRange(cmd.Split(":")[1].Trim().Split(",")); 
                 try
                 {
-                    logger.LogError("connect {0} [{1}]", command, string.Join(",",args));
+                    logger.LogInformation("connect {0} [{1}]", command, string.Join(",",args));
                     if (command.Contains("http")) GetUrl($"{command}:{args[0]}");
                     if (command == "s") SendKeys(args[0], args[1]); 
                     if (command == "c") Click(args[0]);

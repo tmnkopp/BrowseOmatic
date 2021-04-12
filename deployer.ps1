@@ -24,9 +24,11 @@
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
         $message = $message + $m  
         $message = $message + $m
-        git add .; git commit -m 'Depreciate script parser resolves #7'; git push;
+        git add .; git commit -m 'resolves #8'; git push;
         #Write-Host 'foo'
     } 
+
+    explorer.exe C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\
 } 
-Invoke-BOM-Workflow -with " release   " 
+Invoke-BOM-Workflow -with " release commit  " 
 
