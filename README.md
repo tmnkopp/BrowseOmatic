@@ -54,7 +54,7 @@ Use `config.yaml` files to configure test automation steps.
 - `Url`: one argument - the URL
 - `Script`: one argument - Javascript
 - `SetOption`: 2 arguments - select element and index to select 
-- `NaiveFormFill`: no arguments - fills a form
+- `NaiveFormFill`: one argument - container
 - `OpenTab`: one argument - URL to open
 - `Pause`: one argument - int Milliseconds  
 - `SetWait`: one argument - int Pause between next steps
@@ -76,7 +76,7 @@ tasks:
     - Click: ['SubmitCreate'] 
     - Pause: 2000
     - SetWait: 50
-    - NaiveFormFill: []  
+    - NaiveFormFill: ['']  
     - SetWait: 1000   
     - OpenTab: ['https://github.com/tmnkopp/BrowseOmatic/blob/master/README.md']
     - Script:  window.scrollTo(0,200); alert('Success'); 
@@ -99,7 +99,7 @@ tasks:
     - Key: ['input_id_ending', 'My Text']
     - Key: ['textarea_class_contains', 'My Text']
     - SetWait: 50    
-    - NaiveFormFill: []      
+    - NaiveFormFill: ['']      
     - Click: ['save_button']
 ```
 ***
