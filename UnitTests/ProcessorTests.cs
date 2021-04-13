@@ -15,7 +15,7 @@ namespace UnitTests
         [TestMethod]
         public void PromptProcess_Processes()
         {
-            var configuration = new UnitTestManager().Configuration;
+            var configuration = new TestServices().Configuration;
 
             var mock = new Mock<ILogger<ConfigTaskProvider>>(); 
             ILogger<ConfigTaskProvider> logger = mock.Object;

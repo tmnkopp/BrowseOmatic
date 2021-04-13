@@ -13,7 +13,7 @@ namespace UnitTests
         [TestMethod]
         public void OpenTab_Opens()
         {
-            var config = new UnitTestManager().Configuration; 
+            var config = new TestServices().Configuration; 
             ILogger<ContextProvider> logger = new Mock<ILogger<ContextProvider>>().Object;
  
             ICommand cmd = new OpenTab("https://gist.github.com/safebear/a550c4094811993f3c223e1d2f8a8eb5");

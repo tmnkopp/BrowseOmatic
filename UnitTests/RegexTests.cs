@@ -13,7 +13,7 @@ namespace UnitTests
         [TestMethod]
         public void NaiveInputDefaultsDefaults()
         {
-            var config = new UnitTestManager().Configuration;
+            var config = new TestServices().Configuration;
             var match = false;
             var inputs = config.GetSection("NaiveInputDefaults"); 
             foreach (var item in inputs.GetChildren())

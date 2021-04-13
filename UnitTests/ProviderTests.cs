@@ -62,7 +62,7 @@ namespace UnitTests
         [TestMethod]
         public void Provider_Provides()
         {
-            var configuration = new UnitTestManager().Configuration;
+            var configuration = new TestServices().Configuration;
             var sections = configuration.GetSection("contexts").GetChildren().AsEnumerable();
             var contexts = from s in sections
                            let name = s["name"]
@@ -77,7 +77,7 @@ namespace UnitTests
         [TestMethod]
         public void TaskProvider_Provides()
         { 
-            var configuration = new UnitTestManager().Configuration;
+            var configuration = new TestServices().Configuration;
             var mock = new Mock<ILogger<ConfigTaskProvider>>();
             ILogger<ConfigTaskProvider> logger = mock.Object;
 

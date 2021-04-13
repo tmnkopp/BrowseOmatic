@@ -7,9 +7,10 @@
     <AssemblyName>BOM</AssemblyName>
     <StartupObject>BOM.Program</StartupObject>
     <Description>-p config.yaml</Description>
-    <AssemblyVersion>1.0.5.0</AssemblyVersion>
-    <Version>1.0.5</Version>
+    <AssemblyVersion>1.0.6.0</AssemblyVersion>
+    <Version>1.0.6</Version>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <FileVersion>1.0.6.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
