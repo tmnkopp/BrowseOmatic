@@ -9,7 +9,12 @@
     )
     cd 'C:\Users\Tim\source\repos\BrowseOmatic';   
     if ($with -match ' release ' ){
-        # taskkill /IM "BOM.exe" /F
+        try{
+            taskkill /IM "BOM.exe" /F
+        }catch{
+            Write-Host 'BOM not killable'
+        }
+        
         dotnet build --configuration Debug;
         dotnet build --configuration Release;
         dotnet publish BrowseOmatic -p:PublishProfile=FolderProfile   
@@ -24,11 +29,12 @@
         $message = $message + $m  
         $message = $message + $m
         cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
-        git add .; git commit -m 'resolves #8'; git push;
+        git add .; git commit -m 'refac add unit tests'; git push;
         #Write-Host 'foo'
     } 
 
     explorer.exe C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\
+    #explorer.exe C:\BOM
 } 
-Invoke-BOM-Workflow -with " release commit  " 
+Invoke-BOM-Workflow -with " release " 
 

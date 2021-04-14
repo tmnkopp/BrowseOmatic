@@ -23,54 +23,17 @@ namespace BOM.CORE
                 , DateTime.Now.TimeOfDay.Minutes.ToString()) ;
             IList<IWebElement> inputs;
             var dvr = ctx.SessionDriver.Driver;
-            string[] elements = new string[] { $"{this.container} *[type='text']", $"{this.container} textarea", $"{this.container} *[type='password']" };
-            foreach (string el in elements)
-            {
-                inputs = dvr.FindElements(By.CssSelector(el));
-                foreach (IWebElement input in inputs)
-                {
-                    ctx.SessionDriver.Pause(0); 
-                    try
-                    {
-                        if (el == "textarea") {
-                            input.Clear();
-                            input.SendKeys(input.GetAttribute("id"));
-                        }
-                        if (el.Contains("password"))
-                        {
-                            input.Clear();
-                            input.SendKeys(input.GetAttribute("type"));
-                        }
-
-                        var NaiveInputDefaults = ctx.SessionDriver.config.GetSection("NaiveInputDefaults");
-                        if (NaiveInputDefaults != null)
-                        {
-                            foreach (var item in NaiveInputDefaults.GetChildren())
-                            {
-                                var target = $"{input.GetAttribute("name")} {input.GetAttribute("id")}";
-                                if (Regex.Match(target, item.Key, RegexOptions.IgnoreCase).Success) {
-                                    input.Clear();
-                                    input.SendKeys(item.Value); 
-                                }  
-                            }
-                        }
-
-                        if (input.GetAttribute("value") == "") 
-                            input.SendKeys("0");  
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"NaiveFormFill: {ex.Message}");
-                    } 
-                }
-            }
-            var selements = dvr.FindElements(By.TagName($"{this.container} select")); 
-            foreach (var el in selements)
-            {
-                ctx.SessionDriver.Pause(0);
-                SelectElement sections = new SelectElement(el);
+            string[] elements;
+             
+            inputs = dvr.FindElements(By.CssSelector($"{this.container} select"));
+            List<string> ids = new List<string>();
+            foreach (IWebElement input in inputs) ids.Add(input.GetAttribute("id") ?? "");
+            foreach (string id in ids) 
+            { 
+                IWebElement el = dvr.FindElement(By.CssSelector($"#{id}")); 
                 if (el != null)
                 {
+                    SelectElement sections = new SelectElement(el);
                     int _from = 2;
                     while (_from > 0)
                     {
@@ -88,54 +51,57 @@ namespace BOM.CORE
                     } 
                 }
             }  
-            foreach (string el in new string[] { $"{this.container} input[type='radio'], {this.container}  input[type='checkbox']" })
+            foreach (string el in new string[] { $"{this.container} input[type='radio']", $"{this.container}  input[type='checkbox']" })
             {
                 inputs = dvr.FindElements(By.CssSelector(el));
-                foreach (IWebElement input in inputs)
-                {
-                    ctx.SessionDriver.Pause(0);
+                ids = new List<string>();
+                foreach (IWebElement input in inputs) ids.Add(input.GetAttribute("id")??""); 
+                foreach (string id in ids)
+                {  
                     try
                     {
-                        var val = input.GetAttribute("value");
-                        if (val != "")
-                            input.Click();
+                        dvr.FindElement(By.CssSelector($"#{id}"))?.Click(); 
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"NaiveFormFill: {ex.Message}");
+                        Console.WriteLine($"NaiveFormFill: {ex.Message} {el} {id}");
                     }
                 }
             } 
-        
-            inputs = dvr.FindElements(By.CssSelector($"{this.container}  input[type='file']"));
-            foreach (IWebElement input in inputs)
+         
+            elements = new string[] { $"{this.container} *[type='text']", $"{this.container} textarea", $"{this.container} *[type='password']" };
+            foreach (string el in elements)
             {
-                ctx.SessionDriver.Pause(0);
-                try
+                inputs = dvr.FindElements(By.CssSelector(el));
+                ids = new List<string>();
+                foreach (IWebElement input in inputs) ids.Add(input.GetAttribute("id") ?? "");
+                foreach (string id in ids)
                 { 
-                    //TODO: Configure Uploader Doc
-                    input.SendKeys(@" ");
+                    try
+                    {
+                        IWebElement input = dvr.FindElement(By.CssSelector($"#{id}"));
+                        input?.Clear();
+                        if (el == "textarea") input?.SendKeys(id); 
+                        if (el.Contains("password")) input?.SendKeys(id);
+                    
+                        var NaiveInputDefaults = ctx.SessionDriver.config.GetSection("NaiveInputDefaults");
+                        if (NaiveInputDefaults != null)
+                        {
+                            foreach (var item in NaiveInputDefaults.GetChildren())
+                            {
+                                var target = $"{input?.GetAttribute("name")} {input?.GetAttribute("id")}";
+                                if (Regex.Match(target, item.Key, RegexOptions.IgnoreCase).Success) 
+                                    input?.SendKeys(item.Value); 
+                            }
+                        }  
+                        if (input?.GetAttribute("value") == "") input?.SendKeys("0");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"NaiveFormFill: {ex.Message} {el} {id}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"NaiveFormFill: {ex.Message}");
-                }
-            }
-
-            inputs = dvr.FindElements(By.CssSelector($"{this.container}  button[type='submit']"));
-            foreach (IWebElement input in inputs)
-            {
-                ctx.SessionDriver.Pause(0);
-                try
-                {
-                    //input.Click(); 
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"NaiveFormFill: {ex.Message}");
-                }
-            }
-
+            } 
         }
     }
 }

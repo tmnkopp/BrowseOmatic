@@ -19,7 +19,7 @@ namespace TelerikCommands
         public void Execute(ISessionContext ctx)
         { 
             var dvr = ctx.SessionDriver;
-            if (section > 0)  new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(section); 
+            if (section >= 0)  new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(section); 
             dvr.Click("btnEdit");
             new NaiveFormFill(this.Container).Execute(ctx);
             new RadFormFill(this.Container).Execute(ctx);

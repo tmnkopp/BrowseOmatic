@@ -1,6 +1,9 @@
 using BOM.CORE;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -13,21 +16,23 @@ namespace UnitTests
         public void JiraIssue_Closer()
         {
             var ctx = Session.Context("jira");
-            var dvr = ctx.SessionDriver.Pause(2000);
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*Notification for FY21.*");
+            var dvr = ctx.SessionDriver;
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*BOD 18.*");
             urlProvider.Execute(ctx);
+            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
-            {
-                dvr.Pause(1000).GetUrl(kvp.Key);
-                dvr.Pause(1000).Click("opsbar-operations_more");
-                dvr.Pause(1000).Click("log-work");
-                dvr.Pause(1000).SendKeys("input[id='log-work-time-logged']", "20m");
-                dvr.Pause(2000).Click("input[id='log-work-submit']");
-                dvr.Pause(2000).Click("a[title*='Start Progress']");    
-                dvr.Pause(2000).Click("a[title*='Resolve']");    
-                dvr.Pause(2000).Click("input[id*='issue-workflow-transition-submit']"); 
-                dvr.Pause(2000).Click("a[title*='Ready To Test']");
-                dvr.Pause(2000).Click("input[id*='issue-workflow-transition-submit']");
+            { 
+                dvr.GetUrl(kvp.Key);
+                dvr.Click("opsbar-operations_more");
+                dvr.Click("log-work");
+                dvr.SendKeys("input[id='log-work-time-logged']", "2m");
+                dvr.Click("input[id='log-work-submit']");
+                dvr.Pause(1000);
+                //dvr.Click("a[title*='Start Progress']");    
+                //dvr.Click("a[title*='Resolve']");    
+                //dvr.Click("input[id*='issue-workflow-transition-submit']"); 
+                //dvr.Click("a[title*='Ready To Test']");
+                //dvr.Click("input[id*='issue-workflow-transition-submit']");
             }
             dvr.Dispose();
         }
