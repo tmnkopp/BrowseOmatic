@@ -13,26 +13,25 @@ namespace UnitTests
     public class JiraTests
     {
         [TestMethod]
-        public void JiraIssue_Closer()
+        public void JiraIssue_Starter()
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*BOD 18.*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*BOD.*02.*Section.*");
             urlProvider.Execute(ctx);
-            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
+            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
             { 
                 dvr.GetUrl(kvp.Key);
                 dvr.Click("opsbar-operations_more");
                 dvr.Click("log-work");
-                dvr.SendKeys("input[id='log-work-time-logged']", "2m");
+                dvr.SendKeys("input[id='log-work-time-logged']", "5m");
                 dvr.Click("input[id='log-work-submit']");
-                dvr.Pause(1000);
-                //dvr.Click("a[title*='Start Progress']");    
-                //dvr.Click("a[title*='Resolve']");    
-                //dvr.Click("input[id*='issue-workflow-transition-submit']"); 
-                //dvr.Click("a[title*='Ready To Test']");
-                //dvr.Click("input[id*='issue-workflow-transition-submit']");
+                dvr.Pause(1000).Click("a[title*='Start Progress']");    
+                //dvr.Pause(1000).Click("a[title*='Resolve']");    
+                //dvr.Pause(10).Click("input[id*='issue-workflow-transition-submit']"); 
+                //dvr.Pause(10).Click("a[title*='Ready To Test']");
+                //dvr.Pause(10).Click("input[id*='issue-workflow-transition-submit']");
             }
             dvr.Dispose();
         }
