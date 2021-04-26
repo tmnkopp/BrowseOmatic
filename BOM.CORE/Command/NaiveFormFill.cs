@@ -52,10 +52,19 @@ namespace BOM.CORE
                 }
             }  
             foreach (string el in new string[] { $"{this.container} input[type='radio']", $"{this.container}  input[type='checkbox']" })
-            {
+            { 
                 inputs = dvr.FindElements(By.CssSelector(el));
                 ids = new List<string>();
-                foreach (IWebElement input in inputs) ids.Add(input.GetAttribute("id")??""); 
+                try
+                {
+                    foreach (IWebElement input in inputs) ids.Add(input.GetAttribute("id") ?? "");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"NFF: radio, checkbox:  {e.Message}");
+
+                }
+                
                 foreach (string id in ids)
                 {  
                     try

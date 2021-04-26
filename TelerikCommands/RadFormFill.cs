@@ -22,7 +22,38 @@ namespace TelerikCommands
              
             IList<IWebElement> inputs; 
             try
-            {
+            { 
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container} input[id*='MultiSelect_Input']"));
+                dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+                List<string> ids = new List<string>();
+                foreach (IWebElement input in inputs) ids.Add(input.GetAttribute("id") ?? "");
+                foreach (string id in ids)
+                {
+                    IWebElement el = dvr.Driver.FindElement(By.CssSelector($"#{id}"));
+                    el.Click();
+                    dvr.Pause(250);
+                    IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbList li")); 
+                    if (options.Count > 1)
+                    {  
+                        try
+                        {
+                            int index = _random.Next(1, options.Count - 1);
+                            options[index].Click(); 
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine($"sections.SelectByIndex index out of range {e.Message}");
+                        } 
+                    }
+                }
+
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadDropDownList"));
+                foreach (var input in inputs)
+                {
+                    input.Click();
+                    dvr.Pause(250).Click("ul[class*='rddlList'] li:nth-child(2)").Click("body").Pause(50);
+                }
+
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadDropDownList"));
                 foreach (var input in inputs) { 
                     input.Click();
