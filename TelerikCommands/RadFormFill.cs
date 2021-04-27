@@ -20,9 +20,9 @@ namespace TelerikCommands
             string rnd = DateTime.Now.Day.ToString() + "-" + _random.Next(255).ToString();
             var dvr = ctx.SessionDriver;
              
-            IList<IWebElement> inputs; 
+            IList<IWebElement> inputs;
             try
-            { 
+            {
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container} input[id*='MultiSelect_Input']"));
                 dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
                 List<string> ids = new List<string>();
@@ -31,21 +31,23 @@ namespace TelerikCommands
                 {
                     IWebElement el = dvr.Driver.FindElement(By.CssSelector($"#{id}"));
                     el.Click();
-                    dvr.Pause(250);
-                    IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbList li")); 
+                    dvr.Pause(450);
+                    IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .rcbList li"));
                     if (options.Count > 1)
-                    {  
-                        try
-                        {
-                            int index = _random.Next(1, options.Count - 1);
-                            options[index].Click(); 
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine($"sections.SelectByIndex index out of range {e.Message}");
-                        } 
+                    { 
+                        int index = _random.Next(1, options.Count - 1);
+                        options[2].Click(); 
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"sections.SelectByIndex index out of range {ex.Message}");
+            }
+
+            try
+            { 
+ 
 
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadDropDownList"));
                 foreach (var input in inputs)

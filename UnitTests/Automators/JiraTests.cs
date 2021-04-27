@@ -17,15 +17,15 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*BOD.*Validate.*|.*BOD.*Section.*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*Manage.*|.*Justifi.*|.*BOD.*Validate.*|.*BOD.*Section.*");
             urlProvider.Execute(ctx);
             dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
             {
                 dvr.Pause(1000).GetUrl(kvp.Key);
-                dvr.Pause(1000).Click("opsbar-operations_more");
+                dvr.Pause(1000).Click("opsbar-operations_more");   
                 dvr.Pause(1000).Click("log-work");
-                dvr.Pause(1000).SendKeys("input[id='log-work-time-logged']", "20m");
+                dvr.Pause(1000).SendKeys("input[id='log-work-time-logged']", "15m");
                 dvr.Pause(1000).Click("input[id='log-work-submit']");
                 //dvr.Pause(1000).Click("a[title*='Start Progress']");    // Interconnections Database Script
                 //dvr.Pause(1200).Click("a[title*='Resolve']");    

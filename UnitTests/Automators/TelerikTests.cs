@@ -14,15 +14,21 @@ namespace UnitTests
     public class TelerikTests
     {
         [TestMethod]
+        public void FFormTests_Closer()
+        {
+            var ctx = Session.Context("csagency");
+            var dvr = ctx.SessionDriver;
+            new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
+            dvr.Pause(900).Click("_Launch");
+            //new SetOption("ddl_Sections", 5);
+            //new FismaForm(1, ".table").Execute(ctx); 
+
+        }
+        [TestMethod]
         public void TelerikTests_Closer()
         {
-            var ctx = Session.Context("bomdriver");
-            var dvr = ctx.SessionDriver; 
-            dvr.GetUrl("http://localhost/login.aspx");
-            dvr.SendKeys("UserName", "Bill-D-Robertson");
-            dvr.SendKeys("Password", "**********"); 
-            dvr.Pause(900).Click("LoginButton");
-            dvr.Pause(900).Click("Accept");
+            var ctx = Session.Context("csagency"); 
+            var dvr = ctx.SessionDriver;  
             new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
             dvr.Pause(900).Click("_Launch"); 
             new FismaForm(1, ".table").Execute(ctx);  
