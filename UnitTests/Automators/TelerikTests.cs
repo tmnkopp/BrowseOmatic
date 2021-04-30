@@ -31,13 +31,19 @@ namespace UnitTests
             var dvr = ctx.SessionDriver;  
             new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
             dvr.Pause(900).Click("_Launch"); 
-            new FismaForm(1, ".table").Execute(ctx);  
-            //dvr.Click("a[title*='Start Progress']");    
-            //dvr.Click("a[title*='Resolve']");    
-            //dvr.Click("input[id*='issue-workflow-transition-submit']"); 
-            //dvr.Click("a[title*='Ready To Test']");
-            //dvr.Click("input[id*='issue-workflow-transition-submit']");
-
+            for (int section = 0; section <=3 ; section++)
+            {
+                int attempts = 0;
+                new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(section);
+                while (attempts < 2)
+                { 
+                    dvr.Click("btnEdit");
+                    new RadFormFill(".table").Execute(ctx);
+                    new NaiveFormFill(".table").Execute(ctx);
+                    dvr.Click("btnSave").Pause(250);
+                    attempts++;
+                } 
+            } 
         }
     } 
 }

@@ -24,7 +24,7 @@ namespace TelerikCommands
             try
             {
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container} input[id*='MultiSelect_Input']"));
-                dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+                dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
                 List<string> ids = new List<string>();
                 foreach (IWebElement input in inputs) ids.Add(input.GetAttribute("id") ?? "");
                 foreach (string id in ids)
@@ -43,19 +43,16 @@ namespace TelerikCommands
             catch (Exception ex)
             {
                 Console.WriteLine($"sections.SelectByIndex index out of range {ex.Message}");
-            }
-
+            } 
             try
             { 
- 
-
+  
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadDropDownList"));
                 foreach (var input in inputs)
                 {
                     input.Click();
                     dvr.Pause(250).Click("ul[class*='rddlList'] li:nth-child(2)").Click("body").Pause(50);
-                }
-
+                } 
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadDropDownList"));
                 foreach (var input in inputs) { 
                     input.Click();
