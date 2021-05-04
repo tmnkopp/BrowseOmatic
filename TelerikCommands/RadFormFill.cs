@@ -45,8 +45,13 @@ namespace TelerikCommands
                 Console.WriteLine($"sections.SelectByIndex index out of range {ex.Message}");
             } 
             try
-            { 
-  
+            {
+
+                inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[type='radio']"));
+                foreach (var input in inputs) { 
+                    if (input.GetAttribute("value") == "Y") input.Click();
+                } 
+
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  .RadDropDownList"));
                 foreach (var input in inputs)
                 {

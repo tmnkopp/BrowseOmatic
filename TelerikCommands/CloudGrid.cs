@@ -29,6 +29,12 @@ namespace TelerikCommands
                 dvr.Pause(200).Click("ul[class*='rddlList'] li:nth-child(2)");
             }
 
+            inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[type='radio']"));
+            foreach (var input in inputs)
+            {
+                if (input.GetAttribute("value") == "Y") input.Click();
+            }
+
             inputs = dvr.Driver.FindElements(By.CssSelector("input[id*='date']"));
             foreach (var input in inputs)
                 if (input.GetAttribute("value") == "") input.SendKeys($"{DateTime.Now.ToShortDateString()}");
