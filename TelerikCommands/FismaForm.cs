@@ -21,8 +21,7 @@ namespace TelerikCommands
             var dvr = ctx.SessionDriver;
             if (section >= 0)  new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(section); 
             dvr.Click("btnEdit");
-            new RadFormFill(this.Container).Execute(ctx);
-            new NaiveFormFill(this.Container).Execute(ctx); 
+            new RadFormFill(this.Container).Execute(ctx); 
             dvr.Click("btnSave");
         }
     }

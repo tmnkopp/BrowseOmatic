@@ -32,7 +32,7 @@
         git add .; git commit -m $message; git push;
         #Write-Host 'foo'
     } 
-
+    
     explorer.exe C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\
     # explorer.exe C:\BOM
 } 

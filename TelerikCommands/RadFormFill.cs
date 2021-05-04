@@ -4,6 +4,7 @@ using System.Text;
 using BOM.CORE;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace TelerikCommands
 {
@@ -44,7 +45,7 @@ namespace TelerikCommands
                 if (options.Count > 1) options[1].Click();
             });
             InputIterator(dvr, " input[type='radio']", (inputid) => {
-                IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
+                IWebElement input = dvr.Pause(50).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 if (input.GetAttribute("value") != "") input.Click();
             });
             InputIterator(dvr, " input[type='radio']", (inputid) => {
@@ -59,7 +60,12 @@ namespace TelerikCommands
             InputIterator(dvr, " .RadComboBox", (inputid) => {
                 IWebElement input = dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 input.Click();
-                dvr.Pause(450).Click("ul[class*='rcbList'] li:nth-child(2)").Click("body").Pause(150);
+                dvr.Pause(250).Click("ul[class*='rcbList'] li:nth-child(2)").Click("body").Pause(150);
+            });
+            InputIterator(dvr, " select", (inputid) => {
+                IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
+                SelectElement sections = new SelectElement(input);
+                sections.SelectByIndex(sections.Options.Count-1);  
             });
             InputIterator(dvr, "textarea", (inputid) => {
                 IWebElement input = dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}"));
