@@ -39,7 +39,7 @@ namespace TelerikCommands
             var dvr = ctx.SessionDriver;
             dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(.5);
 
-            InputIterator(dvr, " input[id*='MultiSelect_Input']", (inputid) => { 
+            InputIterator(dvr, " input[id*='MultiSelect']", (inputid) => { 
                 IWebElement input = dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .rcbList li"));
                 if (options.Count > 1) options[1].Click();

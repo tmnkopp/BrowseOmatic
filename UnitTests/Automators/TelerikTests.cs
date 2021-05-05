@@ -31,7 +31,7 @@ namespace UnitTests
             var dvr = ctx.SessionDriver;  
             new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
             dvr.Pause(900).Click("ctl18_hl_Launch");
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
             {
                 new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
                 dvr.Click("btnEdit");
