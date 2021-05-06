@@ -29,16 +29,22 @@ namespace UnitTests
         {
             var ctx = Session.Context("csagency"); 
             var dvr = ctx.SessionDriver;  
-            new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
-            dvr.Pause(900).Click("ctl18_hl_Launch");
-            for (int i = 0; i < 1; i++)
+            new ClickByContent("li.rtsLI", ".*BOD.*2020.*", true).Execute(ctx);
+            dvr.Pause(900).Click("ctl16_hl_Launch");
+            for (int i = 0; i <= 2; i++)
             {
                 new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
                 dvr.Click("btnEdit");
                 new RadFormFill(".table").Execute(ctx);
                 dvr.Click("btnSave").Pause(150);
             }
-
+            for (int i = 3; i <= 4; i++)
+            {
+                new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
+                dvr.Click("btnEdit");
+                new CloudGrid(".table").Execute(ctx);
+                dvr.Click("btnSave").Pause(150);
+            }
         }
     } 
 }
