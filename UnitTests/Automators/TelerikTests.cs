@@ -30,7 +30,7 @@ namespace UnitTests
             var ctx = Session.Context("csagency"); 
             var dvr = ctx.SessionDriver;  
             new ClickByContent("li.rtsLI", ".*BOD.*2020.*", true).Execute(ctx);
-            dvr.Pause(900).Click("ctl16_hl_Launch");
+            dvr.Pause(900).Click("ctl14_hl_Launch");
             for (int i = 0; i <= 2; i++)
             {
                 new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
