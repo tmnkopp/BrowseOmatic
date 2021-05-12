@@ -14,6 +14,22 @@ namespace UnitTests
     public class TelerikTests
     {
         [TestMethod]
+        public void CloudTests_Submits()
+        {
+            var ctx = Session.Context("csagency");
+            var dvr = ctx.SessionDriver;
+            new ClickByContent("li.rtsLI", ".*BOD.*2020.*", true).Execute(ctx);
+            dvr.Pause(900).Click("ctl14_hl_Launch");
+            for (int i = 3; i <= 4; i++)
+            {
+                new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
+                dvr.Click("btnEdit");
+                new CloudGrid(".table").Execute(ctx);
+                dvr.Click("btnSave").Pause(150);
+            }
+
+        }
+        [TestMethod]
         public void FFormTests_Closer()
         {
             var ctx = Session.Context("csagency");

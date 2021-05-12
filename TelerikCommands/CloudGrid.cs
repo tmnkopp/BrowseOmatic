@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using BOM.CORE;
 using OpenQA.Selenium;
 
@@ -29,10 +30,14 @@ namespace TelerikCommands
                 dvr.Pause(200).Click("ul[class*='rddlList'] li:nth-child(2)");
             }
 
-            inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[type='radio']"));
+            inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[type='radio']")); 
             foreach (var input in inputs)
             {
-                if (input.GetAttribute("value") == "Y") input.Click();
+                string val = input.GetAttribute("value");
+                if (Regex.IsMatch(val, $"Y|T"))
+                {
+                    input.Click();
+                } 
             }
 
             inputs = dvr.Driver.FindElements(By.CssSelector("input[id*='date']"));

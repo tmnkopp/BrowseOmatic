@@ -12,10 +12,39 @@ using YamlDotNet.RepresentationModel;
 
 namespace UnitTests
 {
- 
+
     [TestClass]
     public class ProviderTests
     {
+        [TestMethod]
+        public void InputDefaultProvider_Provides() {
+            var configuration = new TestServices().Configuration;
+            var sections = configuration.GetSection("InputDefaults").GetChildren().AsEnumerable();
+
+            List<InputDefault> InputDefaults = new List<InputDefault>();
+            foreach (var item in sections)
+            {
+                InputDefault id = new InputDefault(item.Key);
+                foreach (var idi in item.GetChildren())
+                {
+                    InputDefaultItem inputitem = new InputDefaultItem(id,idi.Key, idi.Value); 
+                    Console.Write($"{idi}");
+                }
+                try
+                {
+                    InputDefaults.Add(new InputDefault
+                    {
+                        ID = item.Key
+                    });
+                }
+                catch (Exception e)
+                { 
+                    Console.Write($" {e.Message} {e.StackTrace} ");
+                }
+            }
+            Assert.IsNotNull(InputDefaults);
+            //return InputDefaults.ToList();
+        }
 
         [TestMethod]
         public void YMLProvider_Provides()
