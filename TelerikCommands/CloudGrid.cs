@@ -32,9 +32,9 @@ namespace TelerikCommands
 
             inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[type='radio']")); 
             foreach (var input in inputs)
-            {
-                string val = input.GetAttribute("value");
-                if (Regex.IsMatch(val, $"Y|T"))
+            { 
+                var pattern = SessionContext.configuration.GetSection("InputDefaults:CloudGrid:radio")?.Value ?? ".*";
+                if (Regex.IsMatch(input.GetAttribute("value"), $"{pattern}"))
                 {
                     input.Click();
                 } 

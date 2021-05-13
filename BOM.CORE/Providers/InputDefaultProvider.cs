@@ -9,28 +9,28 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace BOM.CORE
-{   public class InputDefault {
-        public InputDefault()  {  }
-        public InputDefault(string ID)
+{   public class InputDefaultSection {
+        public InputDefaultSection()  {  }
+        public InputDefaultSection(string ID)
         {
             this.ID = ID;
+            this.InputDefaultItems = new List<InputDefaultItem>();
         }
         public string ID { get; set; } 
+        public List<InputDefaultItem> InputDefaultItems { get; set; }
     }
     public class InputDefaultItem
     {
         public InputDefaultItem() { }
-        public InputDefaultItem(InputDefault InputDefault,string Pattern, string DefaultValue)
+        public InputDefaultItem( string Pattern, string DefaultValue)
         {
             this.Pattern = Pattern;
-            this.DefaultValue = DefaultValue;
-            this.InputDefault = InputDefault;
-        }
-        public InputDefault InputDefault { get; set;}
+            this.DefaultValue = DefaultValue; 
+        } 
         public string Pattern { get; set; }
         public string DefaultValue { get; set; }
     }
-    public class InputDefaultProvider : IAppSettingProvider<InputDefault>
+    public class InputDefaultProvider : IAppSettingProvider<InputDefaultSection>
     {
         #region CTOR 
         private readonly IConfiguration configuration; 
@@ -44,23 +44,23 @@ namespace BOM.CORE
         }
         #endregion 
         #region PROPS
-        public IEnumerable<InputDefault> Items
+        public IEnumerable<InputDefaultSection> Items
         {
             get { return GetItems(); }
         }
         #endregion
         #region Methods 
-        private IEnumerable<InputDefault> GetItems()
+        private IEnumerable<InputDefaultSection> GetItems()
         { 
             var sections = configuration.GetSection("InputDefault").GetChildren().AsEnumerable();
             
-            List<InputDefault> InputDefaults = new List<InputDefault>();
+            List<InputDefaultSection> InputDefaults = new List<InputDefaultSection>();
             foreach (var item in sections)
             {
                 logger.LogInformation("{o}", JsonConvert.SerializeObject(item));
                 try
                 {
-                    InputDefaults.Add(new InputDefault
+                    InputDefaults.Add(new InputDefaultSection
                     {
                         ID=item.Key
                     }); 

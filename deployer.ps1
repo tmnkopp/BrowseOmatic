@@ -27,7 +27,7 @@
     }
     if ($with -match ' commit ' ){
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
-        $message = $message + $m   
+        $message = 'resolves #9' #$message + $m   
         cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
         git add .; git commit -m $message; git push;
         #Write-Host 'foo'
@@ -36,5 +36,5 @@
     explorer.exe C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\
     # explorer.exe C:\BOM
 } 
-Invoke-BOM-Workflow -with " release " 
+Invoke-BOM-Workflow -with " release commit " 
 

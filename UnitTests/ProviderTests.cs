@@ -19,30 +19,13 @@ namespace UnitTests
         [TestMethod]
         public void InputDefaultProvider_Provides() {
             var configuration = new TestServices().Configuration;
-            var sections = configuration.GetSection("InputDefaults").GetChildren().AsEnumerable();
-
-            List<InputDefault> InputDefaults = new List<InputDefault>();
-            foreach (var item in sections)
+            var val = configuration.GetSection("InputDefaults:CloudGrid:radio")?.Value;
+            var sections = configuration.GetSection("InputDefaults:CloudGrid:radio").GetChildren().AsEnumerable();  
+            foreach (var section in sections)
             {
-                InputDefault id = new InputDefault(item.Key);
-                foreach (var idi in item.GetChildren())
-                {
-                    InputDefaultItem inputitem = new InputDefaultItem(id,idi.Key, idi.Value); 
-                    Console.Write($"{idi}");
-                }
-                try
-                {
-                    InputDefaults.Add(new InputDefault
-                    {
-                        ID = item.Key
-                    });
-                }
-                catch (Exception e)
-                { 
-                    Console.Write($" {e.Message} {e.StackTrace} ");
-                }
+                Console.WriteLine($"{section.Key} : {section.Value}");
             }
-            Assert.IsNotNull(InputDefaults);
+            Assert.IsNotNull(sections);
             //return InputDefaults.ToList();
         }
 

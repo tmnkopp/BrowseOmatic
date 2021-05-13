@@ -49,7 +49,8 @@ namespace BOM.CORE
                     {
                         Name = item.name,
                         configContext= item,
-                        SessionDriver = driver
+                        SessionDriver = driver,
+                        configuration = this.configuration
                     }); 
                 } 
                 catch (Exception e)
