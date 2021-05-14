@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using BOM.CORE;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
@@ -21,7 +22,7 @@ namespace TelerikCommands
             foreach (IWebElement input in inputs) idlist.Add(input.GetAttribute("id") ?? "");
             while (idlist.Count > 0)
             {
-                try
+                try  
                 {
                     InputAction(idlist[0]); 
                 }
@@ -42,24 +43,24 @@ namespace TelerikCommands
             InputIterator(dvr, " input[id*='MultiSelect']", (inputid) => { 
                 IWebElement input = dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .rcbList li"));
-                if (options.Count > 1) options[1].Click();
-            });
-            InputIterator(dvr, " input[type='radio']", (inputid) => {
-                IWebElement input = dvr.Pause(50).Driver.FindElement(By.CssSelector($"#{inputid}"));
-                if (input.GetAttribute("value") != "") input.Click();
-            });
+                int j = 1;
+                while (j <= options.Count)
+                {
+                    options[j].Click();  
+                    j++;
+                } 
+            }); 
             InputIterator(dvr, " input[type='radio']", (inputid) => {
                 IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
-                if (input.GetAttribute("value") == "Y") input.Click();
+                var pattern = ctx.configuration.GetSection("InputDefaults:RadFormFill:radio")?.Value ?? ".*";
+                if (Regex.IsMatch(input.GetAttribute("value"), $"{pattern}")) input.Click(); 
             }); 
             InputIterator(dvr, " .RadDropDownList", (inputid) => {
-                IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
-                input.Click();
+                dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}")).Click();
                 dvr.Pause(250).Click("ul[class*='rddlList'] li:nth-child(2)").Click("body").Pause(50);
             });
             InputIterator(dvr, " .RadComboBox", (inputid) => {
-                IWebElement input = dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}"));
-                input.Click();
+                dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}")).Click();
                 dvr.Pause(250).Click("ul[class*='rcbList'] li:nth-child(2)").Click("body").Pause(150);
             });
             InputIterator(dvr, " select", (inputid) => {

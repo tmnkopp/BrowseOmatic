@@ -61,8 +61,7 @@ namespace BOM.CORE
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"NFF: radio, checkbox:  {e.Message}");
-
+                    Console.WriteLine($"NFF: radio, checkbox:  {e.Message}"); 
                 }
                 
                 foreach (string id in ids)

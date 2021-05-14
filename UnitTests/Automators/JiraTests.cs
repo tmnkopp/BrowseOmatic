@@ -18,7 +18,7 @@ namespace UnitTests
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
             dvr.Pause(2000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*Database Script
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-814']", ".*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-818']", ".*");
             urlProvider.Execute(ctx);
             dvr.Pause(2000);
             dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
@@ -29,7 +29,8 @@ namespace UnitTests
                 dvr.Pause(900).Click("log-work");
                 dvr.Pause(900).SendKeys("input[id='log-work-time-logged']", "15m");
                 dvr.Pause(200).Click("input[id='log-work-submit']");
-                // dvr.Pause(1000).Click("a[title*='Start Progress']");    // Interconnections Database Script
+                // dvr.Pause(1000).Click("a[title*='Start Progress']");
+                //     // Interconnections Database Script
                 // dvr.Pause(1200).Click("a[title*='Resolve']");    
                 // dvr.Pause(350).Click("input[id*='issue-workflow-transition-submit']"); 
                 // dvr.Pause(350).Click("a[title*='Ready To Test']");
