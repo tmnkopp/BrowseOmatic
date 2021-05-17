@@ -20,7 +20,7 @@ namespace UnitTests
 
             var ctx = Session.Context("csagency");
             var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*BOD.*2020.*", true).Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
             dvr.Pause(900).Click("ctl14_hl_Launch");
             for (int i = 3; i < 5; i++)
             {
@@ -37,18 +37,20 @@ namespace UnitTests
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
             dvr.Pause(900).Click("_Launch");
-            //new SetOption("ddl_Sections", 5);
-            //new FismaForm(1, ".table").Execute(ctx); 
+            new SetOption("ddl_Sections", 0);
+            new FismaForm(1, ".table").Execute(ctx); 
 
         }
         [TestMethod]
-        public void VAlidateor_Validates()
+        public void Validater_Validates()
         {
             var ctx = Session.Context("csagency");
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
-            dvr.Pause(900).Click("ctl14_hl_Launch"); 
-            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(5);
+            dvr.Pause(900).Click("ctl14_hl_Launch");
+            new SetOption("ddl_Sections", 0);
+            //new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(0);
+            //new FismaForm(1, ".table").Execute(ctx);
         }
         [TestMethod]
         public void TelerikTests_Closer()
