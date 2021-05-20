@@ -34,7 +34,7 @@
     } 
     
     explorer.exe C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\
-    # explorer.exe C:\BOM
+    # explorer.exe C:\BOM commit
 } 
-Invoke-BOM-Workflow -with " release commit " 
+Invoke-BOM-Workflow -with " release  " 
 

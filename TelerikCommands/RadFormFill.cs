@@ -28,7 +28,7 @@ namespace TelerikCommands
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"{Selector}: {ex.Message}\n");
+                    Console.WriteLine($"{Selector} {idlist[0]}: {ex.Message}\n");
                 }
                 idlist.RemoveAt(0);
             }
@@ -42,17 +42,22 @@ namespace TelerikCommands
 
             InputIterator(dvr, " input[id*='MultiSelect']", (inputid) => { 
                 IWebElement input = dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}"));
-                IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .rcbList li"));
-                int j = 1;
-                while (j <= options.Count)
+                input.Click();
+                dvr.Pause(250);
+                List<string> idlist = new List<string>();
+                IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .RadComboBoxDropDown li"));  
+                foreach (IWebElement element in options)
                 {
-                    options[j].Click();  
-                    j++;
+                    if (element.Displayed && element.Enabled) {
+                        element.Click();
+                        break;
+                    }  
                 } 
+                dvr.Pause(250);
             }); 
             InputIterator(dvr, " input[type='radio']", (inputid) => {
                 IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
-                var pattern = ctx.configuration.GetSection("InputDefaults:RadFormFill:radio")?.Value ?? ".*";
+                var pattern = ctx.configuration.GetSection("InputDefaults:RadFormFill:radio")?.Value ?? ".*"; 
                 if (Regex.IsMatch(input.GetAttribute("value"), $"{pattern}")) input.Click(); 
             }); 
             InputIterator(dvr, " .RadDropDownList", (inputid) => {
