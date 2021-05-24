@@ -18,10 +18,10 @@ namespace UnitTests
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
             dvr.Pause(2000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*Database Script
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*BOD.*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*EINST.*");
             urlProvider.Execute(ctx);
             dvr.Pause(2000);
-            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
             {
                 dvr.Pause(900).GetUrl(kvp.Key);

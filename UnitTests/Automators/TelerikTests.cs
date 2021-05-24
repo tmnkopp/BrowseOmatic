@@ -44,14 +44,14 @@ namespace UnitTests
         [TestMethod]
         public void Validater_Validates()
         {
-            var ctx = Session.Context("csagency");
+            var ctx = Session.Context("dayman");
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
-            dvr.Pause(900).Click("ctl04_hl_Launch"); 
+            dvr.Pause(900).Click("08_hl_Launch");  
             new FismaForm(1, ".table").Execute(ctx);
-            //new FismaForm(2, ".table").Execute(ctx); 
-            //new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(0);
-            //new FismaForm(1, ".table").Execute(ctx);
+            new FismaForm(2, ".table").Execute(ctx);
+            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(6);
+
         }
         [TestMethod]
         public void TelerikTests_Closer()
