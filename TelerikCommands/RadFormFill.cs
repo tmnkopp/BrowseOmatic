@@ -54,7 +54,8 @@ namespace TelerikCommands
                     }  
                 } 
                 dvr.Pause(250);
-            }); 
+            });
+            dvr.Click(this.container);  
             InputIterator(dvr, " input[type='radio']", (inputid) => {
                 IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 var pattern = ctx.configuration.GetSection("InputDefaults:RadFormFill:radio")?.Value ?? ".*"; 
@@ -100,6 +101,7 @@ namespace TelerikCommands
             {
                 Console.WriteLine($"RadFormFill input[type='text']: {ex.Message}\n");
             } 
+
         }
     }
 }
