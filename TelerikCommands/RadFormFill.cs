@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using BOM.CORE;
@@ -94,8 +95,21 @@ namespace TelerikCommands
             try
             {
                 inputs = dvr.Driver.FindElements(By.CssSelector($"{this.container}  input[type='text']"));
-                foreach (var input in inputs)
-                    if (input.GetAttribute("value") == "") input.SendKeys($"0");
+                foreach (var input in inputs) {
+                    var NaiveInputDefaults = ctx.SessionDriver.config.GetSection("NaiveInputDefaults");
+                    if (NaiveInputDefaults != null)
+                    {
+                        foreach (var item in NaiveInputDefaults.GetChildren())
+                        {
+                            string rn = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 1).Select(s => s[new Random().Next(s.Length)]).ToArray());
+                            string val = item.Value.Replace("\\w", rn); 
+                            var target = $"{input?.GetAttribute("name")} {input?.GetAttribute("id")}";
+                            if (Regex.Match(target, item.Key, RegexOptions.IgnoreCase).Success)
+                                input?.SendKeys(val);
+                        }
+                    }
+                    if (input?.GetAttribute("value") == "") input?.SendKeys("0");
+                }   
             }
             catch (Exception ex)
             {
