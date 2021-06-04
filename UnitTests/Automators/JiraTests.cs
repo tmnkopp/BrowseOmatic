@@ -17,8 +17,8 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
-            dvr.Pause(2000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*Database Script
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*EINST.*");
+            dvr.Pause(2000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*Database Script ED 21-01: Create Manage Network Interface
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*Interface.*");
             urlProvider.Execute(ctx);
             dvr.Pause(2000);
             dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
