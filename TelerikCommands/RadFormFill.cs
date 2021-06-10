@@ -64,11 +64,11 @@ namespace TelerikCommands
             }); 
             InputIterator(dvr, " .RadDropDownList", (inputid) => {
                 dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}")).Click();
-                dvr.Pause(250).Click("ul[class*='rddlList'] li:nth-child(2)").Click("body").Pause(50);
+                dvr.Pause(250).Click("ul[class*='rddlList'] li:nth-child(2)").Pause(50);
             });
             InputIterator(dvr, " .RadComboBox", (inputid) => {
                 dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}")).Click();
-                dvr.Pause(250).Click("ul[class*='rcbList'] li:nth-child(2)").Click("body").Pause(150);
+                dvr.Pause(250).Click("ul[class*='rcbList'] li:nth-child(2)").Pause(150);
             });
             InputIterator(dvr, " select", (inputid) => {
                 IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));

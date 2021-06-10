@@ -21,10 +21,8 @@ namespace UnitTests
             var ctx = Session.Context("csagency");
             var dvr = ctx.SessionDriver;
             new OpenTab("https://localhost/Maintenance/ManageSolarWinds.aspx").Execute(ctx);
-            dvr.Pause(250).Click("cmdAddNewSolarWindNetwork_input").Pause(250);
-            new RadFormFill(".rgEditForm").Execute(ctx); 
-            dvr.Click(".rgEditForm").Pause(750);
-            dvr.Click("Update").Pause(250);
+            dvr.Pause(250).Click("_ctl04_EditButton").Pause(1250); 
+            dvr.Click("_SWNArtifacts_FileUpload1").Pause(750); 
         }
 
         [TestMethod]
