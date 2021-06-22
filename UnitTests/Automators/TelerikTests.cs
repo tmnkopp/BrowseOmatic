@@ -13,23 +13,78 @@ namespace UnitTests
 {
     [TestClass]
     public class TelerikTests
-    { 
+    {
+        [TestMethod]
+        public void admin_Submits()
+        {
+            var ctx = Session.Context("csadmin");
+            var dvr = ctx.SessionDriver;
+
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);
+
+            new OpenTab("https://localhost/OMBhome.aspx").Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(250).Click("_ctl16_lnkAdmin").Pause(1250);
+
+            new OpenTab("https://localhost/OMBhome.aspx").Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(250).Click("_ctl06_lnkAdmin").Pause(1250);
+
+            new OpenTab("https://localhost/UserAccessNew/SelectUser.aspx").Execute(ctx);
+            dvr.Pause(500).SendKeys("_WebTextEdit1", "bill").Click("_btn_Run");
+
+        }
         [TestMethod]
         public void NaiveInput_Submits()
-        {
-            var t = this.GetType().Name; 
+        { 
             var ctx = Session.Context("csagency");
             var dvr = ctx.SessionDriver;
             new OpenTab("https://localhost/Maintenance/ManageSolarWinds.aspx").Execute(ctx);
-            dvr.Pause(250).Click("_ctl04_EditButton").Pause(1250); 
-            dvr.Click("_SWNArtifacts_FileUpload1").Pause(750); 
         }
+        [TestMethod]
+        public void Test_Validates()
+        {
+            var ctx = Session.Context("dayagency");
+            var dvr = ctx.SessionDriver; 
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(1250); 
+            new ClickByContent("a", ".*MANAGE SOLARWINDS.*", true).Execute(ctx); 
+        }
+        [TestMethod]
+        public void Stage_Validates()
+        {
+            var ctx = Session.Context("dayadmin");
+            var dvr = ctx.SessionDriver;
+      
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);
+
+            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/OMBhome.aspx").Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(250).Click("_ctl16_lnkAdmin").Pause(1250);
+
+            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/OMBhome.aspx").Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(250).Click("_ctl06_lnkAdmin").Pause(1250);
+
+            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
+            dvr.Pause(500).SendKeys("_WebTextEdit1", "bill").Click("_btn_Run");
+
+        }
+        [TestMethod]
+        public void Naive_Submits()
+        {
+            var ctx = Session.Context("csagency");
+            var dvr = ctx.SessionDriver;
+            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            dvr.Pause(250).Click("10_hl_Launch").Pause(1250);
+        }
+
 
         [TestMethod]
         public void CloudTests_Submits()
-        {
-            var t = this.GetType().Name; 
-
+        { 
             var ctx = Session.Context("csagency");
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
