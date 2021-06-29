@@ -18,30 +18,22 @@ namespace UnitTests
         public void admin_Submits()
         {
             var ctx = Session.Context("csadmin");
-            var dvr = ctx.SessionDriver;
-
+            var dvr = ctx.SessionDriver; 
             new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);
-
-            new OpenTab("https://localhost/OMBhome.aspx").Execute(ctx);
-            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            dvr.Pause(250).Click("_ctl16_lnkAdmin").Pause(1250);
-
-            new OpenTab("https://localhost/OMBhome.aspx").Execute(ctx);
-            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            dvr.Pause(250).Click("_ctl06_lnkAdmin").Pause(1250);
-
-            new OpenTab("https://localhost/UserAccessNew/SelectUser.aspx").Execute(ctx);
-            dvr.Pause(500).SendKeys("_WebTextEdit1", "bill").Click("_btn_Run");
-
+            dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);   
         }
         [TestMethod]
         public void NaiveInput_Submits()
         { 
-            var ctx = Session.Context("csagency");
-            var dvr = ctx.SessionDriver;
+            var ctx = Session.Context("csagency"); 
             new OpenTab("https://localhost/Maintenance/ManageSolarWinds.aspx").Execute(ctx);
-        }
+        } 
+        [TestMethod]
+        public void EmailDistributionExternal_Submits()
+        {
+            var ctx = Session.Context("csadmin"); 
+            new OpenTab("https://localhost/Maintenance/EmailDistributionExternal.aspx").Execute(ctx);
+        } 
         [TestMethod]
         public void Test_Validates()
         {
@@ -50,26 +42,24 @@ namespace UnitTests
             new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
             dvr.Pause(1250); 
             new ClickByContent("a", ".*MANAGE SOLARWINDS.*", true).Execute(ctx); 
-        }
+        } 
         [TestMethod]
         public void Stage_Validates()
         {
             var ctx = Session.Context("dayadmin");
             var dvr = ctx.SessionDriver;
       
-            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);
-
-            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/OMBhome.aspx").Execute(ctx);
-            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            dvr.Pause(250).Click("_ctl16_lnkAdmin").Pause(1250);
-
-            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/OMBhome.aspx").Execute(ctx);
-            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            dvr.Pause(250).Click("_ctl06_lnkAdmin").Pause(1250);
-
+            //new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            //dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250); 
+            //new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/OMBhome.aspx").Execute(ctx);
+            //new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            //dvr.Pause(250).Click("ctl18_lnkAdmin").Pause(1250);
+  
             new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
-            dvr.Pause(500).SendKeys("_WebTextEdit1", "bill").Click("_btn_Run");
+            dvr.Pause(500).SendKeys("_WebTextEdit1", "ll-d-rob").Click("_btn_Run").Click("_link_UserID").Pause(550);
+            var handles = dvr.Driver.WindowHandles; 
+            dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 
+            dvr.Pause(1500).Click("_btn_Edit");
 
         }
         [TestMethod]
@@ -80,8 +70,7 @@ namespace UnitTests
             new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
             dvr.Pause(250).Click("10_hl_Launch").Pause(1250);
         }
-
-
+         
         [TestMethod]
         public void CloudTests_Submits()
         { 
@@ -105,8 +94,7 @@ namespace UnitTests
             new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
             dvr.Pause(900).Click("_Launch");
             new SetOption("ddl_Sections", 0);
-            new FismaForm(1, ".table").Execute(ctx); 
-
+            new FismaForm(1, ".table").Execute(ctx);  
         }
         [TestMethod]
         public void Validater_Validates()
@@ -117,8 +105,7 @@ namespace UnitTests
             dvr.Pause(900).Click("08_hl_Launch");  
             new FismaForm(1, ".table").Execute(ctx);
             new FismaForm(2, ".table").Execute(ctx);
-            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(6);
-
+            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(6); 
         }
         [TestMethod]
         public void TelerikTests_Closer()
