@@ -44,24 +44,27 @@ namespace UnitTests
             new ClickByContent("a", ".*MANAGE SOLARWINDS.*", true).Execute(ctx); 
         } 
         [TestMethod]
-        public void Stage_Validates()
+        public void User_Validates()
         {
-            var ctx = Session.Context("dayadmin");
-            var dvr = ctx.SessionDriver;
-      
-            //new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            //dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250); 
-            //new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/OMBhome.aspx").Execute(ctx);
-            //new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            //dvr.Pause(250).Click("ctl18_lnkAdmin").Pause(1250);
+            var ctx = Session.Context("csadmin"); //  dayadmin    csadmin
+            var dvr = ctx.SessionDriver; 
   
             new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
             dvr.Pause(500).SendKeys("_WebTextEdit1", "ll-d-rob").Click("_btn_Run").Click("_link_UserID").Pause(550);
             var handles = dvr.Driver.WindowHandles; 
             dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 
-            dvr.Pause(1500).Click("_btn_Edit");
-
+            dvr.Pause(1500).Click("_btn_Edit"); 
         }
+        [TestMethod]
+        public void Assessment_Submits()
+        {
+            var ctx = Session.Context("csagency"); //  dayman    csagency
+            var dvr = ctx.SessionDriver;
+            new ClickByContent("li.rtsLI", ".*18-02.*Remediation.*", true).Execute(ctx);
+            new ClickByContent("a", ".*Manage New Assessment.*", true).Execute(ctx);
+            var handles = dvr.Driver.WindowHandles;
+            dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 
+        } 
         [TestMethod]
         public void Naive_Submits()
         {
