@@ -61,6 +61,7 @@ namespace UnitTests
             var ctx = Session.Context("csagency"); //  dayman    csagency
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*18-02.*Remediation.*", true).Execute(ctx);
+        
             new ClickByContent("a", ".*Manage New Assessment.*", true).Execute(ctx);
             var handles = dvr.Driver.WindowHandles;
             dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 
@@ -75,19 +76,16 @@ namespace UnitTests
         }
          
         [TestMethod]
-        public void CloudTests_Submits()
+        public void BOD_Sensitive19_Submits()
         { 
             var ctx = Session.Context("csagency");
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
             dvr.Pause(900).Click("ctl14_hl_Launch");
-            for (int i = 3; i < 5; i++)
-            {
-                new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
-                dvr.Click("btnEdit");
-                new CloudGrid(".table").Execute(ctx);
-                dvr.Click("btnSave").Pause(250);
-            } 
+            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(3);
+            dvr.Click("_btnEdit");
+  
+            // new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(6);
         }
         [TestMethod]
         public void FFormTests_Closer()
