@@ -33,10 +33,17 @@ namespace UnitTests
         {
             var ctx = Session.Context("csadmin");
             var dvr = ctx.SessionDriver;
-            dvr.Pause(500);
-            // new OpenTab("https://localhost/Maintenance/Maintenance/PickListMaint.aspx").Execute(ctx);
+            dvr.Pause(200);
+            new OpenTab("https://localhost/Maintenance/PickListMaint.aspx").Execute(ctx);
             // new OpenTab("https://localhost/Maintenance/Authoring/FormAuthDefault.aspx").Execute(ctx);
-            new OpenTab("https://localhost/Maintenance/Authoring/Prepopulate.aspx").Execute(ctx);
+            // new OpenTab("https://localhost/Maintenance/Authoring/Prepopulate.aspx").Execute(ctx);
+        }
+        [TestMethod]
+        public void AdminEO_Updates()
+        {
+            var ctx = Session.Context("dayadmin"); //  dayadmin    csadmin
+            var dvr = ctx.SessionDriver;
+            new ClickByContent("li.rtsLI", ".*EO.*2021.*", true).Execute(ctx);
         }
         [TestMethod]
         public void CIO_RMA_Submits()
