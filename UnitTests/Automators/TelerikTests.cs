@@ -43,7 +43,7 @@ namespace UnitTests
         {
             var ctx = Session.Context("dayadmin"); //  dayadmin    csadmin
             var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*EO.*2021.*", true).Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*EO.*2021.*", true).Execute(ctx); 
         }
         [TestMethod]
         public void CIO_RMA_Submits()
@@ -57,7 +57,7 @@ namespace UnitTests
         [TestMethod]
         public void User_Updates()
         {
-            var ctx = Session.Context("dayadmin"); //  dayadmin    csadmin
+            var ctx = Session.Context("dayadmin"); // dayadmin csadmin
             var dvr = ctx.SessionDriver; 
   
             new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);

@@ -35,8 +35,8 @@ namespace BOM
                 .MapResult(
                 (CommandOptions o) =>
                 {
-                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o)); 
-                    if (o.Path.ToString().EndsWith("yaml"))
+                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o));
+                    if (!string.IsNullOrEmpty(o.Path.ToString()))
                     {
                         if (!o.Path.Contains(":\\"))
                             o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path); 
@@ -115,7 +115,7 @@ namespace BOM
 
                 }, (ConfigOptions o) => {
 
-                    if (o.Path.ToString().EndsWith("yaml"))
+                    if (!string.IsNullOrEmpty(o.Path.ToString()))
                     {
                         if (!o.Path.Contains(":\\")) 
                             o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path);
@@ -185,7 +185,7 @@ namespace BOM
 
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
             var bomloc = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User)?.ToLower().Replace("bom.exe", ""); 
-            if (exeassmloc.Contains("\\appdata\\") && bomloc != null)
+            if (Regex.IsMatch(exeassmloc, @"\\appdata\\") && bomloc != null)
             { 
                 try
                 {

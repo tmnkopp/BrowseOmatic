@@ -11,6 +11,14 @@ namespace UnitTests
     public class RegexTests
     {
         [TestMethod]
+        public void PathMatch_Matches()
+        {
+            string TestString = @"c:\appdata\foo\bar\";
+            string RegExPattern = @"\\appdata\\|\\bom\\";
+            var match = Regex.IsMatch(TestString, RegExPattern); 
+            Assert.IsTrue(match); 
+        } 
+        [TestMethod]
         public void NaiveInputDefaultsDefaults()
         {
             var config = new TestServices().Configuration;
