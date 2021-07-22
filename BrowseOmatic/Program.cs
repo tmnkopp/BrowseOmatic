@@ -39,11 +39,12 @@ namespace BOM
                     if (!string.IsNullOrEmpty(o.Path.ToString()))
                     {
                         if (!o.Path.Contains(":\\"))
-                            o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path); 
+                            o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path);
+                        if (!o.Path.EndsWith(".yaml"))
+                            o.Path += ".yaml";
                         configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
                         logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
-                    }
-
+                    } 
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();  
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
@@ -119,7 +120,8 @@ namespace BOM
                     {
                         if (!o.Path.Contains(":\\")) 
                             o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path);
-                     
+                        if (!o.Path.EndsWith(".yaml"))
+                            o.Path += ".yaml";
                         configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
                         logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
                     }
