@@ -50,7 +50,11 @@ namespace UnitTests
         {
             var ctx = Session.Context("dayagency");
             var dvr = ctx.SessionDriver; // 1
-            new ClickByContent("li.rtsLI", ".*BOD.*2020.*", true).Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
+            dvr.Pause(500).Click("hl_Launch").Pause(1000);
+            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(1);
+            dvr.Pause(1000).Click("_btnEdit");
+            // new ClickByContent("li.rtsLI", ".*BOD.*2020.*", true).Execute(ctx);
             //dvr.Pause(500).Click("hl_Launch").Pause(500);
             //new SetOption("ddl_Sections", 14);
         }
@@ -58,8 +62,8 @@ namespace UnitTests
         public void User_Updates()
         {
             var ctx = Session.Context("dayadmin"); // dayadmin csadmin
-            var dvr = ctx.SessionDriver; 
-  
+            var dvr = ctx.SessionDriver;
+            new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
             new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
             dvr.Pause(500).SendKeys("_WebTextEdit1", "ll-d-rob").Click("_btn_Run").Click("_link_UserID").Pause(550);
             var handles = dvr.Driver.WindowHandles; 

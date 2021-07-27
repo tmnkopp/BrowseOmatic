@@ -13,11 +13,24 @@ namespace UnitTests
     public class JiraTests
     {
         [TestMethod]
+        public void Issue_Logger()
+        {
+            var ctx = Session.Context("jira");
+            var dvr = ctx.SessionDriver; 
+            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
+            dvr.Pause(900).GetUrl("https://dayman.cyber-balance.com/jira/browse/CSHELP-2899");
+            dvr.Pause(900).Click("opsbar-operations_more");
+            dvr.Pause(900).Click("log-work");
+            dvr.Pause(900).SendKeys("input[id='log-work-time-logged']", "20m");
+            dvr.Pause(200).Click("input[id='log-work-submit']");
+            dvr.Dispose();
+        }
+        [TestMethod]
         public void JiraIssue_Starter()
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
-            dvr.Pause(2000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*Database Script ED 21-01: Create Manage Network Interface
+            dvr.Pause(2000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
             var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-82']", ".*Notification.*");
             urlProvider.Execute(ctx);
             dvr.Pause(2000);
