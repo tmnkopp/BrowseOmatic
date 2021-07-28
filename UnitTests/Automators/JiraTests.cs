@@ -13,16 +13,21 @@ namespace UnitTests
     public class JiraTests
     {
         [TestMethod]
-        public void Issue_Logger()
+        public void URL_Logger()
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; 
             dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
-            dvr.Pause(900).GetUrl("https://dayman.cyber-balance.com/jira/browse/CSHELP-2899");
-            dvr.Pause(900).Click("opsbar-operations_more");
-            dvr.Pause(900).Click("log-work");
-            dvr.Pause(900).SendKeys("input[id='log-work-time-logged']", "20m");
-            dvr.Pause(200).Click("input[id='log-work-submit']");
+             
+            string[] urls = new string[] { "CS-8346", "CSHELP-2899" };
+            foreach (var item in urls)
+            {
+                dvr.Pause(500).GetUrl($"https://dayman.cyber-balance.com/jira/browse/{item}");//
+                dvr.Pause(500).Click("opsbar-operations_more");
+                dvr.Pause(500).Click("log-work");
+                dvr.Pause(500).SendKeys("input[id='log-work-time-logged']", "15m");
+                dvr.Pause(200).Click("input[id='log-work-submit']");
+            } 
             dvr.Dispose();
         }
         [TestMethod]
