@@ -19,7 +19,7 @@ namespace UnitTests
             var dvr = ctx.SessionDriver; 
             dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
              
-            string[] urls = new string[] { "CS-8346", "CSHELP-2899" };
+            string[] urls = new string[] { "CS-8346" }; // , "CSHELP-2899"
             foreach (var item in urls)
             {
                 dvr.Pause(500).GetUrl($"https://dayman.cyber-balance.com/jira/browse/{item}");//
