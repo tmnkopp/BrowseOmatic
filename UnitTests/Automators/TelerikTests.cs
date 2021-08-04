@@ -15,6 +15,17 @@ namespace UnitTests
     public class TelerikTests
     {
         [TestMethod]
+        public void SAOP_Submits()
+        {
+            var ctx = Session.Context("csagency"); //  dayman    csagency
+            var dvr = ctx.SessionDriver;
+            new ClickByContent("li.rtsLI", ".*SAOP.*", true).Execute(ctx);
+            dvr.Pause(500).Click("hl_Launch").Pause(1000);
+            //new ClickByContent("a", ".*Manage New Assessment.*", true).Execute(ctx);
+            //var handles = dvr.Driver.WindowHandles;
+            //dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]);
+        } 
+        [TestMethod]
         public void admin_Submits()
         {
             var ctx = Session.Context("csadmin");
@@ -58,10 +69,11 @@ namespace UnitTests
             //dvr.Pause(500).Click("hl_Launch").Pause(500);
             //new SetOption("ddl_Sections", 14);
         }
+
         [TestMethod]
         public void User_Updates()
         {
-            var ctx = Session.Context("dayadmin"); // dayadmin csadmin
+            var ctx = Session.Context("csadmin"); // dayadmin csadmin
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
             new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
