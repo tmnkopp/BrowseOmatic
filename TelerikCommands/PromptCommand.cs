@@ -10,6 +10,10 @@ namespace TelerikCommands
         {
             this.prompt = prompt;
         }
+        public override string ToString()
+        {
+            return $"PromptCommand ['{this.prompt}']";
+        }
         public void Execute(ISessionContext ctx)
         {
             var sd = ctx.SessionDriver;

@@ -9,10 +9,14 @@ namespace TelerikCommands
 {
     public class RowEditor : ICommand
     {
-        private string formFillContainer = "";
-        public RowEditor(string FillContainerContainer)
+        private string container = "";
+        public RowEditor(string Container)
         {
-            this.formFillContainer = FillContainerContainer;
+            this.container = Container;
+        }
+        public override string ToString()
+        {
+            return $"RowEditor ['{this.container}']";
         }
         public void Execute(ISessionContext ctx)
         { 
@@ -23,7 +27,7 @@ namespace TelerikCommands
             foreach (var item in ids)
             {
                 new Click($"*[id$='{item}']").Execute(ctx);
-                new NaiveFormFill($"{this.formFillContainer}").Execute(ctx);
+                new NaiveFormFill($"{this.container}").Execute(ctx);
                 new Click("UpdateButton").Execute(ctx);
                 ctx.SessionDriver.Pause(200);
             }

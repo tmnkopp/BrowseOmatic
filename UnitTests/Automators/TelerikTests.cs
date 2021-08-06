@@ -19,7 +19,7 @@ namespace UnitTests
         [TestMethod]
         public void SAOP_Submits()
         {
-       
+            ICommand cmd;
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("  - task: SAOP_Submits");
             sb.AppendLine("    context: csagency");
@@ -46,13 +46,17 @@ namespace UnitTests
                     new InvGrid(".table").Execute(ctx); 
                     sb.AppendLine($"    - SetOption: ['ddl_Sections', {i}]");
                     sb.AppendLine($"    - InvGrid: ['.table']  "); 
-                }else{ 
-                    dvr.Click("btnEdit"); 
-                    new RadFormFill(".table").Execute(ctx);
-                    dvr.Click("btnSave").Pause(150);
-                    sb.AppendLine($"    - FismaForm: [{i}, '.table']  ");
+                }else{
+                    cmd = new FismaForm(i, ".table");
+                    cmd.Execute(ctx);
+                    sb.AppendLine($"    - {cmd.ToString()}");
+                    // dvr.Click("btnEdit"); 
+                    // new RadFormFill(".table").Execute(ctx);
+                    // dvr.Click("btnSave").Pause(150);
+                    // sb.AppendLine($"    - FismaForm: [{i}, '.table']  ");
                 } 
             }
+            dvr.Dispose();
             var s = sb.ToString(); 
             File.WriteAllText($"c:\\bom\\unittest\\output.yaml", s, Encoding.Unicode); 
             Assert.IsNotNull(s);
@@ -64,36 +68,13 @@ namespace UnitTests
             var dvr = ctx.SessionDriver; 
             new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
             dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);   
-        }
-        [TestMethod]
-        public void NaiveInput_Submits()
-        { 
-            var ctx = Session.Context("csagency"); 
-            new OpenTab("https://localhost/Maintenance/ManageSolarWinds.aspx").Execute(ctx);
         } 
-        [TestMethod]
-        public void EmailDistributionExternal_Submits()
-        {
-            var ctx = Session.Context("csadmin");
-            var dvr = ctx.SessionDriver;
-            dvr.Pause(200);
-            new OpenTab("https://localhost/Maintenance/PickListMaint.aspx").Execute(ctx);
-            // new OpenTab("https://localhost/Maintenance/Authoring/FormAuthDefault.aspx").Execute(ctx);
-            // new OpenTab("https://localhost/Maintenance/Authoring/Prepopulate.aspx").Execute(ctx);
-        }
-        [TestMethod]
-        public void AdminEO_Updates()
-        {
-            var ctx = Session.Context("dayadmin"); //  dayadmin    csadmin
-            var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*EO.*2021.*", true).Execute(ctx); 
-        }
         [TestMethod]
         public void CIO_RMA_Submits()
         {
             var ctx = Session.Context("dayagency");
             var dvr = ctx.SessionDriver; // 1
-            new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
+            new ClickByContent("li.rtsLI", ".*CIO.*Q3.*", true).Execute(ctx);
             dvr.Pause(500).Click("hl_Launch").Pause(1000);
             new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(1);
             dvr.Pause(1000).Click("_btnEdit");
@@ -149,19 +130,7 @@ namespace UnitTests
             }
             new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(5);
         }
-         
-        [TestMethod]
-        public void BOD_Sensitive19_Submits()
-        { 
-            var ctx = Session.Context("csagency");
-            var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
-            dvr.Pause(900).Click("ctl14_hl_Launch");
-            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(3);
-            dvr.Click("_btnEdit");
   
-            // new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(6);
-        }  
         [TestMethod]
         public void TelerikTests_Closer()
         {

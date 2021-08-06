@@ -14,6 +14,10 @@ namespace TelerikCommands
         {
             this.container = Container;
         }
+        public override string ToString()
+        {
+            return $"CloudGrid [{this.container}]";
+        }
         public void Execute(ISessionContext SessionContext)
         {
             Random _random = new Random(); 

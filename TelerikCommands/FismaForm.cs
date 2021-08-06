@@ -15,6 +15,10 @@ namespace TelerikCommands
         {
             this.section = Section;
             this.Container = Container;
+        } 
+        public override string ToString()
+        {
+            return $"FismaForm: [{section}, '{this.Container}']";
         }
         public void Execute(ISessionContext ctx)
         { 

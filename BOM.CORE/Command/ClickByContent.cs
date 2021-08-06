@@ -17,6 +17,10 @@ namespace BOM.CORE
             this.Contents = Contents; 
             this.UseRegex = UseRegex; 
         }
+        public override string ToString()
+        {
+            return $"ClickByContent ['{this.ElementSelect}', '{this.Contents}', {this.UseRegex}]";
+        }
         public void Execute(ISessionContext ctx)
         { 
             ctx.SessionDriver.Pause(0);

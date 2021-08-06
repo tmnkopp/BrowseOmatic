@@ -13,6 +13,10 @@ namespace BOM.CORE
         {
             this.time = time;  
         }
+        public override string ToString()
+        {
+            return $"Pause [{this.time}]";
+        }
         public void Execute(ISessionContext ctx)
         {
             var driver = ctx.SessionDriver.Driver;

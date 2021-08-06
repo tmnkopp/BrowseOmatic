@@ -12,6 +12,10 @@ namespace BOM.CORE
         {
             this.element = Element; 
         }
+        public override string ToString()
+        {
+            return $"Click ['{this.element}']";
+        }
         public void Execute(ISessionContext ctx)
         {
             foreach (string ele in element.Split(","))

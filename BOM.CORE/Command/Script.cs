@@ -16,6 +16,10 @@ namespace BOM.CORE
                 this.script = this.script.Replace(item, "");
  
         }
+        public override string ToString()
+        {
+            return $"Script ['{this.script}']";
+        }
         public void Execute(ISessionContext ctx)
         { 
             var driver = ctx.SessionDriver.Driver; 

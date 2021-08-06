@@ -13,6 +13,10 @@ namespace BOM.CORE
         {
             this.url = Url;
         }
+        public override string ToString()
+        {
+            return $"OpenTab ['{this.url}']";
+        }
         public void Execute(ISessionContext ctx)
         {
             var driver = ctx.SessionDriver.Driver;

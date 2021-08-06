@@ -15,6 +15,10 @@ namespace TelerikCommands
         {
             this.container = Container; 
         }
+        public override string ToString()
+        {
+            return $"InvGrid [{this.container}]";
+        }
         public void Execute(ISessionContext SessionContext)
         { 
             var Driver = SessionContext.SessionDriver.Driver;
