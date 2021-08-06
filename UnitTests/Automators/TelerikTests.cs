@@ -16,11 +16,12 @@ namespace UnitTests
     [TestClass]
     public class TelerikTests
     {
+        StringBuilder sb = new StringBuilder();
+        ICommand cmd;
         [TestMethod]
         public void SAOP_Submits()
         {
-            ICommand cmd;
-            StringBuilder sb = new StringBuilder();
+            sb.Clear();
             sb.AppendLine("  - task: SAOP_Submits");
             sb.AppendLine("    context: csagency");
             sb.AppendLine("    steps: ");
@@ -28,30 +29,28 @@ namespace UnitTests
             var ctx = Session.Context("csagency"); //  dayman    csagency
             var dvr = ctx.SessionDriver;
 
-            new ClickByContent("li.rtsLI", ".*SAOP.*", true).Execute(ctx);
-            sb.AppendLine($"    - ClickByContent: ['li.rtsLI', '.*SAOP.*', true]");
-
-            dvr.Pause(500).Click("hl_Launch").Pause(150);
-            sb.AppendLine($"    - Click: ['hl_Launch']");
+            cmd = new ClickByContent("li.rtsLI", ".*SAOP.*", true);
+            cmd.Execute(ctx);
+            sb.AppendLine($"    - {cmd.ToString()}");
+  
+            dvr.Pause(500);
+            cmd = new Click("hl_Launch");
+            cmd.Execute(ctx);
+            sb.AppendLine($"    - {cmd.ToString()}");
 
             SelectElement select = new SelectElement(dvr.Select("ddl_Sections"));
             var cnt = select.Options.Count();
-            for (int i = 0; i <= 1; i++)
+            for (int i = 0; i <= cnt; i++)
             {
-                select = new SelectElement(dvr.Select("ddl_Sections")); 
-                select.SelectByIndex(i);
+                cmd = new SetOption("ddl_Sections", i);
+                cmd.Execute(ctx);
+                sb.AppendLine($"    - {cmd.ToString()}");
                 ((IJavaScriptExecutor)ctx.SessionDriver.Driver).ExecuteScript($"document.title = '{i}';");
  
-                if (dvr.ElementExists("table[id*='InvGrid']"))  {
-                    cmd = new SetOption("ddl_Sections", i);
-                    cmd.Execute(ctx);
-                    sb.AppendLine($"    - {cmd.ToString()}"); 
-
+                if (dvr.ElementExists("table[id*='InvGrid']"))  { 
                     cmd = new InvGrid(".table");
                     cmd.Execute(ctx);
-                    sb.AppendLine($"    - {cmd.ToString()}");
-                    //sb.AppendLine($"    - SetOption: ['ddl_Sections', {i}]");
-                    //sb.AppendLine($"    - InvGrid: ['.table']  "); 
+                    sb.AppendLine($"    - {cmd.ToString()}"); 
                 }else{
                     cmd = new FismaForm(i, ".table");
                     cmd.Execute(ctx);
@@ -133,34 +132,6 @@ namespace UnitTests
             new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(5);
         }
   
-        [TestMethod]
-        public void TelerikTests_Closer()
-        {
-            var ctx = Session.Context("dayman"); 
-            var dvr = ctx.SessionDriver;  
-            new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
-            dvr.Pause(900).Click("ctl14_hl_Launch");
-            for (int i = 0; i <= 2; i++)
-            {
-                int j = 0;
-                while (j < 1)
-                {
-                    new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
-                    dvr.Click("btnEdit");
-                    new RadFormFill(".table").Execute(ctx);
-                    dvr.Click("btnSave").Pause(150);
-                    j++;
-                } 
-            }
-            for (int i = 3; i < 5; i++)
-            {
-                new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
-                dvr.Click("btnEdit");
-                new CloudGrid(".table").Execute(ctx);
-                dvr.Click("btnSave").Pause(150);
-            }
-            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(5);
-        }
         [TestMethod]
         public void Rand_Submits()
         {

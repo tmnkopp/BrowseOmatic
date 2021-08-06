@@ -49,15 +49,31 @@ namespace TelerikCommands
             InputIterator(dvr, " input[id$='rcbMultiSelect_Input']", (inputid) => { 
                 IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 input.Click();
-                dvr.Pause(150); 
-                IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .RadComboBoxDropDown li"));  
-                foreach (IWebElement element in options)
-                {
-                    if (element.Displayed && element.Enabled) {
-                        element.Click();  
-                        break;
-                    }  
+                dvr.Pause(250); 
+                IList<IWebElement> lis = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .RadComboBoxDropDown li"));
+                foreach (IWebElement li in lis)  
+                {  
+                    var attr = li.GetAttribute("aria-checked");
+                    try
+                    {
+                        if (li.Displayed && li.Enabled)
+                            li.Click();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"{li.ToString()} {inputid}: {ex.Message}\n");
+                        throw ex;
+                    } 
                 }
+                 
+                // foreach (IWebElement element in options)
+                // {
+                //     if (element.Displayed && element.Enabled) {
+                //         var attr = element.GetAttribute("aria-checked");
+                //         element.Click();  
+                //         break;
+                //     }  
+                // }
                 dvr.Pause(150).Click("form[name='aspnetForm']");
             });
 
