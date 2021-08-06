@@ -15,7 +15,7 @@ namespace BOM.CORE
         }
         public override string ToString()
         {
-            return $"Key ['{this.element}', '{this.content}']";
+            return $"Key: ['{this.element}', '{this.content}']";
         }
         public void Execute(ISessionContext ctx)
         {

@@ -18,7 +18,7 @@ namespace BOM.CORE
         }
         public override string ToString()
         {
-            return $"Script ['{this.script}']";
+            return $"Script: ['{this.script}']";
         }
         public void Execute(ISessionContext ctx)
         { 

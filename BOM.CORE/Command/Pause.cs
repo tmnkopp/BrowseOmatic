@@ -15,7 +15,7 @@ namespace BOM.CORE
         }
         public override string ToString()
         {
-            return $"Pause [{this.time}]";
+            return $"Pause: [{this.time}]";
         }
         public void Execute(ISessionContext ctx)
         {

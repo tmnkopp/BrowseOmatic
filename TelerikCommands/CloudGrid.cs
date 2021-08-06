@@ -16,7 +16,7 @@ namespace TelerikCommands
         }
         public override string ToString()
         {
-            return $"CloudGrid [{this.container}]";
+            return $"CloudGrid: [{this.container}]";
         }
         public void Execute(ISessionContext SessionContext)
         {

@@ -15,7 +15,7 @@ namespace BOM.CORE
         }
         public override string ToString()
         {
-            return $"OpenTab ['{this.url}']";
+            return $"OpenTab: ['{this.url}']";
         }
         public void Execute(ISessionContext ctx)
         {

@@ -42,18 +42,20 @@ namespace UnitTests
                 select.SelectByIndex(i);
                 ((IJavaScriptExecutor)ctx.SessionDriver.Driver).ExecuteScript($"document.title = '{i}';");
  
-                if (dvr.ElementExists("table[id*='InvGrid']"))  { 
-                    new InvGrid(".table").Execute(ctx); 
-                    sb.AppendLine($"    - SetOption: ['ddl_Sections', {i}]");
-                    sb.AppendLine($"    - InvGrid: ['.table']  "); 
+                if (dvr.ElementExists("table[id*='InvGrid']"))  {
+                    cmd = new SetOption("ddl_Sections", i);
+                    cmd.Execute(ctx);
+                    sb.AppendLine($"    - {cmd.ToString()}"); 
+
+                    cmd = new InvGrid(".table");
+                    cmd.Execute(ctx);
+                    sb.AppendLine($"    - {cmd.ToString()}");
+                    //sb.AppendLine($"    - SetOption: ['ddl_Sections', {i}]");
+                    //sb.AppendLine($"    - InvGrid: ['.table']  "); 
                 }else{
                     cmd = new FismaForm(i, ".table");
                     cmd.Execute(ctx);
-                    sb.AppendLine($"    - {cmd.ToString()}");
-                    // dvr.Click("btnEdit"); 
-                    // new RadFormFill(".table").Execute(ctx);
-                    // dvr.Click("btnSave").Pause(150);
-                    // sb.AppendLine($"    - FismaForm: [{i}, '.table']  ");
+                    sb.AppendLine($"    - {cmd.ToString()}"); 
                 } 
             }
             dvr.Dispose();

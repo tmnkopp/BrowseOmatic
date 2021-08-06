@@ -16,7 +16,7 @@ namespace TelerikCommands
         }
         public override string ToString()
         {
-            return $"RowEditor ['{this.container}']";
+            return $"RowEditor: ['{this.container}']";
         }
         public void Execute(ISessionContext ctx)
         { 

@@ -19,7 +19,7 @@ namespace BOM.CORE
         }
         public override string ToString()
         {
-            return $"ClickByContent ['{this.ElementSelect}', '{this.Contents}', {this.UseRegex}]";
+            return $"ClickByContent: ['{this.ElementSelect}', '{this.Contents}', {this.UseRegex}]";
         }
         public void Execute(ISessionContext ctx)
         { 

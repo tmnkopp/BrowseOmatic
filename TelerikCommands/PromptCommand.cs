@@ -12,7 +12,7 @@ namespace TelerikCommands
         }
         public override string ToString()
         {
-            return $"PromptCommand ['{this.prompt}']";
+            return $"PromptCommand: ['{this.prompt}']";
         }
         public void Execute(ISessionContext ctx)
         {

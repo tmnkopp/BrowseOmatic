@@ -17,7 +17,7 @@ namespace BOM.CORE
         }
         public override string ToString()
         {
-            return $"SetOption ['{this.Element}',{ this.index }]";
+            return $"SetOption: ['{this.Element}',{ this.index }]";
         }
         public void Execute(ISessionContext ctx)
         {

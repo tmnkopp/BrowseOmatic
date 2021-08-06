@@ -14,7 +14,7 @@ namespace BOM.CORE
         }
         public override string ToString()
         {
-            return $"Click ['{this.element}']";
+            return $"Click: ['{this.element}']";
         }
         public void Execute(ISessionContext ctx)
         {
