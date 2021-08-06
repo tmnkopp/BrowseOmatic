@@ -5,7 +5,9 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using TelerikCommands;
 
@@ -17,13 +19,43 @@ namespace UnitTests
         [TestMethod]
         public void SAOP_Submits()
         {
+       
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("  - task: SAOP_Submits");
+            sb.AppendLine("    context: csagency");
+            sb.AppendLine("    steps: ");
+
             var ctx = Session.Context("csagency"); //  dayman    csagency
             var dvr = ctx.SessionDriver;
+
             new ClickByContent("li.rtsLI", ".*SAOP.*", true).Execute(ctx);
-            dvr.Pause(500).Click("hl_Launch").Pause(1000);
-            //new ClickByContent("a", ".*Manage New Assessment.*", true).Execute(ctx);
-            //var handles = dvr.Driver.WindowHandles;
-            //dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]);
+            sb.AppendLine($"    - ClickByContent: ['li.rtsLI', '.*SAOP.*', true]");
+
+            dvr.Pause(500).Click("hl_Launch").Pause(150);
+            sb.AppendLine($"    - Click: ['hl_Launch']");
+
+            SelectElement select = new SelectElement(dvr.Select("ddl_Sections"));
+            var cnt = select.Options.Count();
+            for (int i = 0; i <= 1; i++)
+            {
+                select = new SelectElement(dvr.Select("ddl_Sections")); 
+                select.SelectByIndex(i);
+                ((IJavaScriptExecutor)ctx.SessionDriver.Driver).ExecuteScript($"document.title = '{i}';");
+ 
+                if (dvr.ElementExists("table[id*='InvGrid']"))  { 
+                    new InvGrid(".table").Execute(ctx); 
+                    sb.AppendLine($"    - SetOption: ['ddl_Sections', {i}]");
+                    sb.AppendLine($"    - InvGrid: ['.table']  "); 
+                }else{ 
+                    dvr.Click("btnEdit"); 
+                    new RadFormFill(".table").Execute(ctx);
+                    dvr.Click("btnSave").Pause(150);
+                    sb.AppendLine($"    - FismaForm: [{i}, '.table']  ");
+                } 
+            }
+            var s = sb.ToString(); 
+            File.WriteAllText($"c:\\bom\\unittest\\output.yaml", s, Encoding.Unicode); 
+            Assert.IsNotNull(s);
         } 
         [TestMethod]
         public void admin_Submits()
@@ -73,7 +105,7 @@ namespace UnitTests
         [TestMethod]
         public void User_Updates()
         {
-            var ctx = Session.Context("csadmin"); // dayadmin csadmin
+            var ctx = Session.Context("dayadmin"); // dayadmin csadmin
             var dvr = ctx.SessionDriver;
             new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
             new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
@@ -81,7 +113,8 @@ namespace UnitTests
             var handles = dvr.Driver.WindowHandles; 
             dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 
             dvr.Pause(1500).Click("_btn_Edit"); 
-        }
+        } 
+
         [TestMethod]
         public void Assessment_Submits()
         {
@@ -128,28 +161,7 @@ namespace UnitTests
             dvr.Click("_btnEdit");
   
             // new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(6);
-        }
-        [TestMethod]
-        public void FFormTests_Closer()
-        {
-            var ctx = Session.Context("csagency");
-            var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
-            dvr.Pause(900).Click("_Launch");
-            new SetOption("ddl_Sections", 0);
-            new FismaForm(1, ".table").Execute(ctx);  
-        }
-        [TestMethod]
-        public void Validater_Validates()
-        {
-            var ctx = Session.Context("dayman");
-            var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*BOD.*2021.*", true).Execute(ctx);
-            dvr.Pause(900).Click("08_hl_Launch");  
-            // new FismaForm(1, ".table").Execute(ctx);
-            // new FismaForm(2, ".table").Execute(ctx);
-            // new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(6); 
-        }
+        }  
         [TestMethod]
         public void TelerikTests_Closer()
         {

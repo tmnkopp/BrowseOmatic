@@ -30,6 +30,7 @@ namespace TelerikCommands
                 catch (Exception ex)
                 {
                     Console.WriteLine($"{Selector} {idlist[0]}: {ex.Message}\n");
+                    throw ex;
                 }
                 idlist.RemoveAt(0);
             }
@@ -39,24 +40,28 @@ namespace TelerikCommands
             Random _random = new Random();
             string rnd = DateTime.Now.Day.ToString() + "-" + _random.Next(255).ToString();
             var dvr = ctx.SessionDriver;
-            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(.5);
+            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(.25);
 
-            InputIterator(dvr, " input[id*='MultiSelect']", (inputid) => { 
-                IWebElement input = dvr.Pause(250).Driver.FindElement(By.CssSelector($"#{inputid}"));
+            InputIterator(dvr, " input[id$='rcbMultiSelect_Input']", (inputid) => { 
+                IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 input.Click();
-                dvr.Pause(250);
-                List<string> idlist = new List<string>();
+                dvr.Pause(150); 
                 IList<IWebElement> options = dvr.Driver.FindElements(By.CssSelector($".rcbSlide .RadComboBoxDropDown li"));  
                 foreach (IWebElement element in options)
                 {
                     if (element.Displayed && element.Enabled) {
                         element.Click();
+                        dvr.Pause(350);
+                        dvr.Click("form");
+                        input = dvr.Driver.FindElement(By.CssSelector($"form"));
+                        input.Click();
                         break;
                     }  
-                } 
-                dvr.Pause(250);
+                }   
             });
+
             dvr.Click(this.container);  
+
             InputIterator(dvr, " input[type='radio']", (inputid) => {
                 IWebElement input = dvr.Pause(150).Driver.FindElement(By.CssSelector($"#{inputid}"));
                 var pattern = ctx.configuration.GetSection("InputDefaults:RadFormFill:radio")?.Value ?? ".*"; 
