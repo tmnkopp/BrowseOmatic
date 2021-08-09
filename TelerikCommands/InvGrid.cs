@@ -17,7 +17,7 @@ namespace TelerikCommands
         }
         public override string ToString()
         {
-            return $"InvGrid: [{this.container}]";
+            return $"InvGrid: ['{this.container}']";
         }
         public void Execute(ISessionContext SessionContext)
         { 

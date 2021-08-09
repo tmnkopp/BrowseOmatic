@@ -29,7 +29,7 @@ namespace UnitTests
             var ctx = Session.Context("csagency"); //  dayman    csagency
             var dvr = ctx.SessionDriver;
 
-            cmd = new ClickByContent("li.rtsLI", ".*SAOP.*", true);
+            cmd = new ClickByContent("li.rtsLI", ".*SAOP.*21.*", true);
             cmd.Execute(ctx);
             sb.AppendLine($"    - {cmd.ToString()}");
   
@@ -40,14 +40,13 @@ namespace UnitTests
 
             SelectElement select = new SelectElement(dvr.Select("ddl_Sections"));
             var cnt = select.Options.Count();
-            for (int i = 0; i <= cnt; i++)
+            for (int i = 0; i < cnt; i++)
             {
-                cmd = new SetOption("ddl_Sections", i);
-                cmd.Execute(ctx);
-                sb.AppendLine($"    - {cmd.ToString()}");
+                new SetOption("ddl_Sections", i).Execute(ctx);
                 ((IJavaScriptExecutor)ctx.SessionDriver.Driver).ExecuteScript($"document.title = '{i}';");
- 
-                if (dvr.ElementExists("table[id*='InvGrid']"))  { 
+                
+                if (dvr.ElementExists("table[id*='InvGrid']") || dvr.ElementExists("table[id*='PIAGrid']"))  {
+                    sb.AppendLine($"    - SetOption: ['ddl_Sections',{i.ToString()}]");
                     cmd = new InvGrid(".table");
                     cmd.Execute(ctx);
                     sb.AppendLine($"    - {cmd.ToString()}"); 

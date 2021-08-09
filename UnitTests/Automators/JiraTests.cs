@@ -19,7 +19,7 @@ namespace UnitTests
             var dvr = ctx.SessionDriver; 
             dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
              
-            string[] urls = new string[] { "CS-8346" }; // , "CSHELP-2899"
+            string[] urls = new string[] { "CS-8346" }; // , "CS-8412"
             foreach (var item in urls)
             {
                 dvr.Pause(500).GetUrl($"https://dayman.cyber-balance.com/jira/browse/{item}");//
@@ -35,19 +35,20 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
-            dvr.Pause(2000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-82']", ".*Notification.*");
-            urlProvider.Execute(ctx);
-            dvr.Pause(2000);
-            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
+            dvr.Pause(1000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*");
+            urlProvider.Execute(ctx); 
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
             {
-                dvr.Pause(900).GetUrl(kvp.Key);
-                dvr.Pause(900).Click("opsbar-operations_more");   
-                dvr.Pause(900).Click("log-work");
-                dvr.Pause(900).SendKeys("input[id='log-work-time-logged']", "15m");
-                dvr.Pause(200).Click("input[id='log-work-submit']");
-                // dvr.Pause(1000).Click("a[title*='Start Progress']"); 
+                dvr.Pause(550).GetUrl(kvp.Key);
+                dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
+                //dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550);
+
+                dvr.Pause(100).Click("opsbar-operations_more");
+                dvr.Pause(100).Click("log-work");
+                dvr.Pause(100).SendKeys("input[id='log-work-time-logged']", "10m");
+                dvr.Pause(100).Click("input[id='log-work-submit']");
+
                 // dvr.Pause(1200).Click("a[title*='Resolve']");    
                 // dvr.Pause(350).Click("input[id*='issue-workflow-transition-submit']"); 
                 // dvr.Pause(350).Click("a[title*='Ready To Test']");
