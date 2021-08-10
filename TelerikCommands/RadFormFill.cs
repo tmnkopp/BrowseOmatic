@@ -65,7 +65,7 @@ namespace TelerikCommands
                         throw ex;
                     } 
                 } 
-                dvr.Pause(150).Click("form[name='aspnetForm']");
+                dvr.Pause(150).Click("form[name='aspnetForm']"); // TODO: Move to Config File
             });
 
             dvr.Click(this.container);  

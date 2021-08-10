@@ -27,7 +27,7 @@
     }
     if ($with -match ' commit ' ){
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
-        $message = 'refactor teleric unit tests issue i-' + $m   
+        $message = 'refactor unit tests issue i-' + $m   
         cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
         git add .; git commit -m $message; git push; 
     }  
