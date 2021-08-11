@@ -27,6 +27,7 @@ namespace BOM.CORE
                 , DateTime.Now.TimeOfDay.Minutes.ToString()) ;
             IList<IWebElement> inputs;
             var dvr = ctx.SessionDriver.Driver;
+            ctx.SessionDriver.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(ctx.SessionDriver.Timeout);
             string[] elements;
              
             inputs = dvr.FindElements(By.CssSelector($"{this.container} select"));

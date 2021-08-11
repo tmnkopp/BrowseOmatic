@@ -19,7 +19,7 @@ namespace BOM.CORE
         }
         public void Execute(ISessionContext ctx)
         {
-            ctx.SessionDriver.Pause(0);
+            ctx.SessionDriver.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(ctx.SessionDriver.Timeout);
             ctx.SessionDriver.SendKeys(this.element, this.content);
         }
     }

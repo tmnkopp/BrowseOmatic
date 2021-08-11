@@ -19,17 +19,16 @@ namespace UnitTests
         public void URL_Logger()
         {
             var ctx = Session.Context("jira");
-            var dvr = ctx.SessionDriver; 
-            dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
-             
-            string[] urls = new string[] { "CS-8346" }; // , "CS-8412"
+            var dvr = ctx.SessionDriver;  
+            string[] urls = new string[] { "CS-8450" }; // , "CS-8412"
             foreach (var item in urls)
-            {
+            { 
                 dvr.Pause(500).GetUrl($"https://dayman.cyber-balance.com/jira/browse/{item}");//
-                dvr.Pause(500).Click("opsbar-operations_more");
-                dvr.Pause(500).Click("log-work");
-                dvr.Pause(500).SendKeys("input[id='log-work-time-logged']", "15m");
-                dvr.Pause(200).Click("input[id='log-work-submit']");
+                ctx.SessionDriver.Timeout = 2;
+                dvr.Click("opsbar-operations_more"); 
+                dvr.Click("log-work"); 
+                dvr.SendKeys("input[id='log-work-time-logged']", "15m");
+                dvr.Click("input[id='log-work-submit']");
             } 
             dvr.Dispose();
         }
@@ -37,18 +36,18 @@ namespace UnitTests
         public void JiraIssue_Starter()
         {
             var ctx = Session.Context("jira");
-            var dvr = ctx.SessionDriver;
-            dvr.Pause(1000);//|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*Database.*|.*Finding.*");
+            var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*Databases.*|.*Finding.*");
             urlProvider.Execute(ctx); 
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
             { 
-                dvr.Pause(550).GetUrl(kvp.Key); 
-                dvr.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
+                dvr.Pause(250).GetUrl(kvp.Key);
+                sb.AppendLine($"    - Click: ['{kvp.Key}']");
+                ctx.SessionDriver.Timeout = 2; 
                 //dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550); 
                 dvr.Click("opsbar-operations_more"); 
                 dvr.Click("log-work"); 
-                dvr.SendKeys("input[id='log-work-time-logged']", "15m");
+                dvr.SendKeys("input[id='log-work-time-logged']", "10m");
                 dvr.Click("input[id='log-work-submit']");
 
                 // dvr.Pause(1200).Click("a[title*='Resolve']");    

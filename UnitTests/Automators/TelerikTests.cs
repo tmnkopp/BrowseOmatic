@@ -86,10 +86,10 @@ namespace UnitTests
         [TestMethod]
         public void User_Updates()
         {
-            var ctx = Session.Context("dayadmin"); // dayadmin csadmin
-            var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*IG.*2021.*", true).Execute(ctx);
-            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
+            var ctx = Session.Context("csadmin"); // dayadmin csadmin
+            var dvr = ctx.SessionDriver; 
+            new OpenTab("https://localhost/UserAccessNew/SelectUser.aspx").Execute(ctx);
+            //new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
             dvr.Pause(500).SendKeys("_WebTextEdit1", "ll-d-rob").Click("_btn_Run").Click("_link_UserID").Pause(550);
             var handles = dvr.Driver.WindowHandles; 
             dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 

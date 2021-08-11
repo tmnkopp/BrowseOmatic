@@ -22,8 +22,8 @@ namespace BOM.CORE
             return $"ClickByContent: ['{this.ElementSelect}', '{this.Contents}', {this.UseRegex}]";
         }
         public void Execute(ISessionContext ctx)
-        { 
-            ctx.SessionDriver.Pause(0);
+        {
+            ctx.SessionDriver.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(ctx.SessionDriver.Timeout);
             IList<IWebElement> elements = ctx.SessionDriver.Driver.FindElements(By.CssSelector($"{this.ElementSelect}"));
             foreach (IWebElement element in elements)
             {

@@ -24,7 +24,8 @@ namespace BOM.CORE
         public IWebElement Select(string ElementSelector);
         public bool ElementExists(string ElementSelector);
         public IConfiguration config { get; }
-        public ILogger Log { get; } 
+        public ILogger Log { get; }
+        public int Timeout { get; set;  }
         public void Connect(string ConnectionString); 
         public void Dispose(); 
     }
@@ -39,10 +40,15 @@ namespace BOM.CORE
         { 
             this.configuration = configuration;
             this.logger = logger;
+        }
+        private int _timeout = 0; 
+        public int Timeout
+        {
+            get { return _timeout; }
+            set { _timeout = value; }
         } 
-        private int timeout = 0;
         public void SetWait(int Timeout) {
-            timeout = Timeout;
+            _timeout = Timeout;
         }
         public IConfiguration config => configuration;
         public ChromeDriver driver;
@@ -93,9 +99,7 @@ namespace BOM.CORE
         }
          
         public SessionDriver Pause(int Time)
-        {
-            if (Time < 5) 
-                Time = timeout; 
+        { 
             System.Threading.Thread.Sleep(Time);
             return this;
         }
@@ -107,12 +111,14 @@ namespace BOM.CORE
         }
         public SessionDriver Click(string ElementSelector)
         {
+            this.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(this.Timeout);
             IWebElement element = Select(ElementSelector);
             if (element != null) element.Click();
             return this;
         }
         public SessionDriver GetUrl(string URL)
         {
+            this.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(this.Timeout);
             Driver.Navigate().GoToUrl($"{URL}");
             return this;
         }
