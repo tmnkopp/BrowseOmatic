@@ -66,8 +66,8 @@ namespace UnitTests
         {
             var ctx = Session.Context("csadmin");
             var dvr = ctx.SessionDriver; 
-            new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);   
+            //new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
+            //dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);   
         } 
         [TestMethod]
         public void CIO_RMA_Submits()
@@ -86,7 +86,7 @@ namespace UnitTests
         [TestMethod]
         public void User_Updates()
         {
-            var ctx = Session.Context("csadmin"); // dayadmin csadmin
+            var ctx = Session.Context("dayadmin"); // dayadmin csadmin
             var dvr = ctx.SessionDriver; 
             new OpenTab("https://localhost/UserAccessNew/SelectUser.aspx").Execute(ctx);
             //new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
@@ -101,8 +101,7 @@ namespace UnitTests
         {
             var ctx = Session.Context("csagency"); //  dayman    csagency
             var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*18-02.*Remediation.*", true).Execute(ctx);
-        
+            new ClickByContent("li.rtsLI", ".*18-02.*Remediation.*", true).Execute(ctx); 
             new ClickByContent("a", ".*Manage New Assessment.*", true).Execute(ctx);
             var handles = dvr.Driver.WindowHandles;
             dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 

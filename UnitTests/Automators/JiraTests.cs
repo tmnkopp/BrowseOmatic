@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace UnitTests
 {
@@ -40,20 +41,25 @@ namespace UnitTests
             var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*Databases.*|.*Finding.*");
             urlProvider.Execute(ctx); 
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
-            { 
-                dvr.Pause(250).GetUrl(kvp.Key);
+            {
+                dvr.GetUrl(kvp.Key).Pause(550);
                 sb.AppendLine($"    - Click: ['{kvp.Key}']");
                 ctx.SessionDriver.Timeout = 2; 
                 //dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550); 
                 dvr.Click("opsbar-operations_more"); 
                 dvr.Click("log-work"); 
-                dvr.SendKeys("input[id='log-work-time-logged']", "10m");
-                dvr.Click("input[id='log-work-submit']");
+                dvr.Pause(900).SendKeys("input[id='log-work-time-logged']", "10m"); 
+                dvr.Pause(900).Click("input[id='log-work-submit']"); 
+                // dvr.Click("a[title*='Resolve']")
+                // .Click("input[id*='issue-workflow-transition-submit']")
+                // .Click("a[title*='Ready To Test']")
+                // .Click("input[id*='issue-workflow-transition-submit']");
 
-                // dvr.Pause(1200).Click("a[title*='Resolve']");    
-                // dvr.Pause(350).Click("input[id*='issue-workflow-transition-submit']"); 
-                // dvr.Pause(350).Click("a[title*='Ready To Test']");
-                // dvr.Pause(350).Click("input[id*='issue-workflow-transition-submit']");
+                string log = File.ReadAllText(@"C:\Users\Tim\Documents\LOGS\log.txt");
+                File.WriteAllText(@"C:\Users\Tim\Documents\LOGS\log.txt", 
+                    $"{ctx.SessionDriver.Driver.Title}\n{log}" + ""
+                    , Encoding.Unicode);
+
             }
             var s = sb.ToString();
             File.WriteAllText($"c:\\bom\\unittest\\jira.yaml", s, Encoding.Unicode);

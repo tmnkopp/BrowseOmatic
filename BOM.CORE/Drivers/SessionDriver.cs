@@ -20,12 +20,12 @@ namespace BOM.CORE
         public SessionDriver Click(string Element);
         public SessionDriver GetUrl(string Url);
         public SessionDriver Pause(int Time);
-        public void SetWait(int Wait);
+        public void SetWait(double Wait);
         public IWebElement Select(string ElementSelector);
         public bool ElementExists(string ElementSelector);
         public IConfiguration config { get; }
         public ILogger Log { get; }
-        public int Timeout { get; set;  }
+        public double Timeout { get; set;  }
         public void Connect(string ConnectionString); 
         public void Dispose(); 
     }
@@ -41,13 +41,13 @@ namespace BOM.CORE
             this.configuration = configuration;
             this.logger = logger;
         }
-        private int _timeout = 0; 
-        public int Timeout
+        private double _timeout = .5; 
+        public double Timeout
         {
             get { return _timeout; }
             set { _timeout = value; }
         } 
-        public void SetWait(int Timeout) {
+        public void SetWait(double Timeout) {
             _timeout = Timeout;
         }
         public IConfiguration config => configuration;
@@ -68,8 +68,7 @@ namespace BOM.CORE
                 }
                 return driver;
             }
-        }
-
+        } 
         
         #region Methods
         public virtual void Connect(string ConnectionString) {   
@@ -117,8 +116,7 @@ namespace BOM.CORE
             return this;
         }
         public SessionDriver GetUrl(string URL)
-        {
-            this.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(this.Timeout);
+        { 
             Driver.Navigate().GoToUrl($"{URL}");
             return this;
         }
