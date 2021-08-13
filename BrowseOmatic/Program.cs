@@ -47,7 +47,7 @@ namespace BOM
                     { 
                         if (taskstep.Cmd.ToLower() == "setwait")
                         {  
-                            ctx.SessionDriver.SetWait(Convert.ToInt32(taskstep.Args[0] ?? "500")); continue;
+                            ctx.SessionDriver.SetWait(Convert.ToDouble(taskstep.Args[0] ?? "1")); continue;
                         } 
 
                         var typ = Assm.GetTypes()
@@ -68,7 +68,8 @@ namespace BOM
                             } 
                             parmcnt++;
                             if (parm.ParameterType.Name.Contains("Int")) oparms.Add(Convert.ToInt32(value ?? "0"));
-                            else if (parm.ParameterType.Name.Contains("Bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));     
+                            else if (parm.ParameterType.Name.Contains("Bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));
+                            else if (parm.ParameterType.Name.ToLower().Contains("double")) oparms.Add(Convert.ToDouble(value ?? "0"));
                             else oparms.Add(value ?? "");
                         }
                         try
