@@ -87,12 +87,11 @@ namespace UnitTests
         public void User_Updates()
         {
             var ctx = Session.Context("dayadmin"); // dayadmin csadmin
-            var dvr = ctx.SessionDriver; 
-            new OpenTab("https://localhost/UserAccessNew/SelectUser.aspx").Execute(ctx);
-            //new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
+            var dvr = ctx.SessionDriver;
+            //new OpenTab("https://localhost/UserAccessNew/SelectUser.aspx").Execute(ctx);
+            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
             dvr.Pause(500).SendKeys("_WebTextEdit1", "ll-d-rob").Click("_btn_Run").Click("_link_UserID").Pause(550);
-            var handles = dvr.Driver.WindowHandles; 
-            dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 
+            new SwitchTo(-1).Execute(ctx);
             dvr.Pause(1500).Click("_btn_Edit"); 
         } 
 

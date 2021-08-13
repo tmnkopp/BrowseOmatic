@@ -24,21 +24,17 @@
 
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\BOM.exe -Force 
         #Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\chromedriver.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\chromedriver.exe -Force 
-        
-        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination f:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\BOM.exe -Force 
-        #Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\chromedriver.exe -Destination f:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\chromedriver.exe -Force 
-  
+ 
         Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\*.pdb -Force
         
     }
     if ($with -match ' commit ' ){
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
-        $message = 'remove [k]ill session path i-' + $m   
+        $message = 'add switch to path i-' + $m   
         cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
         git add .; git commit -m $message; git push; 
     }  
-    explorer.exe C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\
+    explorer.exe F:\dev\CyberScope\CyberScopeBranch\CSwebdev\test
     # explorer.exe C:\BOM commit
 } 
 Invoke-BOM-Workflow -with " release commit  " 
-
