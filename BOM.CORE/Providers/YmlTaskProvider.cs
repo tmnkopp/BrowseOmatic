@@ -34,12 +34,19 @@ namespace BOM.CORE
         #region Methods 
         private IEnumerable<BTask> GetItems()
         { 
-            var yamltasks = configuration.GetSection("paths:yamltasks")?.Value;
+            var yamltasks = configuration.GetSection("paths:yamltasks")?.Value; 
             if (yamltasks == null) {  
                 logger.LogWarning("task path null : {o}", yamltasks);
                 logger.LogWarning("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
                 throw new Exception("Invalid task path enviornment");
             }
+            if (string.IsNullOrEmpty(yamltasks)) 
+                yamltasks = "unittest.yaml"; 
+            if (!yamltasks.Contains(":\\"))
+                yamltasks = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", yamltasks);
+            if (!yamltasks.EndsWith(".yaml"))
+                yamltasks += ".yaml";
+     
             List<BTask> tasks = new List<BTask>();
             var yaml = new YamlStream();
             try

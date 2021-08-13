@@ -37,7 +37,9 @@ namespace BOM
     public class ConfigOptions
     {
         [Option('p', "Path", HelpText = "Sets task file path", Default="")]
-        public string Path { get; set; } 
+        public string Path { get; set; }
+        [Option('t', "Type", HelpText = "Execute an ICommand")]
+        public string Type { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
     }

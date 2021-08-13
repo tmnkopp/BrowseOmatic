@@ -35,16 +35,7 @@ namespace BOM
                 .MapResult(
                 (CommandOptions o) =>
                 {
-                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o));
-                    if (!string.IsNullOrEmpty(o.Path.ToString()))
-                    {
-                        if (!o.Path.Contains(":\\"))
-                            o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path);
-                        if (!o.Path.EndsWith(".yaml"))
-                            o.Path += ".yaml";
-                        configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
-                        logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
-                    } 
+                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o)); 
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();  
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
@@ -113,16 +104,7 @@ namespace BOM
                     return 0;
 
                 }, (ConfigOptions o) => {
-
-                    if (!string.IsNullOrEmpty(o.Path.ToString()))
-                    {
-                        if (!o.Path.Contains(":\\")) 
-                            o.Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", o.Path);
-                        if (!o.Path.EndsWith(".yaml"))
-                            o.Path += ".yaml";
-                        configuration.GetSection("paths:yamltasks").Value = o.Path.ToString();
-                        logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
-                    }
+                     
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
                     logger.LogInformation("{p} tasks: {t}", o.Path,  string.Join(", ", (from t in tasks.Items select t.Name)));
                   
