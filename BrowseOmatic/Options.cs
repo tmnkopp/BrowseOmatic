@@ -18,6 +18,8 @@ namespace BOM
         public string Path { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
+        [Option('k', "KeepAlive", HelpText = "Dispose end of session.", Default = false)]
+        public bool KeepAlive { get; set; }
     }
     [Serializable]
     [Verb("exe", HelpText = "Type executor.")]

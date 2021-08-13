@@ -36,6 +36,7 @@ namespace BOM
                 (CommandOptions o) =>
                 {
                     logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o)); 
+                    SetYamlPath(o.Path, configuration);
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();  
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
@@ -82,7 +83,7 @@ namespace BOM
                             logger.LogError("\n{o}", ex.Message);
                         } 
                     }  
-                    ctx.SessionDriver.Dispose();  
+                    if(!o.KeepAlive) ctx.SessionDriver.Dispose();  
                     return 0;
                 },
                 (ExeOptions o) => {
@@ -104,7 +105,9 @@ namespace BOM
                     return 0;
 
                 }, (ConfigOptions o) => {
-                     
+
+                    logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
+                    SetYamlPath(o.Path, configuration);
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
                     logger.LogInformation("{p} tasks: {t}", o.Path,  string.Join(", ", (from t in tasks.Items select t.Name)));
                   
@@ -129,7 +132,16 @@ namespace BOM
                 errs => 1);
             serviceProvider.Dispose();
         }
-
+        private static void SetYamlPath(string Path, IConfiguration configuration) {
+            if (!string.IsNullOrEmpty(Path.ToString()))
+            {
+                if (!Path.Contains(":\\"))
+                    Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", Path);
+                if (!Path.EndsWith(".yaml"))
+                    Path += ".yaml";
+                configuration.GetSection("paths:yamltasks").Value = Path.ToString(); 
+            }
+        }
         private static ServiceProvider RegisterServices(string[] args)
         {
             

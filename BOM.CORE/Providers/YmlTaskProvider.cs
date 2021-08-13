@@ -40,10 +40,11 @@ namespace BOM.CORE
                 logger.LogWarning("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
                 throw new Exception("Invalid task path enviornment");
             }
+            string bomroot = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", "");
             if (string.IsNullOrEmpty(yamltasks)) 
-                yamltasks = "unittest.yaml"; 
+                yamltasks = $"{bomroot}unittest.yaml";
             if (!yamltasks.Contains(":\\"))
-                yamltasks = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", yamltasks);
+                yamltasks = $"{bomroot}{yamltasks}";
             if (!yamltasks.EndsWith(".yaml"))
                 yamltasks += ".yaml";
      

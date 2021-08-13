@@ -114,7 +114,7 @@ namespace TelerikCommands
                     {
                         foreach (var item in NaiveInputDefaults.GetChildren())
                         {
-                            string rn = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 1).Select(s => s[new Random().Next(s.Length)]).ToArray());
+                            string rn = GetRand();
                             string val = item.Value.Replace("\\w", rn); 
                             var target = $"{input?.GetAttribute("name")} {input?.GetAttribute("id")}";
                             if (Regex.Match(target, item.Key, RegexOptions.IgnoreCase).Success)
@@ -129,6 +129,9 @@ namespace TelerikCommands
                 Console.WriteLine($"RadFormFill input[type='text']: {ex.Message}\n");
             } 
 
+        }
+        private string GetRand() {
+            return new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 1).Select(s => s[new Random().Next(s.Length)]).ToArray());
         }
     }
 }
