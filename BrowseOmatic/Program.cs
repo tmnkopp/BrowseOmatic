@@ -90,9 +90,7 @@ namespace BOM
                             logger.LogWarning("oparms: {o}", JsonConvert.SerializeObject(oparms));
                             logger.LogError("\n{o}", ex.Message);
                         } 
-                    } 
-                    Console.Write($"Automation Routine Complete.\n[k]ill session\n");
-                    string result = Console.ReadLine();
+                    }  
                     ctx.SessionDriver.Dispose();  
                     return 0;
                 },
