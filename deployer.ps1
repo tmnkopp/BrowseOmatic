@@ -22,12 +22,19 @@
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination c:\bom\BOM.exe -Force 
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\bominstaller.ps1 -Destination c:\bom\bominstaller.ps1 -Force 
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\bominstaller.ps1 -Destination C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\installer.ps1 -Force 
+
+        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\BOM.exe -Force 
+        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\chromedriver.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\chromedriver.exe -Force 
+        
+        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination f:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\BOM.exe -Force 
+        Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\chromedriver.exe -Destination f:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\chromedriver.exe -Force 
+  
         Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\*.pdb -Force
         
     }
     if ($with -match ' commit ' ){
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
-        $message = 'refactor Timeout i-' + $m   
+        $message = 'refactor chromedriver path i-' + $m   
         cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
         git add .; git commit -m $message; git push; 
     }  
