@@ -30,7 +30,7 @@
     }
     if ($with -match ' commit ' ){
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
-        $message = 'add switch to path i-' + $m   
+        $message = 'update switchto path i-' + $m   
         cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
         git add .; git commit -m $message; git push; 
     }  
