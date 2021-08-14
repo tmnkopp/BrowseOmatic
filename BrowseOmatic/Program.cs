@@ -67,8 +67,8 @@ namespace BOM
                                 if (value.StartsWith("-p")) value = Prompt(parm); 
                             } 
                             parmcnt++;
-                            if (parm.ParameterType.Name.Contains("Int")) oparms.Add(Convert.ToInt32(value ?? "0"));
-                            else if (parm.ParameterType.Name.Contains("Bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));
+                            if (parm.ParameterType.Name.ToLower().Contains("int")) oparms.Add(Convert.ToInt32(value ?? "0"));
+                            else if (parm.ParameterType.Name.ToLower().Contains("bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));
                             else if (parm.ParameterType.Name.ToLower().Contains("double")) oparms.Add(Convert.ToDouble(value ?? "0"));
                             else oparms.Add(value ?? "");
                         }
