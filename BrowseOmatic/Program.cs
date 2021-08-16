@@ -125,9 +125,8 @@ namespace BOM
                     if (yamltasks == null)
                         logger.LogWarning(" TaskProvider config.GetSection null: {o}", yamltasks);
                     else
-                        logger.LogInformation(" TaskProvider yamltasks : {o}", yamltasks.Value);
+                        logger.LogInformation(" TaskProvider yamltasks : {o}", yamltasks.Value); 
 
-                
                     return 0;
                 },
                 errs => 1);
