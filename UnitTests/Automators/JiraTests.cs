@@ -28,8 +28,8 @@ namespace UnitTests
                 ctx.SessionDriver.Timeout = 2;
                 dvr.Click("opsbar-operations_more"); 
                 dvr.Click("log-work"); 
-                dvr.SendKeys("input[id='log-work-time-logged']", "15m");
-                dvr.Click("input[id='log-work-submit']");
+                dvr.SendKeys("input[id='log-work-time-logged']", "15m"); 
+                dvr.Click("input[id='log-work-submit']"); 
             } 
             dvr.Dispose();
         }
@@ -38,27 +38,25 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*Databases.*|.*Finding.*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*Section.*");
             urlProvider.Execute(ctx); 
             foreach (KeyValuePair<string,string> kvp in urlProvider.Hrefs)
             {
-                dvr.GetUrl(kvp.Key).Pause(550);
+                dvr.GetUrl(kvp.Key);
                 sb.AppendLine($"    - Click: ['{kvp.Key}']");
-                ctx.SessionDriver.Timeout = 2; 
-                //dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550); 
+                ctx.SessionDriver.Timeout = 2;
+                //dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550);
                 dvr.Click("opsbar-operations_more"); 
                 dvr.Click("log-work"); 
-                dvr.Pause(900).SendKeys("input[id='log-work-time-logged']", "10m"); 
-                dvr.Pause(900).Click("input[id='log-work-submit']"); 
+                dvr.Pause(900).SendKeys("input[id='log-work-time-logged']", "15m"); 
+                dvr.Pause(1200).Click("input[id='log-work-submit']").Pause(1200);
                 // dvr.Click("a[title*='Resolve']")
                 // .Click("input[id*='issue-workflow-transition-submit']")
                 // .Click("a[title*='Ready To Test']")
                 // .Click("input[id*='issue-workflow-transition-submit']");
 
-                string log = File.ReadAllText(@"C:\Users\Tim\Documents\LOGS\log.txt");
-                File.WriteAllText(@"C:\Users\Tim\Documents\LOGS\log.txt", 
-                    $"{ctx.SessionDriver.Driver.Title}\n{log}" + ""
-                    , Encoding.Unicode);
+                //string log = File.ReadAllText(@"C:\Users\Tim\Documents\LOGS\log.txt");
+                //File.WriteAllText(@"C:\Users\Tim\Documents\LOGS\log.txt", $"{ctx.SessionDriver.Driver.Title}\n{log}" + ""  , Encoding.Unicode);
 
             }
             var s = sb.ToString();
@@ -66,47 +64,5 @@ namespace UnitTests
             dvr.Dispose();
         }
     }
-    public class UrlProvider : ICommand
-    {
-        #region CTOR
-
-        private string MatchPattern = "";
-        private string Selector = "";
-        public UrlProvider(string Container, string MatchPattern)
-        {
-            this.Selector = Container;
-            this.MatchPattern = MatchPattern;
-        }
-
-        #endregion
-
-        #region PROPS
-        private Dictionary<string, string> hrefs = new Dictionary<string, string>();
-        public Dictionary<string, string> Hrefs
-        {
-            get { return hrefs; }
-        }
-        #endregion
-
-        #region METHODS
-
-        public void Execute(ISessionContext ctx)
-        { 
-            IList<IWebElement> inputs =
-                ctx.SessionDriver.Driver.FindElements(By.CssSelector($"{Selector}"));
-            foreach (var item in inputs)
-            {
-                var txt = item.Text;
-                var href = item.GetAttribute("href");
-                if ( Regex.IsMatch($"{href}{txt}", MatchPattern))
-                { 
-                    if (!hrefs.ContainsKey(href))
-                    {
-                        hrefs.Add(href, txt);
-                    } 
-                }
-            }
-        } 
-        #endregion
-    } 
+  
 }
