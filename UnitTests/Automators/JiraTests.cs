@@ -53,11 +53,7 @@ namespace UnitTests
                 // dvr.Click("a[title*='Resolve']")
                 // .Click("input[id*='issue-workflow-transition-submit']")
                 // .Click("a[title*='Ready To Test']")
-                // .Click("input[id*='issue-workflow-transition-submit']");
-
-                //string log = File.ReadAllText(@"C:\Users\Tim\Documents\LOGS\log.txt");
-                //File.WriteAllText(@"C:\Users\Tim\Documents\LOGS\log.txt", $"{ctx.SessionDriver.Driver.Title}\n{log}" + ""  , Encoding.Unicode);
-
+                // .Click("input[id*='issue-workflow-transition-submit']"); 
             }
             var s = sb.ToString();
             File.WriteAllText($"c:\\bom\\unittest\\jira.yaml", s, Encoding.Unicode);
