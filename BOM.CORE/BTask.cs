@@ -15,6 +15,12 @@ namespace BOM.CORE
         {
             TaskSteps = new List<TaskStep>();
         }
+        public BTask(string Name, string Context)
+        {
+            this.Name= Name;
+            this.Context = Context;
+            TaskSteps = new List<TaskStep>();
+        }
         public string Name { get; set; } 
         public string Context { get; set; } 
         public List<TaskStep> TaskSteps { get; set; }
@@ -22,8 +28,7 @@ namespace BOM.CORE
     public class TaskStep
     {
         public TaskStep()
-        {
-
+        { 
         }
         public TaskStep(string Cmd, string[] Args)
         {

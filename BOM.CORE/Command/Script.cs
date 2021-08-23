@@ -30,7 +30,7 @@ namespace BOM.CORE
             }
             catch (Exception ex)
             {
-                Console.Write($" Invalid Javascript {ex.Message} {this.script}"); 
+                Console.Write($" Invalid Javascript: {ex.Message} {this.script}"); 
             }
            
         }

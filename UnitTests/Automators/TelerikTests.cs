@@ -17,57 +17,12 @@ namespace UnitTests
     public class TelerikTests
     {
         StringBuilder sb = new StringBuilder();
-        ICommand cmd;
-        [TestMethod]
-        public void SAOP_Submits()
-        {
-            sb.Clear();
-            sb.AppendLine("  - task: SAOP_Submits");
-            sb.AppendLine("    context: csagency");
-            sb.AppendLine("    steps: ");
-
-            var ctx = Session.Context("csagency"); //  dayman    csagency
-            var dvr = ctx.SessionDriver;
-
-            cmd = new ClickByContent("li.rtsLI", ".*SAOP.*21.*", true);
-            cmd.Execute(ctx);
-            sb.AppendLine($"    - {cmd.ToString()}");
-  
-            dvr.Pause(500);
-            cmd = new Click("hl_Launch");
-            cmd.Execute(ctx);
-            sb.AppendLine($"    - {cmd.ToString()}");
-
-            SelectElement select = new SelectElement(dvr.Select("ddl_Sections"));
-            var cnt = select.Options.Count();
-            for (int i = 0; i < cnt; i++)
-            {
-                new SetOption("ddl_Sections", i).Execute(ctx);
-                ((IJavaScriptExecutor)ctx.SessionDriver.Driver).ExecuteScript($"document.title = '{i}';");
-                
-                if (dvr.ElementExists("table[id*='InvGrid']") || dvr.ElementExists("table[id*='PIAGrid']"))  {
-                    sb.AppendLine($"    - SetOption: ['ddl_Sections',{i.ToString()}]");
-                    cmd = new InvGrid(".table");
-                    cmd.Execute(ctx);
-                    sb.AppendLine($"    - {cmd.ToString()}"); 
-                }else{
-                    cmd = new FismaForm(i, ".table");
-                    cmd.Execute(ctx);
-                    sb.AppendLine($"    - {cmd.ToString()}"); 
-                } 
-            }
-            dvr.Dispose();
-            var s = sb.ToString(); 
-            File.WriteAllText($"c:\\bom\\unittest\\output.yaml", s, Encoding.Unicode); 
-            Assert.IsNotNull(s);
-        } 
+        ICommand cmd; 
         [TestMethod]
         public void admin_Submits()
         {
             var ctx = Session.Context("csadmin");
-            var dvr = ctx.SessionDriver; 
-            //new ClickByContent("li.rtsLI", ".*Solar.*", true).Execute(ctx);
-            //dvr.Pause(250).Click("_ctl04_lnkAdmin").Pause(1250);   
+            var dvr = ctx.SessionDriver;   
         } 
         [TestMethod]
         public void CIO_RMA_Submits()
@@ -77,12 +32,8 @@ namespace UnitTests
             new ClickByContent("li.rtsLI", ".*CIO.*Q3.*", true).Execute(ctx);
             dvr.Pause(500).Click("hl_Launch").Pause(1000);
             new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(1);
-            dvr.Pause(1000).Click("_btnEdit");
-            // new ClickByContent("li.rtsLI", ".*BOD.*2020.*", true).Execute(ctx);
-            //dvr.Pause(500).Click("hl_Launch").Pause(500);
-            //new SetOption("ddl_Sections", 14);
-        }
-
+            dvr.Pause(1000).Click("_btnEdit"); 
+        } 
         [TestMethod]
         public void User_Updates()
         {

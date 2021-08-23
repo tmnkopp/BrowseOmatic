@@ -38,53 +38,12 @@ namespace BOM
                     logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o)); 
                     SetYamlPath(o.Path, configuration);
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
-                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();  
+                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
-                    ctx.SessionDriver.Connect(ctx.configContext.conn);
-                    
-                    foreach (var taskstep in task.TaskSteps)
-                    { 
-                        if (taskstep.Cmd.ToLower() == "setwait")
-                        {  
-                            ctx.SessionDriver.SetWait(Convert.ToDouble(taskstep.Args[0] ?? "1")); continue;
-                        } 
-
-                        var typ = Assm.GetTypes()
-                        .Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand)
-                        .IsAssignableFrom(t)).FirstOrDefault();
-
-                        Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}") ?? Type.GetType($"{typ.FullName}, BOM");
-                        ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
-                        List<object> oparms = new List<object>();
-                        int parmcnt = 0;
-                        foreach (ParameterInfo parm in PI)
-                        {
-                            string value = null;
-                            if (taskstep.Args.Count() >= parmcnt)
-                            {
-                                value = taskstep.Args[parmcnt];
-                                if (value.StartsWith("-p")) value = Prompt(parm); 
-                            } 
-                            parmcnt++;
-                            if (parm.ParameterType.Name.ToLower().Contains("int")) oparms.Add(Convert.ToInt32(value ?? "0"));
-                            else if (parm.ParameterType.Name.ToLower().Contains("bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));
-                            else if (parm.ParameterType.Name.ToLower().Contains("double")) oparms.Add(Convert.ToDouble(value ?? "0"));
-                            else oparms.Add(value ?? "");
-                        }
-                        try
-                        {
-                            ICommand obj = (ICommand)Activator.CreateInstance(tCmd, oparms.ToArray());
-                            obj.Execute(ctx);
-                        }
-                        catch (Exception ex)
-                        { 
-                            logger.LogWarning("ICommand:CreateInstance {c}\n", tCmd );
-                            logger.LogWarning("oparms: {o}", JsonConvert.SerializeObject(oparms));
-                            logger.LogError("\n{o}", ex.Message);
-                        } 
-                    }  
-                    if(!o.KeepAlive) ctx.SessionDriver.Dispose();  
+                    CommandProcessor processor = new CommandProcessor(ctx, logger);
+                    processor.Process(task);
+                    if (!o.KeepAlive) ctx.SessionDriver.Dispose();
                     return 0;
                 },
                 (ExeOptions o) => {
@@ -204,7 +163,7 @@ namespace BOM
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());
             services.AddSingleton(configuration);
             services.AddTransient<IAppSettingProvider<SessionContext>, ContextProvider>();
-            services.AddTransient<IAppSettingProvider<BTask>, YmlTaskProvider>();
+            services.AddTransient<IAppSettingProvider<BTask>, TaskProvider>();
             services.AddTransient<ITypeParamProvider, TypeParamProvider>();
             services.AddTransient<ITypeProvider, TypeProvider>(); 
             return services.BuildServiceProvider();
