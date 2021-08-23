@@ -35,7 +35,7 @@ namespace BOM.CORE
             var sections = configuration.GetSection("contexts").GetChildren().AsEnumerable();
             var SessionContexts = (
                     from s in sections   
-                    select new BomConfigContext {name=s["name"], conn=s["conn"]}
+                    select new BomConfigContext {name=s["name"], conn=s["conn"], root = s["root"] }
                 ); 
             List<SessionContext> contexts = new List<SessionContext>();
             foreach (var item in SessionContexts)

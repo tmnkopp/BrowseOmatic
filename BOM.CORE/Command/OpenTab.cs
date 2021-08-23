@@ -18,13 +18,12 @@ namespace BOM.CORE
             return $"OpenTab: ['{this.url}']";
         }
         public void Execute(ISessionContext ctx)
-        {
-            var driver = ctx.SessionDriver.Driver;
-            ctx.SessionDriver.Pause(0);
+        { 
+            this.url = this.url.Replace("~", ctx.configContext.root ?? "");
+            var driver = ctx.SessionDriver.Driver; 
             ((IJavaScriptExecutor)driver).ExecuteScript("window.open();");
             driver.SwitchTo().Window(driver.WindowHandles.Last());
-            ctx.SessionDriver.GetUrl(this.url).Pause(20);
-            
+            ctx.SessionDriver.GetUrl(this.url).Pause(20); 
         }
     }  
 }

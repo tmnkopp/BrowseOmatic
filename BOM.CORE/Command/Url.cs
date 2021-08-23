@@ -16,7 +16,8 @@ namespace BOM.CORE
             return $"Url: ['{this.url}']";
         }
         public void Execute(ISessionContext ctx)
-        {
+        { 
+            this.url = this.url.Replace("~", ctx.configContext.root ?? "");
             ctx.SessionDriver.GetUrl(this.url).Pause(20);
         }
     }

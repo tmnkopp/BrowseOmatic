@@ -8,5 +8,6 @@ namespace BOM.CORE
     {
         public string name { get; set; }
         public string conn { get; set; } 
+        public string root { get; set; } 
     }
 }

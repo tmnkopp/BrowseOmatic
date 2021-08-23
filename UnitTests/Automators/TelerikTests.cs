@@ -1,5 +1,8 @@
+using BOM;
 using BOM.CORE;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -10,75 +13,53 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using TelerikCommands;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace UnitTests
 {
     [TestClass]
     public class TelerikTests
     {
-        StringBuilder sb = new StringBuilder();
+        private void WriteTasks(List<BTask> tasks)
+        {
+            var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+            File.WriteAllText($"c:\\bom\\unittest\\output.yaml", serializer.Serialize(tasks), Encoding.Unicode);
+        }
+        List<BTask> tasks = new List<BTask>();
         ICommand cmd; 
+ 
         [TestMethod]
-        public void admin_Submits()
-        {
-            var ctx = Session.Context("csadmin");
-            var dvr = ctx.SessionDriver;   
-        } 
-        [TestMethod]
-        public void CIO_RMA_Submits()
-        {
-            var ctx = Session.Context("dayagency");
-            var dvr = ctx.SessionDriver; // 1
-            new ClickByContent("li.rtsLI", ".*CIO.*Q3.*", true).Execute(ctx);
-            dvr.Pause(500).Click("hl_Launch").Pause(1000);
-            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(1);
-            dvr.Pause(1000).Click("_btnEdit"); 
+        public void Prepop_Submits()
+        { 
+            BTask task = new BTask("prepop", "dayadmin");
+            task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://dayman.cyber-balance.com/CyberScopeBranch/Maintenance/Authoring/Prepopulate.aspx" }));
+
+            tasks.Add(task);
+
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
+
+            WriteTasks(tasks);
         } 
         [TestMethod]
         public void User_Updates()
         {
-            var ctx = Session.Context("dayadmin"); // dayadmin csadmin
-            var dvr = ctx.SessionDriver; 
-            new OpenTab("https://dayman.cyber-balance.com/CyberScopeBranch/UserAccessNew/SelectUser.aspx").Execute(ctx);
-            dvr.Pause(500).SendKeys("_WebTextEdit1", "ll-d-rob").Click("_btn_Run").Click("_link_UserID").Pause(550);
-            new SwitchTo(-1).Execute(ctx);
-            dvr.Pause(1500).Click("_btn_Edit"); 
-        } 
+            BTask task = new BTask("USER", "dayadmin");
+            task.TaskSteps.Add(new TaskStep("OpenTab", new string[] { "~/UserAccessNew/SelectUser.aspx" }));
+            task.TaskSteps.Add(new TaskStep("Key", new string[] { "_WebTextEdit1", "ll-d-rob" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_btn_Run" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_link_UserID" }));
+            task.TaskSteps.Add(new TaskStep("SwitchTo", new string[] { "-1" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_btn_Edit" }));
+            tasks.Add(task);
 
-        [TestMethod]
-        public void Assessment_Submits()
-        {
-            var ctx = Session.Context("csagency"); //  dayman    csagency
-            var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*18-02.*Remediation.*", true).Execute(ctx); 
-            new ClickByContent("a", ".*Manage New Assessment.*", true).Execute(ctx);
-            var handles = dvr.Driver.WindowHandles;
-            dvr.Driver.SwitchTo().Window(handles[handles.Count - 1]); 
-        } 
-        [TestMethod]
-        public void HVA_ANNUAL_Submits()
-        {
-            var ctx = Session.Context("csagency");
-            var dvr = ctx.SessionDriver;
-            new ClickByContent("li.rtsLI", ".*BOD.*Annual 2020.*", true).Execute(ctx);
-            dvr.Pause(250).Click("ctl16_hl_Launch").Pause(1250);
-            for (int i = 0; i <= 2; i++)
-            { 
-                new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
-                dvr.Click("btnEdit");
-                new RadFormFill(".table").Execute(ctx);
-                dvr.Click("btnSave").Pause(150); 
-            }
-            for (int i = 3; i < 5; i++)
-            {
-                new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(i);
-                dvr.Click("btnEdit");
-                new CloudGrid(".table").Execute(ctx);
-                dvr.Click("btnSave").Pause(150);
-            }
-            new SelectElement(dvr.Select("ctl00_ddl_Sections")).SelectByIndex(5);
-        }
-  
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
+
+            WriteTasks(tasks); 
+        }  
+ 
         [TestMethod]
         public void Rand_Submits()
         {
