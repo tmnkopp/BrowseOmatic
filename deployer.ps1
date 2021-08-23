@@ -4,7 +4,7 @@
         param ( 
         [Parameter(Mandatory = $false, Position = 0)] 
         [string] $with ,
-        [Parameter(Mandatory = $false, Position = 0)] 
+        [Parameter(Mandatory = $false, Position = 1)] 
         [string] $message = 'refactor build '  
     )
     cd 'C:\Users\Tim\source\repos\BrowseOmatic';   
@@ -22,8 +22,7 @@
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\bom\BOM.exe -Force 
         #Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\chromedriver.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\chromedriver.exe -Force 
  
-        Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\*.pdb -Force
-        
+        Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\*.pdb -Force 
     }
     if ($with -match ' commit ' ){
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
@@ -31,7 +30,7 @@
         cd 'C:\Users\Tim\source\repos\BrowseOmatic';  
         git add .; git commit -m $message; git push; 
     }  
-    explorer.exe F:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\bom
+    explorer.exe d:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\bom
     # explorer.exe C:\BOM commit
 } 
 Invoke-BOM-Workflow -with " release commit  " 
