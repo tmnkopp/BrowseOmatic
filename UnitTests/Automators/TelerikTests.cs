@@ -51,7 +51,7 @@ namespace UnitTests
             task.TaskSteps.Add(new TaskStep("Click", new string[] { "_btn_Run" }));
             task.TaskSteps.Add(new TaskStep("Click", new string[] { "_link_UserID" }));
             task.TaskSteps.Add(new TaskStep("SwitchTo", new string[] { "-1" }));
-            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_btn_Edit" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='ctl00_ctl00_contentPh_RightBody_ContentPlaceHolder1_fv_Profile_btn_Edit']" }));
             tasks.Add(task);
 
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
