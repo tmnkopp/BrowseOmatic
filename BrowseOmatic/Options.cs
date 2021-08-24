@@ -9,8 +9,8 @@ namespace BOM
 { 
  
     [Serializable]
-    [Verb("cmd", HelpText = "Command Runner.")]
-    public class CommandOptions
+    [Verb("run", HelpText = "Task Runner.")]
+    public class RunOptions
     {
         [Option('t', "Task", HelpText ="Executes A Task")]
         public string Task { get; set; }

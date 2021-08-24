@@ -31,9 +31,9 @@ namespace BOM
             ITypeParamProvider typeParamProvider;
  
 
-            var exit = Parser.Default.ParseArguments<ExeOptions, CommandOptions, ConfigOptions>(args)
+            var exit = Parser.Default.ParseArguments<ExeOptions, RunOptions, ConfigOptions>(args)
                 .MapResult(
-                (CommandOptions o) =>
+                (RunOptions o) =>
                 {
                     logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o)); 
                     SetYamlPath(o.Path, configuration);
@@ -65,8 +65,7 @@ namespace BOM
                     return 0;
 
                 }, (ConfigOptions o) => {
-
-                    logger.LogInformation("{o}", configuration.GetSection("paths:yamltasks").Value);
+                     
                     SetYamlPath(o.Path, configuration);
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
                     logger.LogInformation("{p} tasks: {t}", o.Path,  string.Join(", ", (from t in tasks.Items select t.Name)));
@@ -84,8 +83,15 @@ namespace BOM
                     if (yamltasks == null)
                         logger.LogWarning(" TaskProvider config.GetSection null: {o}", yamltasks);
                     else
-                        logger.LogInformation(" TaskProvider yamltasks : {o}", yamltasks.Value); 
+                        logger.LogInformation(" TaskProvider yamltasks : {o}", yamltasks.Value);
 
+                    var contexts = configuration.GetSection("contexts").GetChildren();
+                    if (contexts == null) 
+                        logger.LogWarning("{o}", contexts);
+                    else
+                        foreach (var context in contexts) 
+                            logger.LogInformation("{n} {c}", context["name"], context["conn"]); 
+                       
                     return 0;
                 },
                 errs => 1);
