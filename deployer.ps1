@@ -20,7 +20,6 @@
         dotnet publish BrowseOmatic -p:PublishProfile=FolderProfile   
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination c:\bom\BOM.exe -Force 
         Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\bom\BOM.exe -Force 
-        #Copy-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\chromedriver.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\chromedriver.exe -Force 
  
         Remove-Item -Path C:\Users\Tim\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\*.pdb -Force 
     }

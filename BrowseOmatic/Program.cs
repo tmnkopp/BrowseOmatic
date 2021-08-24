@@ -21,21 +21,19 @@ namespace BOM
     class Program
     {
         static void Main(string[] args)
-        {
-             
+        { 
             ServiceProvider serviceProvider = RegisterServices(args);
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             IAppSettingProvider<SessionContext> ctxs;
             IAppSettingProvider<BTask> tasks;
-            ITypeParamProvider typeParamProvider;
- 
+            ITypeParamProvider typeParamProvider; 
 
             var exit = Parser.Default.ParseArguments<ExeOptions, RunOptions, ConfigOptions>(args)
                 .MapResult(
                 (RunOptions o) =>
                 {
-                    logger.LogInformation("CommandOptions: {o}", JsonConvert.SerializeObject(o)); 
+                    logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o)); 
                     SetYamlPath(o.Path, configuration);
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
@@ -84,13 +82,13 @@ namespace BOM
                         logger.LogWarning(" TaskProvider config.GetSection null: {o}", yamltasks);
                     else
                         logger.LogInformation(" TaskProvider yamltasks : {o}", yamltasks.Value);
-
+                     
                     var contexts = configuration.GetSection("contexts").GetChildren();
                     if (contexts == null) 
                         logger.LogWarning("{o}", contexts);
                     else
-                        foreach (var context in contexts) 
-                            logger.LogInformation("{n} {c}", context["name"], context["conn"]); 
+                        foreach (var context in contexts)   
+                            logger.LogInformation("{n} {c}", context["name"], context["conn"], context["root"]); 
                        
                     return 0;
                 },
