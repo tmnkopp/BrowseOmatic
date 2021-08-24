@@ -16,12 +16,12 @@
 ## Get Started
 
 1. [Get Latest Release](https://github.com/tmnkopp/BrowseOmatic/releases)
-2. Create a bom environment variable (name = bom, path = c:\bom\bom.exe)
-3. %bom% cmd -t unittest
+2. Create a bom environment variable (name = bom, path = c:\bom\bom.exe); Add PATH c:\bom\ (optional)
+3. bom run -t unittest
 
 ### Or use Powershell
 
-1. Run bominstaller.ps1
+1. Run installer.ps1
 bominstaller will install bom dependencies and keep your bom up-to-date with the latest release.
 
 
@@ -43,7 +43,7 @@ Use `config.yaml` files to configure test automation steps.
 
 `context` associates the task to the appropriate context defined in the appsettings.json 
 
-`steps` defines a list of test automation steps
+`taskSteps` defines a list of test automation steps
  
  
 ### Browser Driver Commands (just a few)
@@ -67,19 +67,15 @@ Use `config.yaml` files to configure test automation steps.
 tasks:
   - task: unittest
     context: bomdriver
-    steps:
-    - OpenTab: ['https://github.com/tmnkopp/BrowseOmatic'] 
-    - Script:  window.scrollTo(0,600);    
-    - Pause: 1000
-    - OpenTab: ['http://automationpractice.com/index.php?controller=authentication&back=identity']  
-    - Key: ['email_create', 'TestyMcTestFace@domain.com']  
-    - Click: ['SubmitCreate'] 
-    - Pause: 2000
-    - SetWait: 50
-    - NaiveFormFill: ['']  
-    - SetWait: 1000   
-    - OpenTab: ['https://github.com/tmnkopp/BrowseOmatic/blob/master/README.md']
-    - Script:  window.scrollTo(0,200); alert('Success'); 
+    taskSteps:   
+    - { cmd: OpenTab, args: [ 'http://automationpractice.com/index.php?controller=authentication&back=identity'  ]}
+    - { cmd: Key, args: [ 'email_create', 'TestyMcTestFace@Domain.com'  ]}
+    - { cmd: Click, args: [ 'SubmitCreate'  ]}
+    - { cmd: Pause, args: [ 2000 ]}
+    - { cmd: SetWait, args: [ '50'   ]}
+    - { cmd: NaiveFormFill, args: [ ''    ]}
+    - { cmd: OpenTab, args: [ 'https://github.com/tmnkopp/BrowseOmatic#browse-o-matic-readme']}
+    - { cmd: Script, args: [  alert('Success\n\nUnit Test Complete'); ]}
 
 ```
 
@@ -87,20 +83,11 @@ tasks:
 ``` yaml
   - task: how_fluent_selectors_work
     context: bomdriver
-    steps:
-    - OpenTab: ['https://github.com/tmnkopp/BrowseOmatic']  
-    - Click: ['Element_Selector']
-    - Key: ['PartialID_Or_PartialClass_Or_PartialName', 'My Input Text']
-    - Click: ['Element_Selector_Is_Fluent_Will_Search_Attributes_For_Best_Match']
-    - Click: ['submit_button_id_contains']
-    - Key: ['Username', 'My User']
-    - Key: ['Password', 'My Pass But Keep This Private Using the AppSettings.Config']    
-    - SetOption: ['dropdown_id', 2]
-    - Key: ['input_id_ending', 'My Text']
-    - Key: ['textarea_class_contains', 'My Text']
-    - SetWait: 50    
-    - NaiveFormFill: ['']      
-    - Click: ['save_button']
+    taskSteps:    
+    - { cmd: Key, args: [ 'PartialID_Or_PartialClass_Or_PartialName', 'My Input Text' ]}
+    - { cmd: Click, args: [ 'Element_Selector_Is_Fluent_Will_Search_Attributes_For_Best_Match' ]}   
+    - { cmd: SetOption, args: ['dropdown_id', 2]}
+    - { cmd: Script, args: [  "alert(' javascript goes here ');" ]} 
 ```
 ***
 
