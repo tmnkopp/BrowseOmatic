@@ -40,7 +40,7 @@ namespace BOM
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
-                    ISessionContext ctx = (from c in ctxs.Items where c.Name == task.Context select c).FirstOrDefault();
+                    ISessionContext ctx = (from c in ctxs.Items where c.Name == (o.Context ?? task.Context) select c).FirstOrDefault();
                     CommandProcessor processor = new CommandProcessor(ctx, logger);
                     processor.Process(task);
                     if (!o.KeepAlive) ctx.SessionDriver.Dispose();

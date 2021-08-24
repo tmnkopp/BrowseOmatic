@@ -16,6 +16,8 @@ namespace BOM
         public string Task { get; set; }
         [Option('p', "Path",Default="", HelpText = "Sets task file path")]
         public string Path { get; set; }
+        [Option('c', "Context", Default = null, HelpText = "Sets Context")]
+        public string Context { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
         [Option('k', "KeepAlive", HelpText = "Dispose end of session.", Default = false)]
