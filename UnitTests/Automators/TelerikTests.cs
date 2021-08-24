@@ -21,11 +21,7 @@ namespace UnitTests
     [TestClass]
     public class TelerikTests
     {
-        private void WriteTasks(List<BTask> tasks)
-        {
-            var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
-            File.WriteAllText($"c:\\bom\\unittest\\output.yaml", serializer.Serialize(tasks), Encoding.Unicode);
-        }
+ 
         List<BTask> tasks = new List<BTask>();
         ICommand cmd; 
  
@@ -33,10 +29,9 @@ namespace UnitTests
         public void Prepop_Submits()
         { 
             BTask task = new BTask("prepop", "dayadmin");
-            task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://dayman.cyber-balance.com/CyberScopeBranch/Maintenance/Authoring/Prepopulate.aspx" }));
+            task.TaskSteps.Add(new TaskStep("Url", new string[] { "~/Maintenance/Authoring/Prepopulate.aspx" }));
 
-            tasks.Add(task);
-
+            tasks.Add(task); 
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(task);
 
@@ -58,13 +53,17 @@ namespace UnitTests
             processor.Process(task);
 
             WriteTasks(tasks); 
-        }  
- 
+        }   
         [TestMethod]
         public void Rand_Submits()
         {
             string rnd = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 1).Select(s => s[new Random().Next(s.Length)]).ToArray());
             Assert.IsNotNull(rnd);
+        }
+        private void WriteTasks(List<BTask> tasks)
+        {
+            var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+            File.WriteAllText($"c:\\bom\\unittest\\output.yaml", serializer.Serialize(tasks), Encoding.Unicode);
         }
     } 
 }
