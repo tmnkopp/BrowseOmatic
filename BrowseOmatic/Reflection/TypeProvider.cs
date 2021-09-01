@@ -22,6 +22,7 @@ namespace BOM
                     t => typeof(ICommand).IsAssignableFrom(t)
                         && (t.GetCustomAttribute<CommandMeta>()?.Context == Context
                         )
+
                  ).ToList();
           
         }  
