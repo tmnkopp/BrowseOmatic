@@ -58,6 +58,23 @@ namespace UnitTests
             WriteTasks(tasks);
         }
         [TestMethod]
+        public void JiraCreate()
+        {
+            BTask task = new BTask("create", "jira");
+            task.TaskSteps.Add(new TaskStep("SetWait", new string[] { "2" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "create_link" })); 
+            task.TaskSteps.Add(new TaskStep("Script", new string[] { @" 
+                document.title='TASKS';
+                window.scrollTo(100, 1000); 
+            " }));
+            tasks.Add(task);
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
+
+            WriteTasks(tasks);
+        }
+
+        [TestMethod]
         public void JiraTime_Taker()
         {
             var ctx = Session.Context("jira");
