@@ -63,33 +63,37 @@ namespace BOM
                     return 0;
 
                 }, (ConfigOptions o) => {
-                     
+
+                    StringBuilder sb = new StringBuilder();
                     SetYamlPath(o.Path, configuration);
-                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>(); 
-                    logger.LogInformation("{p} tasks: {t}", o.Path,  string.Join(", ", (from t in tasks.Items select t.Name)));
-                  
-                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o));
-                    logger.LogInformation("EnVar {o}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
-                    logger.LogInformation("AssmLoc {o}", Assembly.GetExecutingAssembly().Location);
+                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
+                    sb.AppendFormat("\n{0}tasks{0}", new string('-', 9));
+                    sb.AppendFormat("\n\npath: {0} \ntasks: \n{1}", o.Path, string.Join("\n\t", (from t in tasks.Items select t.Name)));
+                    sb.AppendFormat("\n\n{0}vars{0}", new string('-', 9));
+                    sb.AppendFormat("\n{0}", JsonConvert.SerializeObject(o));
+                    sb.AppendFormat("\nEnVar: {0}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
+                    sb.AppendFormat("\nAssmLoc: {0}", Assembly.GetExecutingAssembly().Location);
+                     
                     var paths = configuration.GetSection("paths");
                     if (paths == null)
-                        logger.LogWarning(" TaskProvider config.GetSection null: {o}", paths);
-                    else
-                        logger.LogInformation(" TaskProvider paths : {o}", paths.GetChildren().Count().ToString());
-                     
+                        logger.LogWarning(" TaskProvider config.GetSection null: {o}", paths); 
+
+                    sb.AppendFormat("\n\n{0}yamltasks{0}", new string('-', 9));
                     var yamltasks = configuration.GetSection("paths:yamltasks");
                     if (yamltasks == null)
                         logger.LogWarning(" TaskProvider config.GetSection null: {o}", yamltasks);
-                    else
-                        logger.LogInformation(" TaskProvider yamltasks : {o}", yamltasks.Value);
-                     
+                    else 
+                        sb.AppendFormat("\npaths:yamltasks : {0}", yamltasks.Value);
+
+                    sb.AppendFormat("\n\n{0}contexts{0}", new string('-', 9));
                     var contexts = configuration.GetSection("contexts").GetChildren();
                     if (contexts == null) 
                         logger.LogWarning("{o}", contexts);
                     else
-                        foreach (var context in contexts)   
-                            logger.LogInformation("{n} {c}", context["name"], context["conn"], context["root"]); 
-                       
+                        foreach (var context in contexts)
+                            sb.AppendFormat("\n\t{0} {1} {2}", context["name"], context["conn"], context["root"]);
+
+                    logger.LogInformation("{0}", sb.ToString());
                     return 0;
                 },
                 errs => 1);
