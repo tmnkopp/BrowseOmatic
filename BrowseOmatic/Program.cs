@@ -67,34 +67,36 @@ namespace BOM
                     StringBuilder sb = new StringBuilder();
                     SetYamlPath(o.Path, configuration);
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
-                    sb.AppendFormat("\n{0}tasks{0}", new string('-', 9)); 
-                    foreach (var t in tasks.Items) 
-                        sb.AppendFormat("\n\t{0}", $"bom -k -p {o.Path} -t {t.Name}");
-             
-                    
+
+                    sb.AppendFormat("\n{0}contexts{0}", new string('-', 9));
+                    var contexts = configuration.GetSection("contexts").GetChildren();
+                    if (contexts == null)
+                        logger.LogWarning("{o}", contexts);
+                    else
+                        foreach (var context in contexts)
+                            sb.AppendFormat("\n{0} \t{2} \n{1}", context["name"], context["conn"], context["root"]);
+
                     sb.AppendFormat("\n\n{0}vars{0}", new string('-', 9));
                     sb.AppendFormat("\n{0}", JsonConvert.SerializeObject(o));
                     sb.AppendFormat("\nEnVar: {0}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
                     sb.AppendFormat("\nAssmLoc: {0}", Assembly.GetExecutingAssembly().Location);
+                    sb.AppendFormat("\nAppSetting: {0}", $"{Assembly.GetExecutingAssembly().Location}\\appsettings.json");
                      
                     var paths = configuration.GetSection("paths");
                     if (paths == null)
                         logger.LogWarning(" TaskProvider config.GetSection null: {o}", paths); 
-
-                    sb.AppendFormat("\n\n{0}yamltasks{0}", new string('-', 9));
+                     
                     var yamltasks = configuration.GetSection("paths:yamltasks");
                     if (yamltasks == null)
                         logger.LogWarning(" TaskProvider config.GetSection null: {o}", yamltasks);
                     else 
                         sb.AppendFormat("\npaths:yamltasks : {0}", yamltasks.Value);
 
-                    sb.AppendFormat("\n\n{0}contexts{0}", new string('-', 9));
-                    var contexts = configuration.GetSection("contexts").GetChildren();
-                    if (contexts == null) 
-                        logger.LogWarning("{o}", contexts);
-                    else
-                        foreach (var context in contexts)
-                            sb.AppendFormat("\n\t{0} {1} {2}", context["name"], context["conn"], context["root"]);
+
+
+                    sb.AppendFormat("\n{0}tasks{0}", new string('-', 9));
+                    foreach (var t in tasks.Items)
+                        sb.AppendFormat("\n\t{0}", $"bom -k -p {o.Path} -t {t.Name}");
 
                     logger.LogInformation("{0}", sb.ToString());
                     return 0;
