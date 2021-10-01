@@ -67,8 +67,11 @@ namespace BOM
                     StringBuilder sb = new StringBuilder();
                     SetYamlPath(o.Path, configuration);
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
-                    sb.AppendFormat("\n{0}tasks{0}", new string('-', 9));
-                    sb.AppendFormat("\n\npath: {0} \ntasks: \n{1}", o.Path, string.Join("\n\t", (from t in tasks.Items select t.Name)));
+                    sb.AppendFormat("\n{0}tasks{0}", new string('-', 9)); 
+                    foreach (var t in tasks.Items) 
+                        sb.AppendFormat("\n\t{0}", $"bom -k -p {o.Path} -t {t.Name}");
+             
+                    
                     sb.AppendFormat("\n\n{0}vars{0}", new string('-', 9));
                     sb.AppendFormat("\n{0}", JsonConvert.SerializeObject(o));
                     sb.AppendFormat("\nEnVar: {0}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
