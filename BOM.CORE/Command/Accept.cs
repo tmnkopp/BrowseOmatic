@@ -6,10 +6,10 @@ using System.Text;
 
 namespace BOM.CORE 
 {  
-    public class AlertAccept : ICommand
+    public class AcceptAlert : ICommand
     {
         int WaitTime = 0; 
-        public AlertAccept(string pause)
+        public AcceptAlert(string pause)
         {
             this.WaitTime = Convert.ToInt32(pause ?? "0"); 
         } 
