@@ -36,7 +36,23 @@ namespace UnitTests
             processor.Process(task);
 
             WriteTasks(tasks);
-        } 
+        }
+        [TestMethod]
+        public void Grid_Updloads()
+        {
+            BTask task = new BTask("GridUpdloads", "localagency");
+            task.TaskSteps.Add(new TaskStep("ClickByContent", new string[] { "li.rtsLI", ".*EINST.*", "true" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_Launch" }));
+            task.TaskSteps.Add(new TaskStep("SetOption", new string[] { "ddl_Sections", "0" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_DeleteButton" }));
+            task.TaskSteps.Add(new TaskStep("AcceptAlert", new string[] { "5" }));
+            tasks.Add(task);
+
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
+
+            WriteTasks(tasks);
+        }
         [TestMethod]
         public void User_Updates()
         {
