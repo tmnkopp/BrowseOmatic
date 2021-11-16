@@ -89,7 +89,7 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("SetWait", new string[] { "2" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "opsbar-operations_more" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "log-work" }));
-                task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "20m" }));
+                task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "45m" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" })); 
             }
