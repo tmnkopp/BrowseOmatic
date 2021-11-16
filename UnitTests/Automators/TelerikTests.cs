@@ -23,8 +23,29 @@ namespace UnitTests
     {
  
         List<BTask> tasks = new List<BTask>();
-        ICommand cmd; 
- 
+        ICommand cmd;
+        [TestMethod]
+        public void EINS_Submits()
+        { 
+            BTask task = new BTask("EINS_Submits", "localagency");
+            task.TaskSteps.Add(new TaskStep("ClickByContent", new string[] { "li.rtsLI", ".*EINST.*", "true" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_Launch" }));
+            for (int i = 0; i < 7; i++)
+            {
+                task.TaskSteps.Add(new TaskStep("SetOption", new string[] { "ddl_Sections", $"{i}" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "_btnEdit" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "_DeleteButton" }));
+                task.TaskSteps.Add(new TaskStep("AcceptAlert", new string[] { "1000" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "AddNewRecordButton" }));
+                task.TaskSteps.Add(new TaskStep("RadFormFill", new string[] { "*[class*='EinsteinGrid']" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[id*='_PerformInsertButton']" })); 
+                tasks.Add(task);
+            }
+
+            //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            //processor.Process(task);
+            WriteTasks(tasks); 
+        }
         [TestMethod]
         public void Prepop_Submits()
         { 
