@@ -17,6 +17,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace UnitTests
 {
+ 
     [TestClass]
     public class JiraTests
     {
@@ -30,7 +31,7 @@ namespace UnitTests
             task.TaskSteps.Add(new TaskStep("Click", new string[] { "log-work" }));
             task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "15m" }));
             task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
-            task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
+            task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" })); 
             tasks.Add(task);
       
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
@@ -81,7 +82,7 @@ namespace UnitTests
             var dvr = ctx.SessionDriver; 
             ctx.SessionDriver.Connect(ctx.configContext.conn);
             var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*EINSTEIN.*");
-            urlProvider.Execute(ctx);
+   
             BTask task = new BTask("ein_taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
             { 
@@ -91,9 +92,16 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "log-work" }));
                 task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "45m" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" })); 
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Resolve Issue']" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Ready To Test']" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
+                tasks.Add(task); 
             }
-            tasks.Add(task);
+            
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(task);
             WriteTasks(tasks);
