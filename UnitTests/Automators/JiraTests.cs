@@ -80,9 +80,9 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; 
-            ctx.SessionDriver.Connect(ctx.configContext.conn);
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*EINSTEIN.*");
-   
+            ctx.SessionDriver.Connect(ctx.configContext.conn);// EINSTEIN
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*BOD 22.*");
+            urlProvider.Execute(ctx);
             BTask task = new BTask("ein_taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
             { 
@@ -90,15 +90,15 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("SetWait", new string[] { "2" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "opsbar-operations_more" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "log-work" }));
-                task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "45m" }));
+                task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "25m" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
-                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Resolve Issue']" }));
-                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
-                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Ready To Test']" }));
-                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
+                // task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Resolve Issue']" }));
+                // task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
+                // task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
+                // task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Ready To Test']" }));
+                // task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
+                // task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
                 tasks.Add(task); 
             }
             
