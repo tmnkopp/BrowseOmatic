@@ -94,6 +94,8 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" })); 
             }
             tasks.Add(task);
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
             WriteTasks(tasks);
             dvr.Dispose();
         }
