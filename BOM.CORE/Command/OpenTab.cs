@@ -11,7 +11,7 @@ namespace BOM.CORE
         string url = ""; 
         public OpenTab(string Url )
         {
-            this.url = Url;
+            this.url = Url.Trim();
         }
         public override string ToString()
         {
@@ -20,7 +20,10 @@ namespace BOM.CORE
         public void Execute(ISessionContext ctx)
         { 
             this.url = this.url.Replace("~", ctx.configContext.root ?? "");
-            var driver = ctx.SessionDriver.Driver; 
+            var driver = ctx.SessionDriver.Driver;
+            if (string.IsNullOrEmpty(this.url)) 
+                this.url = driver.Url;
+       
             ((IJavaScriptExecutor)driver).ExecuteScript("window.open();");
             driver.SwitchTo().Window(driver.WindowHandles.Last());
             ctx.SessionDriver.GetUrl(this.url).Pause(20); 
