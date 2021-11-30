@@ -33,10 +33,10 @@ namespace UnitTests
             task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
             tasks.Add(task);
       
-            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            processor.Process(task);
+            //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            //processor.Process(task);
 
-            WriteTasks(tasks );
+            Utils.WriteTasks(tasks );
         }        
         [TestMethod]
         public void JiraIssue_Action()
@@ -61,25 +61,13 @@ namespace UnitTests
         public void ebil_writes()
         {
             BTask task = new BTask("ebil", "ebil");
-            task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://secure.ebillity.com/firm4.0/TimeExpense/WeeklyTimeSheet2.aspx'" }));
-            //task.TaskSteps.Add(new TaskStep("Click", new string[] { "btnCopyTimeSheet" }));
-            //task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
-            //task.TaskSteps.Add(new TaskStep("Script", new string[] { "document.getElementsByClassName('btn_green')[0].click();" })); 
-
-            tasks.Add(task);
-
-            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            processor.Process(task);
-
-            WriteTasks(tasks);
-        }
-
-        private void WriteTasks(List<BTask> tasks )
-        {
-            var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
-            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", serializer.Serialize(tasks), Encoding.Unicode);
-            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.ps1", $"bom run -t {tasks[0].Name} -k -p c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", Encoding.Unicode);
-        }
-    }
-  
+            task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://secure.ebillity.com/firm4.0/TimeExpense/WeeklyTimeSheet2.aspx" }));
+            task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "btnCopyTimeSheet" }));
+            task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
+            //task.TaskSteps.Add(new TaskStep("Script", new string[] { "document.getElementsByClassName('btn_green')[0].click();" }));  
+            tasks.Add(task);  
+            Utils.WriteTasks(tasks);
+        } 
+    } 
 }
