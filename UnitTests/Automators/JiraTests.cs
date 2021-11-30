@@ -37,7 +37,7 @@ namespace UnitTests
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(task);
 
-            WriteTasks(tasks );
+            WriteTasks(tasks);
         }       
         [TestMethod]
         public void JiraIssue_List()
@@ -53,8 +53,8 @@ namespace UnitTests
                 window.scrollTo(100, 1000); 
             " })); 
             tasks.Add(task); 
-            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            processor.Process(task);
+            //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            //processor.Process(task);
 
             WriteTasks(tasks);
         }
@@ -81,9 +81,9 @@ namespace UnitTests
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; 
             ctx.SessionDriver.Connect(ctx.configContext.conn);// EINSTEIN
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*BOD 22.*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*");
             urlProvider.Execute(ctx);
-            BTask task = new BTask("ein_taketime", "jira");
+            BTask task = new BTask("taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
             { 
                 task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
@@ -102,10 +102,10 @@ namespace UnitTests
                 tasks.Add(task); 
             }
             
-            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            processor.Process(task);
+            //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            //processor.Process(task);
             WriteTasks(tasks);
-            dvr.Dispose();
+           
         }
         [TestMethod]
         public void JiraIssue_Starter()
@@ -128,9 +128,12 @@ namespace UnitTests
         }
         private void WriteTasks(List<BTask> tasks )
         {
+            Dictionary<string, List<BTask>> ser = new Dictionary<string, List<BTask>>();
+            ser.Add("tasks", tasks);
             var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
-            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", serializer.Serialize(tasks), Encoding.Unicode);
+            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", serializer.Serialize(ser), Encoding.Unicode);
             File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.ps1", $"bom run -t {tasks[0].Name} -k -p c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", Encoding.Unicode);
+            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.bat", $"bom run -t {tasks[0].Name} -k -p c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", Encoding.Unicode);
         }
     }
   
