@@ -27,7 +27,7 @@ namespace UnitTests
         [TestMethod]
         public void EINS_Submits()
         { 
-            BTask task = new BTask("EINS_Submits", "localagency");
+            BTask task = new BTask("einstein_all_sections", "dayagency");
             task.TaskSteps.Add(new TaskStep("ClickByContent", new string[] { "li.rtsLI", ".*EINST.*", "true" }));
             task.TaskSteps.Add(new TaskStep("Click", new string[] { "_Launch" }));
             for (int i = 0; i < 7; i++)
@@ -41,23 +41,11 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[id*='_PerformInsertButton']" })); 
                 tasks.Add(task);
             }
-
             //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
             //processor.Process(task);
-            WriteTasks(tasks); 
+            Utils.WriteTasks(tasks);
         }
-        [TestMethod]
-        public void Prepop_Submits()
-        { 
-            BTask task = new BTask("prepop", "dayadmin");
-            task.TaskSteps.Add(new TaskStep("Url", new string[] { "~/Maintenance/Authoring/Prepopulate.aspx" }));
-
-            tasks.Add(task); 
-            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            processor.Process(task);
-
-            WriteTasks(tasks);
-        }
+ 
         [TestMethod]
         public void Grid_Updloads()
         {
@@ -72,7 +60,7 @@ namespace UnitTests
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(task);
 
-            WriteTasks(tasks);
+            Utils.WriteTasks(tasks);
         }
         [TestMethod]
         public void User_Updates()
@@ -89,7 +77,7 @@ namespace UnitTests
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(task);
 
-            WriteTasks(tasks); 
+            Utils.WriteTasks(tasks);
         }   
         [TestMethod]
         public void Rand_Submits()
@@ -97,11 +85,7 @@ namespace UnitTests
             string rnd = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 1).Select(s => s[new Random().Next(s.Length)]).ToArray());
             Assert.IsNotNull(rnd);
         }
-        private void WriteTasks(List<BTask> tasks)
-        {
-            var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
-            File.WriteAllText($"c:\\bom\\unittest\\output.yaml", serializer.Serialize(tasks), Encoding.Unicode);
-        }
+ 
     } 
 }
  
