@@ -54,8 +54,7 @@ namespace UnitTests
             " })); 
             tasks.Add(task); 
             //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            //processor.Process(task);
-
+            //processor.Process(task); 
             WriteTasks(tasks);
         }
         [TestMethod]
@@ -105,7 +104,8 @@ namespace UnitTests
             //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
             //processor.Process(task);
             WriteTasks(tasks);
-           
+            dvr.Dispose();
+
         }
         [TestMethod]
         public void JiraIssue_Starter()
@@ -131,9 +131,9 @@ namespace UnitTests
             Dictionary<string, List<BTask>> ser = new Dictionary<string, List<BTask>>();
             ser.Add("tasks", tasks);
             var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
-            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", serializer.Serialize(ser), Encoding.Unicode);
-            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.ps1", $"bom run -t {tasks[0].Name} -k -p c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", Encoding.Unicode);
-            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.bat", $"bom run -t {tasks[0].Name} -k -p c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", Encoding.Unicode);
+            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", serializer.Serialize(ser), Encoding.UTF8);
+            //File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.ps1", $"bom run -t {tasks[0].Name} -k -p c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", Encoding.UTF8);
+            File.WriteAllText($"c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.bat", $"bom run -t {tasks[0].Name} -k -p c:\\bom\\unittest\\{tasks[0].Context}_{tasks[0].Name}.yaml", Encoding.ASCII);
         }
     }
   
