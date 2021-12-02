@@ -47,14 +47,21 @@ namespace UnitTests
         }
  
         [TestMethod]
-        public void Grid_Updloads()
+        public void Assmt_All()
         {
-            BTask task = new BTask("GridUpdloads", "localagency");
-            task.TaskSteps.Add(new TaskStep("ClickByContent", new string[] { "li.rtsLI", ".*EINST.*", "true" }));
+            BTask task = new BTask("assmt_all_tabs", "localagency");
+            task.TaskSteps.Add(new TaskStep("ClickByContent", new string[] { "li.rtsLI", ".*BOD 18-02 Rem.*", "true" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_lnkAddAssm" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "*[id*='AssmtGrid_ctl00_ctl04' ] .rgExpandIcon" }));
+            task.TaskSteps.Add(new TaskStep("OpenTab", new string[] { "~/ReporterHome.aspx" }));
+            task.TaskSteps.Add(new TaskStep("OpenTab", new string[] { "~/ReporterHome.aspx" }));
             task.TaskSteps.Add(new TaskStep("Click", new string[] { "_Launch" }));
             task.TaskSteps.Add(new TaskStep("SetOption", new string[] { "ddl_Sections", "0" }));
-            task.TaskSteps.Add(new TaskStep("Click", new string[] { "_DeleteButton" }));
-            task.TaskSteps.Add(new TaskStep("AcceptAlert", new string[] { "5" }));
+            task.TaskSteps.Add(new TaskStep("OpenTab", new string[] { "" }));
+            task.TaskSteps.Add(new TaskStep("SetOption", new string[] { "ddl_Sections", "1" }));
+            task.TaskSteps.Add(new TaskStep("OpenTab", new string[] { "" }));
+            task.TaskSteps.Add(new TaskStep("SetOption", new string[] { "ddl_Sections", "2" }));
+            task.TaskSteps.Add(new TaskStep("SwitchTo", new string[] { "0" }));
             tasks.Add(task);
 
             CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
