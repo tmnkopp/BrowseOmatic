@@ -76,7 +76,7 @@ namespace UnitTests
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; 
             ctx.SessionDriver.Connect(ctx.configContext.conn);// EINSTEIN
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-81']", ".*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*");
             urlProvider.Execute(ctx);
             BTask task = new BTask("taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
@@ -87,32 +87,32 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "log-work" }));
                 task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "15m" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" })); 
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" })); 
                 tasks.Add(task); 
             }
             
-            //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            //processor.Process(task);
-            Utils.WriteTasks(tasks);
-            dvr.Dispose();
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
+            //Utils.WriteTasks(tasks);
+            // dvr.Dispose();
 
         }
         [TestMethod]
-        public void JiraIssue_Starter()
+        public void JiraIssue_Closer()
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*Section.*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*EINS.*");
             urlProvider.Execute(ctx); 
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
             {
                 dvr.GetUrl(kvp.Key); 
                 ctx.SessionDriver.Timeout = 2;
                 //dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550); 
-                // dvr.Click("a[title*='Resolve']")
-                // .Click("input[id*='issue-workflow-transition-submit']")
-                // .Click("a[title*='Ready To Test']")
-                // .Click("input[id*='issue-workflow-transition-submit']"); 
+                dvr.Click("a[title*='Resolve']");
+                dvr.Click("input[id*='issue-workflow-transition-submit']");
+                dvr.Click("a[title*='Ready To Test']");
+                dvr.Click("input[id*='issue-workflow-transition-submit']"); 
             }  
             dvr.Dispose();
         }
