@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using BOM.CORE;
@@ -148,7 +149,37 @@ namespace TelerikCommands
                 for (int i = 1; i < vals.Length; i++)
                     sb.Append($"{GetRand()}{vals[i]}");
                 val = $"{vals[0]}{sb.ToString()}";
-            } 
+            }
+            if (Regex.IsMatch(val, @"\[(\d)-(\d)\]"))
+            {
+                System.Text.RegularExpressions.Match match = Regex.Match(val, @"\[(\d)-(\d)\]");
+                while (match.Success)
+                {
+                    var g0 = match.Groups[0];
+                    var g1 = match.Groups[1];
+                    var g2 = match.Groups[2];
+                    int rInt = RandomNumberGenerator.GetInt32(Convert.ToInt32(g1.Value), Convert.ToInt32(g2.Value));
+                    int postbegin = g0.Index + g0.Length;
+                    int len = val.Length - postbegin;
+                    val = $"{val.Substring(0, g0.Index)}{rInt}{val.Substring(postbegin, len)}";
+                    match = Regex.Match(val, @"\[(\d)-(\d)\]");
+                }
+            }
+            if (Regex.IsMatch(val, @"\[([^\]]+|.+)\]"))
+            {
+                System.Text.RegularExpressions.Match match = Regex.Match(val, @"\[([^\]]+|.+)\]");
+                while (match.Success)
+                {
+                    var g0 = match.Groups[0];
+                    var g1 = match.Groups[1];
+                    int postbegin = g0.Index + g0.Length;
+                    int len = val.Length - postbegin;
+                    var g1vals = g1.Value.Split("|");
+                    int index = RandomNumberGenerator.GetInt32(0, g1vals.Length - 1);
+                    val = $"{val.Substring(0, g0.Index)}{g1vals[index]}{val.Substring(postbegin, len)}";
+                    match = Regex.Match(val, @"\[([^\]]+|.+)\]");
+                }
+            }
             return val;
         }
         private string GetRand() {
