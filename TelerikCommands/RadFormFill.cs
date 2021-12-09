@@ -133,23 +133,7 @@ namespace TelerikCommands
         }
         private string FormatWildcard(string val) {
             StringBuilder sb = new StringBuilder();
-            string[] vals;
-            if (val.Contains("\\d"))
-            {
-                vals = val.Split(new string[] { "\\d" }, StringSplitOptions.None);
-                for (int i = 1; i < vals.Length; i++)
-                    sb.Append($"{GetRandNum()}{vals[i]}");
-                val = $"{vals[0]}{sb.ToString()}";
-            }
-             
-            sb.Clear();
-            if (val.Contains("\\w"))
-            {
-                vals = val.Split(new string[] { "\\w" }, StringSplitOptions.None);
-                for (int i = 1; i < vals.Length; i++)
-                    sb.Append($"{GetRand()}{vals[i]}");
-                val = $"{vals[0]}{sb.ToString()}";
-            }
+            string[] vals; 
             if (Regex.IsMatch(val, @"\[(\d)-(\d)\]"))
             {
                 System.Text.RegularExpressions.Match match = Regex.Match(val, @"\[(\d)-(\d)\]");
@@ -179,6 +163,22 @@ namespace TelerikCommands
                     val = $"{val.Substring(0, g0.Index)}{g1vals[index]}{val.Substring(postbegin, len)}";
                     match = Regex.Match(val, @"\[([^\]]+|.+)\]");
                 }
+            }
+            if (val.Contains("\\d"))
+            {
+                vals = val.Split(new string[] { "\\d" }, StringSplitOptions.None);
+                for (int i = 1; i < vals.Length; i++)
+                    sb.Append($"{GetRandNum()}{vals[i]}");
+                val = $"{vals[0]}{sb.ToString()}";
+            }
+
+            sb.Clear();
+            if (val.Contains("\\w"))
+            {
+                vals = val.Split(new string[] { "\\w" }, StringSplitOptions.None);
+                for (int i = 1; i < vals.Length; i++)
+                    sb.Append($"{GetRand()}{vals[i]}");
+                val = $"{vals[0]}{sb.ToString()}";
             }
             return val;
         }
