@@ -102,6 +102,7 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
+            ctx.SessionDriver.Connect(ctx.configContext.conn);
             var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*EINS.*");
             urlProvider.Execute(ctx); 
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
@@ -113,10 +114,8 @@ namespace UnitTests
                 dvr.Click("input[id*='issue-workflow-transition-submit']");
                 dvr.Click("a[title*='Ready To Test']");
                 dvr.Click("input[id*='issue-workflow-transition-submit']"); 
-            }  
+            } 
             dvr.Dispose();
-        }
- 
-    }
-  
+        } 
+    } 
 }
