@@ -24,4 +24,10 @@
     <ProjectReference Include="..\BrowseOmatic\BrowseOmatic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="TelerikCommands">
+      <HintPath>..\TelerikCommands\bin\Debug\netcoreapp3.1\TelerikCommands.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

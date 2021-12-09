@@ -114,8 +114,8 @@ namespace TelerikCommands
                     {
                         foreach (var item in NaiveInputDefaults.GetChildren())
                         {
-                            string rn = GetRand();
-                            string val = item.Value.Replace("\\w", rn); 
+                            string val = item.Value; 
+                            val = FormatWildcard(val); 
                             var target = $"{input?.GetAttribute("name")} {input?.GetAttribute("id")}";
                             if (Regex.Match(target, item.Key, RegexOptions.IgnoreCase).Success)
                                 input?.SendKeys(val);
@@ -130,8 +130,26 @@ namespace TelerikCommands
             } 
 
         }
+        private string FormatWildcard(string val) {
+            StringBuilder sb = new StringBuilder();
+            var vals = val.Split(new string[] { "\\d" }, StringSplitOptions.None);
+            for (int i = 1; i < vals.Length; i++) 
+                sb.Append($"{GetRandNum()}{vals[i]}"); 
+            val = $"{vals[0]}{sb.ToString()}";
+
+            vals = val.Split(new string[] { "\\w" }, StringSplitOptions.None);
+            for (int i = 1; i < vals.Length; i++)
+                sb.Append($"{GetRand()}{vals[i]}");
+            val = $"{vals[0]}{sb.ToString()}";
+
+            return val;
+        }
         private string GetRand() {
             return new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 1).Select(s => s[new Random().Next(s.Length)]).ToArray());
+        }
+        private string GetRandNum()
+        {
+            return new string(Enumerable.Repeat("0123456789", 1).Select(s => s[new Random().Next(s.Length)]).ToArray());
         }
     }
 }

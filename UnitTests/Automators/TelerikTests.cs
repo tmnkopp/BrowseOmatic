@@ -21,13 +21,25 @@ namespace UnitTests
     [TestClass]
     public class TelerikTests
     {
- 
+        Dictionary<int, string> eins = new Dictionary<int, string>();
         List<BTask> tasks = new List<BTask>();
         ICommand cmd;
+        public TelerikTests()
+        {
+            eins.Add(0, @"C:\Users\Tim\Downloads\Bill-D-Robertson_EinsteinPublicIP.xlsx");
+            eins.Add(1, @"C:\Users\Tim\Downloads\Bill-D-Robertson_EinsteinUnannounced.xlsx");
+            eins.Add(2, @"C:\Users\Tim\Downloads\Bill-D-Robertson_EinsteinTaps.xlsx");
+            eins.Add(3, @"C:\Users\Tim\Downloads\Bill-D-Robertson_EinsteinVLAN.xlsx");
+            eins.Add(4, @"C:\Users\Tim\Downloads\Bill-D-Robertson_EinsteinUnmonitoredTraffic.xlsx");
+            eins.Add(5, @"C:\Users\Tim\Downloads\Bill-D-Robertson_EinsteinNAT.xlsx");
+            eins.Add(6, @"C:\Users\Tim\Downloads\Bill-D-Robertson_EinsteinBGP.xlsx");
+
+            //C:\Users\Tim\Downloads
+        }
         [TestMethod]
         public void EINS_Submits()
         { 
-            BTask task = new BTask("einstein_all_sections", "dayagency");
+            BTask task = new BTask("einstein_all_sections", "localagency");
             task.TaskSteps.Add(new TaskStep("ClickByContent", new string[] { "li.rtsLI", ".*EINST.*", "true" }));
             task.TaskSteps.Add(new TaskStep("Click", new string[] { "_Launch" }));
             for (int i = 0; i < 7; i++)
@@ -39,10 +51,14 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "AddNewRecordButton" }));
                 task.TaskSteps.Add(new TaskStep("RadFormFill", new string[] { "*[class*='EinsteinGrid']" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[id*='_PerformInsertButton']" })); 
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "*[id*='_rbtnDownload']" }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1000" }));
+                task.TaskSteps.Add(new TaskStep("Key", new string[] { "_fileUpload", eins[i] }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "_cmdUpload, _btnSave" }));  
                 tasks.Add(task);
             }
-            //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            //processor.Process(task);
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
             Utils.WriteTasks(tasks);
         }
  
