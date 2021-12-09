@@ -132,16 +132,23 @@ namespace TelerikCommands
         }
         private string FormatWildcard(string val) {
             StringBuilder sb = new StringBuilder();
-            var vals = val.Split(new string[] { "\\d" }, StringSplitOptions.None);
-            for (int i = 1; i < vals.Length; i++) 
-                sb.Append($"{GetRandNum()}{vals[i]}"); 
-            val = $"{vals[0]}{sb.ToString()}";
-
-            vals = val.Split(new string[] { "\\w" }, StringSplitOptions.None);
-            for (int i = 1; i < vals.Length; i++)
-                sb.Append($"{GetRand()}{vals[i]}");
-            val = $"{vals[0]}{sb.ToString()}";
-
+            string[] vals;
+            if (val.Contains("\\d"))
+            {
+                vals = val.Split(new string[] { "\\d" }, StringSplitOptions.None);
+                for (int i = 1; i < vals.Length; i++)
+                    sb.Append($"{GetRandNum()}{vals[i]}");
+                val = $"{vals[0]}{sb.ToString()}";
+            }
+             
+            sb.Clear();
+            if (val.Contains("\\w"))
+            {
+                vals = val.Split(new string[] { "\\w" }, StringSplitOptions.None);
+                for (int i = 1; i < vals.Length; i++)
+                    sb.Append($"{GetRand()}{vals[i]}");
+                val = $"{vals[0]}{sb.ToString()}";
+            } 
             return val;
         }
         private string GetRand() {
