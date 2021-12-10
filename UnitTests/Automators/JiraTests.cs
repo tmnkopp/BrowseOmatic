@@ -103,19 +103,19 @@ namespace UnitTests
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
             ctx.SessionDriver.Connect(ctx.configContext.conn);
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*EINS.*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-']", ".*CIO.*");
             urlProvider.Execute(ctx); 
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
             {
                 dvr.GetUrl(kvp.Key); 
                 ctx.SessionDriver.Timeout = 2;
-                //dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550); 
-                dvr.Click("a[title*='Resolve']");
-                dvr.Click("input[id*='issue-workflow-transition-submit']");
-                dvr.Click("a[title*='Ready To Test']");
-                dvr.Click("input[id*='issue-workflow-transition-submit']"); 
-            } 
-            dvr.Dispose();
-        } 
+                dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550);
+                //dvr.Click("a[title*='Resolve']");
+                //dvr.Click("input[id*='issue-workflow-transition-submit']");
+                //dvr.Click("a[title*='Ready To Test']");
+                //dvr.Click("input[id*='issue-workflow-transition-submit']"); 
+            }
+            //dvr.Dispose();
+        }
     } 
 }
