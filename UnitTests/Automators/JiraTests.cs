@@ -76,7 +76,7 @@ namespace UnitTests
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; 
             ctx.SessionDriver.Connect(ctx.configContext.conn);// EINSTEIN
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-85']", ".*");
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*CIO.*");
             urlProvider.Execute(ctx);
             BTask task = new BTask("taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
