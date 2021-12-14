@@ -103,18 +103,23 @@ namespace UnitTests
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
             ctx.SessionDriver.Connect(ctx.configContext.conn);
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-']", ".*CIO.*");
-            urlProvider.Execute(ctx); 
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*CIO|EINSTEIN|BOD.*");
+            urlProvider.Execute(ctx);
+            BTask task = new BTask("resolve_tickets", "jira");
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
-            {
-                dvr.GetUrl(kvp.Key); 
-                ctx.SessionDriver.Timeout = 2;
-                dvr.Pause(550).Click("a[title*='Start Progress']").Pause(550);
-                //dvr.Click("a[title*='Resolve']");
-                //dvr.Click("input[id*='issue-workflow-transition-submit']");
-                //dvr.Click("a[title*='Ready To Test']");
-                //dvr.Click("input[id*='issue-workflow-transition-submit']"); 
+            { 
+                task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Resolve']" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" })); 
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Ready To Test']" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
+                tasks.Add(task);
             }
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
+            Utils.WriteTasks(tasks);
             //dvr.Dispose();
         }
     } 
