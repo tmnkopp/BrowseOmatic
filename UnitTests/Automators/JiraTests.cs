@@ -122,5 +122,22 @@ namespace UnitTests
             Utils.WriteTasks(tasks);
             //dvr.Dispose();
         }
+        [TestMethod]
+        public void JiraIssue_Scraper()
+        {
+            var ctx = Session.Context("jira");
+            var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
+            ctx.SessionDriver.Connect(ctx.configContext.conn);
+            BTask task = new BTask("scrape_issue", "jira");
+            task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://dayman.cyber-balance.com/jira/issues/?jql=project%20%3D%20CS%20AND%20assignee%20%3D%20currentUser()%20AND%20type%20%3DTask%20AND%20resolution%20%3D%20Unresolved" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "header-operations" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "allCsvFields" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "csv-export-dialog-export-button" }));
+            tasks.Add(task);
+            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(task);
+            //Utils.WriteTasks(tasks);
+            //dvr.Dispose();
+        }
     } 
 }
