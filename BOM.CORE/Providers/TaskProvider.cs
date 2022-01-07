@@ -29,12 +29,8 @@ namespace BOM.CORE
         #endregion  
         #region Methods 
         public BTask Get(string ItemName)
-        {
-            var yamltasks = configuration.GetSection("paths:yamltasks")?.Value;
-            var taskfile = $"{yamltasks}{ItemName}";
-            if (!taskfile.EndsWith(".yaml"))
-                taskfile += ".yaml";
-             
+        { 
+            var taskfile = $"{configuration.GetSection("paths:yamltasks")?.Value}{ItemName}.yaml";  
             string yamlraw = "";
             using (TextReader tr = File.OpenText(taskfile))
                 yamlraw = tr.ReadToEnd().Replace("tasks:", "");
