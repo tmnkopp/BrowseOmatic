@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace BOM.CORE
 {
-    public class ContextProvider : IAppSettingProvider<SessionContext>
+    public class ContextProvider : IAppSettingsProvider<SessionContext>
     {
         #region CTOR 
         private readonly IConfiguration configuration; 
@@ -46,7 +46,7 @@ namespace BOM.CORE
                     contexts.Add(new SessionContext
                     {
                         Name = context.name,
-                        configContext= context,
+                        ContextConfig= context,
                         SessionDriver = driver,
                         configuration = this.configuration
                     }); 

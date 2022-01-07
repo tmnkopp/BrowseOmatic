@@ -13,11 +13,8 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace BOM.CORE 
 {
-    public interface ITaskProvider 
-    {
-        BTask GetTask(string Taskname);
-    }
-    public class TaskProvider : ITaskProvider 
+
+    public class TaskProvider : ISettingProvider<BTask> 
     {
         #region CTOR
         private readonly IConfiguration configuration;
@@ -31,15 +28,15 @@ namespace BOM.CORE
         }
         #endregion  
         #region Methods 
-        public BTask GetTask(string Taskname)
+        public BTask Get(string ItemName)
         {
             var yamltasks = configuration.GetSection("paths:yamltasks")?.Value;
-            var taskfile = $"{yamltasks}{Taskname}";
+            var taskfile = $"{yamltasks}{ItemName}";
             if (!taskfile.EndsWith(".yaml"))
                 taskfile += ".yaml";
              
             string yamlraw = "";
-            using (TextReader tr = File.OpenText(yamltasks))
+            using (TextReader tr = File.OpenText(taskfile))
                 yamlraw = tr.ReadToEnd().Replace("tasks:", "");
 
             var deserializer = new DeserializerBuilder()
@@ -52,7 +49,7 @@ namespace BOM.CORE
             }
             catch (Exception ex)
             {
-                logger.LogError("paths:yamltasks : {o}", yamltasks);
+                logger.LogError("paths:yamltasks : {o}", taskfile);
                 logger.LogError("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
                 throw new Exception($"YamlStream Deserialize Failed: {ex.Message}");
             } 

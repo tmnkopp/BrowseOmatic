@@ -26,7 +26,8 @@ namespace BOM.CORE
         public IConfiguration config { get; }
         public ILogger Log { get; }
         public double Timeout { get; set;  }
-        public void Connect(string ConnectionString); 
+        public ChromeOptions ChromeOptions { get; set; }
+        public void Create(); 
         public void Dispose(); 
     }
     public class SessionDriver: ISessionDriver
@@ -51,53 +52,34 @@ namespace BOM.CORE
             _timeout = Timeout;
         }
         public IConfiguration config => configuration;
+        public ChromeOptions ChromeOptions { get; set; } = new ChromeOptions();
         public ChromeDriver driver;
         public ChromeDriver Driver
         {
             get
             {
-                if (driver == null)
-                {
-                    ChromeOptions options = new ChromeOptions();
-                    string path =  configuration.GetSection("paths")["chromedriver"].Replace("chromedriver.exe", "");
-                    if (string.IsNullOrEmpty(path)) { 
-                        path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", "");
-                    }
-                    var chromeDriverService = ChromeDriverService.CreateDefaultService(path);
-                    chromeDriverService.HideCommandPromptWindow = true;
-                    chromeDriverService.SuppressInitialDiagnosticInformation = true;
-                    options.AddArgument("log-level=3");
-                    driver = new ChromeDriver(chromeDriverService, options); 
-                }
+                if (driver == null) 
+                    Create(); 
                 return driver;
             }
-        } 
-        
+        }  
         #region Methods
-        public virtual void Connect(string ConnectionString) {   
-            if (string.IsNullOrEmpty(ConnectionString))
-                throw new ArgumentNullException("driver connection string empty");
-                 
-            List<string> args = new List<string>();
-            var match = Regex.Match(ConnectionString + ";", "driver:(.*?);"); 
-            ConnectionString = ConnectionString.Replace(match.Groups[0].Value, "");
-            foreach (string cmd in ConnectionString.Trim().Split(";").TakeWhile(s => s.Trim().Contains(":")))
+        public virtual void Create() {
+            if (driver == null)
             {
-                args = new List<string>();
-                var command = cmd.Split(":")[0].Trim();
-                args.AddRange(cmd.Split(":")[1].Trim().Split(",")); 
-                try
+                
+                string path = configuration.GetSection("paths")["chromedriver"].Replace("chromedriver.exe", "");
+                if (string.IsNullOrEmpty(path))
                 {
-                    logger.LogInformation("connect {0} [{1}]", command, string.Join(",",args));
-                    if (command.Contains("http")) GetUrl($"{command}:{args[0]}");
-                    if (command == "s") SendKeys(args[0], args[1]); 
-                    if (command == "c") Click(args[0]);
+                    path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", "");
                 }
-                catch (Exception ex)
-                {
-                    logger.LogError("Connection failed {0} {1}", ConnectionString, ex.Message); 
-                } 
-            }   
+                var chromeDriverService = ChromeDriverService.CreateDefaultService(path);
+                chromeDriverService.HideCommandPromptWindow = true;
+                chromeDriverService.SuppressInitialDiagnosticInformation = true;
+
+                ChromeOptions.AddArgument("log-level=3");
+                driver = new ChromeDriver(chromeDriverService, ChromeOptions);
+            } 
         }
          
         public SessionDriver Pause(int Time)

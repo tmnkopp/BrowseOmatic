@@ -27,8 +27,7 @@ namespace BOM
         }
 
         public void Process(BTask task)
-        { 
-            ctx.SessionDriver.Connect(ctx.configContext.conn); 
+        {  
             foreach (var taskstep in task.TaskSteps)
             {
                 if (taskstep.Cmd.ToLower() == "setwait")

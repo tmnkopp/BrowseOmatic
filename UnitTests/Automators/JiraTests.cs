@@ -74,7 +74,7 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; 
-            ctx.SessionDriver.Connect(ctx.configContext.conn);// EINSTEIN
+            ctx.SessionDriver.Create();// EINSTEIN
             var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*CIO.*");
             urlProvider.Execute(ctx);
             BTask task = new BTask("taketime", "jira");
@@ -101,7 +101,7 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
-            ctx.SessionDriver.Connect(ctx.configContext.conn);
+            ctx.SessionDriver.Create();
             var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*CIO|EINSTEIN|BOD.*");
             urlProvider.Execute(ctx);
             BTask task = new BTask("resolve_tickets", "jira");
@@ -126,7 +126,7 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
-            ctx.SessionDriver.Connect(ctx.configContext.conn);
+            ctx.SessionDriver.Create( );
             BTask task = new BTask("scrape_issue", "jira");
             task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://dayman.cyber-balance.com/jira/si/jira.issueviews:issue-html/CS-8621/CS-8621.html" }));
             task.TaskSteps.Add(new TaskStep("ClickByContent", new string[] { "Validate and Approve" }));

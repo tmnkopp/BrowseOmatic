@@ -5,12 +5,12 @@ using System.Text;
 
 namespace BOM.CORE
 {
-    public interface IAppSettingProvider<T>
+    public interface IAppSettingsProvider<T>
     {
         IEnumerable<T> Items { get; } 
     }
-    public interface IAppSettingsProvider<T>
+    public interface ISettingProvider<T>
     {
-        IEnumerable<T> Items { get; }
+        T Get(string ItemName);
     }
 }

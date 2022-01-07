@@ -17,7 +17,7 @@ namespace BOM.CORE
         }
         public void Execute(ISessionContext ctx)
         { 
-            this.url = this.url.Replace("~", ctx.configContext.root ?? "");
+            this.url = this.url.Replace("~", ctx.ContextConfig.root ?? "");
             ctx.SessionDriver.GetUrl(this.url).Pause(20);
         }
     }

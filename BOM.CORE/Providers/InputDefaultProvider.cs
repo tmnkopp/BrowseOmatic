@@ -30,7 +30,7 @@ namespace BOM.CORE
         public string Pattern { get; set; }
         public string DefaultValue { get; set; }
     }
-    public class InputDefaultProvider : IAppSettingProvider<InputDefaultSection>
+    public class InputDefaultProvider : IAppSettingsProvider<InputDefaultSection>
     {
         #region CTOR 
         private readonly IConfiguration configuration; 

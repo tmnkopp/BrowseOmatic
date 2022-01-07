@@ -23,7 +23,7 @@ namespace TelerikCommands
         public void Execute(ISessionContext ctx)
         {
             var dvr = ctx.SessionDriver;
-            dvr.Connect(ctx.configContext.conn);
+            dvr.Create();
             IList<IWebElement> elements = ctx.SessionDriver.Driver.FindElements(By.CssSelector("*[id*='_Surveys'] li"));
             foreach (IWebElement element in elements)
             {

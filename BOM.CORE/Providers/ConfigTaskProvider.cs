@@ -9,7 +9,7 @@ using System.Text;
 namespace BOM.CORE
 {
 
-    public class ConfigTaskProvider: IAppSettingProvider<BTask>
+    public class ConfigTaskProvider: IAppSettingsProvider<BTask>
     {
         #region CTOR
         private readonly IConfiguration configuration;

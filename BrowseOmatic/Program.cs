@@ -25,23 +25,26 @@ namespace BOM
             ServiceProvider serviceProvider = RegisterServices(args);
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
-            IAppSettingProvider<SessionContext> ctxs;
-            BTask task;
+            IAppSettingsProvider<SessionContext> ctxs;
+            ITask task;
 
             var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
                 .MapResult(
                 (RunOptions o) =>
                 {
                     logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o)); 
-                    //SetYamlPath(o.Path, configuration);
-
-                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
-                    task = serviceProvider.GetService<ITaskProvider>().GetTask(o.Task);
+                    //SetYamlPath(o.Path, configuration); 
+                    ctxs = serviceProvider.GetService<IAppSettingsProvider<SessionContext>>();
+                    task = serviceProvider.GetService<ISettingProvider<BTask>>().Get(o.Task);
 
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == (o.Context ?? task.Context) select c).FirstOrDefault();
-                     
+ 
+                    ctx.ContextConfig.conntask.TaskSteps.AddRange(task.TaskSteps);
+                    ctx.SessionDriver.ChromeOptions.AddArgument("log-level=3");
+                    ctx.SessionDriver.Create();
+
                     CommandProcessor processor = new CommandProcessor(ctx, logger);
-                    processor.Process(task);
+                    processor.Process(ctx.ContextConfig.conntask);
 
                     if (!o.KeepAlive) ctx.SessionDriver.Dispose();
                     return 0;
@@ -49,7 +52,7 @@ namespace BOM
                 (ConfigOptions o) => {
 
                     StringBuilder sb = new StringBuilder();
-                    SetYamlPath(o.Path, configuration); 
+                    //SetYamlPath(o.Path, configuration); 
 
                     sb.AppendFormat("\n{0}contexts{0}", new string('-', 9));
                     var contexts = configuration.GetSection("contexts").GetChildren();
@@ -152,8 +155,8 @@ namespace BOM
             services.AddLogging(cfg => cfg.AddConsole());
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());
             services.AddSingleton(configuration);
-            services.AddTransient<IAppSettingProvider<SessionContext>, ContextProvider>();
-            services.AddTransient<ITaskProvider, TaskProvider>(); 
+            services.AddTransient<IAppSettingsProvider<SessionContext>, ContextProvider>();
+            services.AddTransient<ISettingProvider<BTask>, TaskProvider>(); 
             services.AddTransient<ITypeParamProvider, TypeParamProvider>();
             services.AddTransient<ITypeProvider, TypeProvider>(); 
             return services.BuildServiceProvider();

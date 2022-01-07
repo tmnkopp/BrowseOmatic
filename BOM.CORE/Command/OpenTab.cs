@@ -19,7 +19,7 @@ namespace BOM.CORE
         }
         public void Execute(ISessionContext ctx)
         { 
-            this.url = this.url.Replace("~", ctx.configContext.root ?? "");
+            this.url = this.url.Replace("~", ctx.ContextConfig.root ?? "");
             var driver = ctx.SessionDriver.Driver;
             if (string.IsNullOrEmpty(this.url)) 
                 this.url = driver.Url;
