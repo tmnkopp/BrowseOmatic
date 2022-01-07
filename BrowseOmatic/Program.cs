@@ -25,20 +25,18 @@ namespace BOM
             ServiceProvider serviceProvider = RegisterServices(args);
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
-            IAppSettingsProvider<SessionContext> ctxs;
+            ISessionContext ctx;
             ITask task;
 
             var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
                 .MapResult(
                 (RunOptions o) =>
                 {
-                    logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o)); 
-                    //SetYamlPath(o.Path, configuration); 
-                    ctxs = serviceProvider.GetService<IAppSettingsProvider<SessionContext>>();
+                    logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o));
+                    //SetYamlPath(o.Path, configuration);
                     task = serviceProvider.GetService<ISettingProvider<BTask>>().Get(o.Task);
-
-                    ISessionContext ctx = (from c in ctxs.Items where c.Name == (o.Context ?? task.Context) select c).FirstOrDefault();
- 
+                    ctx = serviceProvider.GetService<ISettingProvider<SessionContext>>().Get(o.Context ?? task.Context);
+                     
                     ctx.ContextConfig.conntask.TaskSteps.AddRange(task.TaskSteps);
                     ctx.SessionDriver.ChromeOptions.AddArgument("log-level=3");
                     ctx.SessionDriver.Create();
@@ -155,7 +153,7 @@ namespace BOM
             services.AddLogging(cfg => cfg.AddConsole());
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());
             services.AddSingleton(configuration);
-            services.AddTransient<IAppSettingsProvider<SessionContext>, ContextProvider>();
+            services.AddTransient<ISettingProvider<SessionContext>, ContextProvider>();
             services.AddTransient<ISettingProvider<BTask>, TaskProvider>(); 
             services.AddTransient<ITypeParamProvider, TypeParamProvider>();
             services.AddTransient<ITypeProvider, TypeProvider>(); 

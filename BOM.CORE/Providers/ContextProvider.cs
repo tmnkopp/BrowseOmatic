@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace BOM.CORE
 {
-    public class ContextProvider : IAppSettingsProvider<SessionContext>
+    public class ContextProvider : ISettingProvider<SessionContext>
     {
         #region CTOR 
         private readonly IConfiguration configuration; 
@@ -22,44 +22,37 @@ namespace BOM.CORE
             this.configuration = configuration; 
             this.logger = logger;
         }
-        #endregion 
+        #endregion
         #region PROPS
-        public IEnumerable<SessionContext> Items
-        {
-            get { return GetItems(); }
-        }
+
         #endregion
         #region Methods 
-        private IEnumerable<SessionContext> GetItems()
-        { 
-            var sections = configuration.GetSection("contexts").GetChildren().AsEnumerable();
-            var ConfigContexts = configuration.GetSection("contexts").Get<List<BomConfigContext>>();
- 
-            List<SessionContext> contexts = new List<SessionContext>();
-            foreach (var context in ConfigContexts)
+        public SessionContext Get(string ItemName)
+        {  
+            var ConfigContexts = configuration.GetSection("contexts").Get<List<BomConfigContext>>(); 
+            var ctx = (from c in ConfigContexts where c.name.ToLower()== ItemName.ToLower() select c).FirstOrDefault();
+            SessionContext sc;
+            try
             {
-                logger.LogInformation("{o}", JsonConvert.SerializeObject(context));
-                try
+                var t = Type.GetType("BOM.CORE.SessionDriver, BOM.CORE");
+                var driver = (ISessionDriver)Activator.CreateInstance(t, new object[] { configuration, logger });
+
+                sc = new SessionContext
                 {
-                    var t = Type.GetType("BOM.CORE.SessionDriver, BOM.CORE");  
-                    var driver = (ISessionDriver)Activator.CreateInstance( t, new object[] { configuration, logger });
-                    contexts.Add(new SessionContext
-                    {
-                        Name = context.name,
-                        ContextConfig= context,
-                        SessionDriver = driver,
-                        configuration = this.configuration
-                    }); 
-                } 
-                catch (Exception e)
-                {
-                    logger.LogError("{item}", JsonConvert.SerializeObject(context));
-                    logger.LogError("{e}", e.Message);
-                    Console.Write($" {e.Message} {e.StackTrace} ");
-                    throw e; 
-                }  
-            }  
-            return contexts.ToList();
+                    Name = ctx.name,
+                    ContextConfig = ctx,
+                    SessionDriver = driver,
+                    configuration = this.configuration
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError("{item}", JsonConvert.SerializeObject(ctx));
+                logger.LogError("{e}", e.Message);
+                Console.Write($" {e.Message} {e.StackTrace} ");
+                throw e;
+            }
+            return sc;
         }
         #endregion
     }
