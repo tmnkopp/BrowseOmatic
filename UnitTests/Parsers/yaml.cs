@@ -7,6 +7,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions; 
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using UnitTests;
+using Microsoft.Extensions.Configuration;
+
 namespace CoreTests
 { 
     [TestClass]
@@ -67,6 +70,9 @@ namespace CoreTests
         [TestMethod]
         public void Deserialize_Config()
         {
+            var configuration = new TestServices().Configuration;
+            var c = configuration.GetSection("contexts").Get<List<ConfigContext>>();
+
             var json = File.ReadAllText($@"c:\bom\unittest\a_test.json");
             var result =  JsonSerializer.Deserialize<List<ConfigContext>>(json);
 
