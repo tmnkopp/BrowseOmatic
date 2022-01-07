@@ -52,7 +52,7 @@ namespace CoreTests
             System.Console.WriteLine(yaml);
         }
         [TestMethod]
-        public void JiraCreate()
+        public void Serialize_Config()
         {
             Task task = new Task();
             task.TaskSteps.Add(new TaskStep("URL", new string[] { "https://localhost/login.aspx" }));
@@ -65,7 +65,7 @@ namespace CoreTests
             this.WriteTask(task);
         }
         [TestMethod]
-        public void DEserialize_Config()
+        public void Deserialize_Config()
         {
             var json = File.ReadAllText($@"c:\bom\unittest\a_test.json");
             var result =  JsonSerializer.Deserialize<List<ConfigContext>>(json);
