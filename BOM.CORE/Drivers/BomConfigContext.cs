@@ -9,7 +9,7 @@ namespace BOM.CORE
     {
         public string name { get; set; }
         public string conn { get; set; }
-        public BTask connectiontask { get; set; }
+        public BTask conntask { get; set; }
         public string root { get; set; } 
     }
 }

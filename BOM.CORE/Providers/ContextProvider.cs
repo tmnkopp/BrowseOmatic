@@ -33,12 +33,10 @@ namespace BOM.CORE
         private IEnumerable<SessionContext> GetItems()
         { 
             var sections = configuration.GetSection("contexts").GetChildren().AsEnumerable();
-            var SessionContexts = (
-                    from s in sections   
-                    select new BomConfigContext {name=s["name"], conn=s["conn"], root = s["root"] }
-                ); 
+            var ConfigContexts = configuration.GetSection("contexts").Get<List<BomConfigContext>>();
+ 
             List<SessionContext> contexts = new List<SessionContext>();
-            foreach (var context in SessionContexts)
+            foreach (var context in ConfigContexts)
             {
                 logger.LogInformation("{o}", JsonConvert.SerializeObject(context));
                 try

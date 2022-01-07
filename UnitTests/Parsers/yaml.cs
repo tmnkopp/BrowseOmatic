@@ -57,15 +57,13 @@ namespace CoreTests
         [TestMethod]
         public void Serialize_Config()
         {
+            //https://dayman.cyber-balance.com/jira/login.jsp;s:username,tim.kopp;s:password,T!mCyber2021@;c:submit;
             Task task = new Task();
-            task.TaskSteps.Add(new TaskStep("URL", new string[] { "https://localhost/login.aspx" }));
-            task.TaskSteps.Add(new TaskStep("Key", new string[] { "UserName", "Bill-D-Robertson" }));
-            task.TaskSteps.Add(new TaskStep("Key", new string[] { "Password", "P@ssword1" }));
-            task.TaskSteps.Add(new TaskStep("Click", new string[] {  "LoginButton" })); 
-            task.TaskSteps.Add(new TaskStep("Click", new string[] { "Accept" }));  
-            //CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            //processor.Process(task); 
-            this.WriteTask(task);
+            task.TaskSteps.Add(new TaskStep("URL", new string[] { "https://dayman.cyber-balance.com/jira/login.jsp" }));
+            task.TaskSteps.Add(new TaskStep("Key", new string[] { "username", "tim.kopp" }));
+            task.TaskSteps.Add(new TaskStep("Key", new string[] { "password", "T!mCyber2021@;" }));
+            task.TaskSteps.Add(new TaskStep("Click", new string[] { "submit" }));  
+            this.WriteTask(task, "localagency");
         }
         [TestMethod]
         public void Deserialize_Config()
@@ -86,16 +84,11 @@ namespace CoreTests
 
             Assert.IsInstanceOfType(result, typeof(List<ConfigContext>));
         }
-        public void WriteTask(Task task)
+        public void WriteTask(Task task, string name)
         { 
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string ser = JsonSerializer.Serialize(task, options);
-            ser = Regex.Replace(ser, $@"(&o0\r\n\s\s)|(- \*o0\r\n)", "");
-            File.WriteAllText($"c:\\bom\\unittest\\a_test.json", ser, Encoding.ASCII);
-
-            var json = File.ReadAllText($@"c:\bom\unittest\a_test.json");
-            var Task =
-                JsonSerializer.Deserialize<List<ConfigContext>>(json);
+            var options = new JsonSerializerOptions { WriteIndented = false };
+            string ser = JsonSerializer.Serialize(task, options); 
+            File.WriteAllText($"c:\\bom\\unittest\\{name}.json", ser, Encoding.ASCII); 
         }
     }
 
