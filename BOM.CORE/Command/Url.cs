@@ -10,11 +10,7 @@ namespace BOM.CORE
         public Url(string Url)
         {
             this.url = Url;
-        }
-        public override string ToString()
-        {
-            return $"Url: ['{this.url}']";
-        }
+        } 
         public void Execute(ISessionContext ctx)
         { 
             this.url = this.url.Replace("~", ctx.ContextConfig.root ?? "");

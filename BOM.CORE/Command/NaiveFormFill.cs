@@ -14,11 +14,7 @@ namespace BOM.CORE
         public NaiveFormFill(string Container )
         {
             this.container = Container;
-        }
-        public override string ToString()
-        {
-            return $"NaiveFormFill: ['{this.container}']";
-        }
+        } 
         public void Execute(ISessionContext ctx)
         {
             Random _random = new Random();

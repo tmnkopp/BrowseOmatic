@@ -16,11 +16,7 @@ namespace BOM.CORE
             this.ElementSelect = ElementSelect; 
             this.Contents = Contents; 
             this.UseRegex = UseRegex; 
-        }
-        public override string ToString()
-        {
-            return $"ClickByContent: ['{this.ElementSelect}', '{this.Contents}', {this.UseRegex}]";
-        }
+        } 
         public void Execute(ISessionContext ctx)
         {
             ctx.SessionDriver.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(ctx.SessionDriver.Timeout);

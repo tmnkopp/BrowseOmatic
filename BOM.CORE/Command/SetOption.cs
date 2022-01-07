@@ -14,11 +14,7 @@ namespace BOM.CORE
         {
             this.Element = Element;
             this.index = index;
-        }
-        public override string ToString()
-        {
-            return $"SetOption: ['{this.Element}',{ this.index }]";
-        }
+        } 
         public void Execute(ISessionContext ctx)
         {
             var dvr = ctx.SessionDriver;

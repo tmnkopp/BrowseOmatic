@@ -11,11 +11,7 @@ namespace BOM.CORE
         public SwitchTo(int Tab)
         {
             this.tab = Tab; 
-        }
-        public override string ToString()
-        {
-            return $"SwitchTo: ['{this.tab}']";
-        }
+        } 
         public void Execute(ISessionContext ctx)
         {
             var handles = ctx.SessionDriver.Driver.WindowHandles;

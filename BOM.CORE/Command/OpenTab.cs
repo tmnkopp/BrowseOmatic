@@ -12,11 +12,7 @@ namespace BOM.CORE
         public OpenTab(string Url )
         {
             this.url = Url.Trim();
-        }
-        public override string ToString()
-        {
-            return $"OpenTab: ['{this.url}']";
-        }
+        } 
         public void Execute(ISessionContext ctx)
         { 
             this.url = this.url.Replace("~", ctx.ContextConfig.root ?? "");
