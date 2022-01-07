@@ -22,20 +22,9 @@ namespace BOM
         public bool Verbose { get; set; }
         [Option('k', "KeepAlive", HelpText = "Dispose end of session.", Default = false)]
         public bool KeepAlive { get; set; }
-    }
-    [Serializable]
-    [Verb("exe", HelpText = "Type executor.")]
-    public class ExeOptions
-    { 
-        [Option('p', "Prompt", HelpText = "Prompt for Param")]
-        public bool Prompt { get; set; }
-        [Option('t', "Type", HelpText = "Execute an ICommand")]
-        public string Type { get; set; }
-        [Option('a', "Assembly", HelpText = "Sets an Assembly")]
-        public string Assembly { get; set; }
-        [Option('v', "Verbose", HelpText = "Print details during execution.")]
-        public bool Verbose { get; set; }
-    }
+        [Option('h', "Headless", HelpText = "Headless session.", Default = false)]
+        public bool Headless { get; set; }
+    } 
     [Serializable]
     [Verb("config", HelpText = "Config setter.")]
     public class ConfigOptions
