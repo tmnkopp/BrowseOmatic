@@ -13,7 +13,11 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace BOM.CORE 
 {
-    public class TaskProvider : IAppSettingProvider<BTask>
+    public interface ITaskProvider 
+    {
+        BTask GetTask(string Taskname);
+    }
+    public class TaskProvider : ITaskProvider 
     {
         #region CTOR
         private readonly IConfiguration configuration;
@@ -25,32 +29,15 @@ namespace BOM.CORE
             configuration = Configuration;
             logger = Logger;
         }
-        #endregion 
-        #region PROPS
-        public IEnumerable<BTask> Items
-        {
-            get { return GetItems(); }
-        }
-        #endregion
+        #endregion  
         #region Methods 
-        private IEnumerable<BTask> GetItems()
+        public BTask GetTask(string Taskname)
         {
             var yamltasks = configuration.GetSection("paths:yamltasks")?.Value;
-            if (yamltasks == null)
-            {
-                logger.LogWarning("task path null : {o}", yamltasks);
-                logger.LogWarning("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
-                throw new Exception("Invalid task path enviornment");
-            }
-            string bomroot = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", "");
-            if (string.IsNullOrEmpty(yamltasks))
-                yamltasks = $"{bomroot}unittest.yaml";
-            if (!yamltasks.Contains(":\\"))
-                yamltasks = $"{bomroot}{yamltasks}";
-            if (!yamltasks.EndsWith(".yaml"))
-                yamltasks += ".yaml";
-
-            List<BTask> tasks = new List<BTask>();
+            var taskfile = $"{yamltasks}{Taskname}";
+            if (!taskfile.EndsWith(".yaml"))
+                taskfile += ".yaml";
+             
             string yamlraw = "";
             using (TextReader tr = File.OpenText(yamltasks))
                 yamlraw = tr.ReadToEnd().Replace("tasks:", "");
@@ -58,9 +45,10 @@ namespace BOM.CORE
             var deserializer = new DeserializerBuilder()
                .WithNamingConvention(CamelCaseNamingConvention.Instance)
                .Build();
+            BTask task;
             try
             {
-                tasks = deserializer.Deserialize<List<BTask>>(yamlraw);
+                task = deserializer.Deserialize<BTask>(yamlraw);
             }
             catch (Exception ex)
             {
@@ -68,7 +56,7 @@ namespace BOM.CORE
                 logger.LogError("GetExecutingAssembly : {o}", Assembly.GetExecutingAssembly().Location);
                 throw new Exception($"YamlStream Deserialize Failed: {ex.Message}");
             } 
-            return tasks.ToList();
+            return task;
         }
         #endregion 
     }

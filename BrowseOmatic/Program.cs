@@ -26,20 +26,18 @@ namespace BOM
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             IAppSettingProvider<SessionContext> ctxs;
-            IAppSettingProvider<BTask> tasks;
-            ITypeParamProvider typeParamProvider; 
+            BTask task;
 
-            var exit = Parser.Default.ParseArguments<ExeOptions, RunOptions, ConfigOptions>(args)
+            var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
                 .MapResult(
                 (RunOptions o) =>
                 {
                     logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o)); 
                     SetYamlPath(o.Path, configuration);
 
-                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>(); 
-                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
+                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
+                    task = serviceProvider.GetService<ITaskProvider>().GetTask(o.Task);
 
-                    var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == (o.Context ?? task.Context) select c).FirstOrDefault();
 
 
@@ -50,29 +48,10 @@ namespace BOM
                     if (!o.KeepAlive) ctx.SessionDriver.Dispose();
                     return 0;
                 },
-                (ExeOptions o) => {
-
-                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>(); 
-                    typeParamProvider = serviceProvider.GetService<ITypeParamProvider>();
-                    logger.LogInformation("{o}", JsonConvert.SerializeObject(o)); 
-                     
-                    var typ = Assm.GetTypes().Where(t => t.Name.Contains(o.Type)).FirstOrDefault();
-
-                    Type type = Type.GetType($"{typ.FullName}, {typ.Namespace}");
-                    if (type==null) type = Type.GetType($"{typ.FullName}, BOM");
-                    var oparam = typeParamProvider.Prompt(type);
-                    ICommand obj = (ICommand)Activator.CreateInstance(Type.GetType($"{typ.FullName}, {typ.Namespace}"), oparam);
-
-                    var objctx = obj.GetType().GetCustomAttribute<CommandMeta>()?.Context;
-                    ISessionContext ctx = (from c in ctxs.Items where c.Name == objctx select c).FirstOrDefault();
-                    obj.Execute(ctx);
-                    return 0;
-
-                }, (ConfigOptions o) => {
+                (ConfigOptions o) => {
 
                     StringBuilder sb = new StringBuilder();
-                    SetYamlPath(o.Path, configuration);
-                    tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
+                    SetYamlPath(o.Path, configuration); 
 
                     sb.AppendFormat("\n{0}contexts{0}", new string('-', 9));
                     var contexts = configuration.GetSection("contexts").GetChildren();
@@ -97,13 +76,7 @@ namespace BOM
                         logger.LogWarning(" TaskProvider config.GetSection null: {o}", yamltasks);
                     else 
                         sb.AppendFormat("\npaths:yamltasks : {0}", yamltasks.Value);
-
-
-
-                    sb.AppendFormat("\n{0}tasks{0}", new string('-', 9));
-                    foreach (var t in tasks.Items)
-                        sb.AppendFormat("\n\t{0}", $"bom -k -p {o.Path} -t {t.Name}");
-
+  
                     logger.LogInformation("{0}", sb.ToString());
                     return 0;
                 },
@@ -182,7 +155,7 @@ namespace BOM
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());
             services.AddSingleton(configuration);
             services.AddTransient<IAppSettingProvider<SessionContext>, ContextProvider>();
-            services.AddTransient<IAppSettingProvider<BTask>, TaskProvider>(); 
+            services.AddTransient<ITaskProvider, TaskProvider>(); 
             services.AddTransient<ITypeParamProvider, TypeParamProvider>();
             services.AddTransient<ITypeProvider, TypeProvider>(); 
             return services.BuildServiceProvider();
