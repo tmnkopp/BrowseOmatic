@@ -33,15 +33,13 @@ namespace BOM
                 (RunOptions o) =>
                 {
                     logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o)); 
-                    SetYamlPath(o.Path, configuration);
+                    //SetYamlPath(o.Path, configuration);
 
                     ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
                     task = serviceProvider.GetService<ITaskProvider>().GetTask(o.Task);
 
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == (o.Context ?? task.Context) select c).FirstOrDefault();
-
-
-
+                     
                     CommandProcessor processor = new CommandProcessor(ctx, logger);
                     processor.Process(task);
 
