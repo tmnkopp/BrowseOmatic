@@ -38,24 +38,24 @@ namespace BOM.CORE
                     select new BomConfigContext {name=s["name"], conn=s["conn"], root = s["root"] }
                 ); 
             List<SessionContext> contexts = new List<SessionContext>();
-            foreach (var item in SessionContexts)
+            foreach (var context in SessionContexts)
             {
-                logger.LogInformation("{o}", JsonConvert.SerializeObject(item));
+                logger.LogInformation("{o}", JsonConvert.SerializeObject(context));
                 try
                 {
                     var t = Type.GetType("BOM.CORE.SessionDriver, BOM.CORE");  
                     var driver = (ISessionDriver)Activator.CreateInstance( t, new object[] { configuration, logger });
                     contexts.Add(new SessionContext
                     {
-                        Name = item.name,
-                        configContext= item,
+                        Name = context.name,
+                        configContext= context,
                         SessionDriver = driver,
                         configuration = this.configuration
                     }); 
                 } 
                 catch (Exception e)
                 {
-                    logger.LogError("{item}", JsonConvert.SerializeObject(item));
+                    logger.LogError("{item}", JsonConvert.SerializeObject(context));
                     logger.LogError("{e}", e.Message);
                     Console.Write($" {e.Message} {e.StackTrace} ");
                     throw e; 

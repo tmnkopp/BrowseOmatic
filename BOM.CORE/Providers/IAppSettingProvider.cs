@@ -9,4 +9,8 @@ namespace BOM.CORE
     {
         IEnumerable<T> Items { get; } 
     }
+    public interface IAppSettingsProvider<T>
+    {
+        IEnumerable<T> Items { get; }
+    }
 }

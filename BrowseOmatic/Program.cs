@@ -35,12 +35,18 @@ namespace BOM
                 {
                     logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o)); 
                     SetYamlPath(o.Path, configuration);
-                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>();
+
+                    ctxs = serviceProvider.GetService<IAppSettingProvider<SessionContext>>(); 
                     tasks = serviceProvider.GetService<IAppSettingProvider<BTask>>();
+
                     var task = (from t in tasks.Items where t.Name.ToUpper().Contains(o.Task.ToUpper()) select t).FirstOrDefault();
                     ISessionContext ctx = (from c in ctxs.Items where c.Name == (o.Context ?? task.Context) select c).FirstOrDefault();
+
+
+
                     CommandProcessor processor = new CommandProcessor(ctx, logger);
                     processor.Process(task);
+
                     if (!o.KeepAlive) ctx.SessionDriver.Dispose();
                     return 0;
                 },
@@ -176,7 +182,7 @@ namespace BOM
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());
             services.AddSingleton(configuration);
             services.AddTransient<IAppSettingProvider<SessionContext>, ContextProvider>();
-            services.AddTransient<IAppSettingProvider<BTask>, TaskProvider>();
+            services.AddTransient<IAppSettingProvider<BTask>, TaskProvider>(); 
             services.AddTransient<ITypeParamProvider, TypeParamProvider>();
             services.AddTransient<ITypeProvider, TypeProvider>(); 
             return services.BuildServiceProvider();
