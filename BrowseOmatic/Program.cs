@@ -27,8 +27,7 @@ namespace BOM
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             ISessionContext ctx;
             BTask task;
-           
-
+            
             var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
                 .MapResult(
                 (RunOptions o) =>
@@ -79,11 +78,10 @@ namespace BOM
                         foreach (var context in ConfigContexts)
                         {
                             sb.AppendFormat("\n{0}context: {1}{0}", new string('-', 9), context.name);
-                            sb.AppendFormat("\n{0}root: ", context.root);
+                            sb.AppendFormat("\nroot: {0}", context.root);
                             sb.AppendFormat("\n{0}", JsonConvert.SerializeObject(context.conntask));
                         }
-
-
+                     
                     logger.LogInformation("{0}", sb.ToString());
                     return 0;
                 },
@@ -91,8 +89,7 @@ namespace BOM
             serviceProvider.Dispose();
         } 
         private static ServiceProvider RegisterServices(string[] args)
-        {
-            
+        { 
             try
             {
                 var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
@@ -127,19 +124,7 @@ namespace BOM
 
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
             var bomloc = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User)?.ToLower().Replace("bom.exe", "");
-
-            // if (Regex.IsMatch(exeassmloc, @"\\appdata\\") && bomloc != null)
-            // { 
-            //     try
-            //     {
-            //         File.Delete($"{exeassmloc}appsettings.json");
-            //         File.Copy($"{bomloc}appsettings.json", $"{exeassmloc}appsettings.json");
-            //     }
-            //     catch (Exception)
-            //     { 
-            //         throw;
-            //     } 
-            // }
+ 
             Console.WriteLine($"SetBasePath: {bomloc}");
 
             IConfiguration configuration = new ConfigurationBuilder()
