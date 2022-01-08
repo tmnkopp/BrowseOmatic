@@ -26,31 +26,33 @@ namespace BOM
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             ISessionContext ctx;
-            ITask task;
+            BTask task;
 
             var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
                 .MapResult(
                 (RunOptions o) =>
                 {
                     logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o));
-                    //SetYamlPath(o.Path, configuration);
+            
                     task = serviceProvider.GetService<ISettingProvider<BTask>>().Get(o.Task);
                     ctx = serviceProvider.GetService<ISettingProvider<SessionContext>>().Get(o.Context ?? task.Context);
-                     
-                    ctx.ContextConfig.conntask.TaskSteps.AddRange(task.TaskSteps);
+
+                    task.TaskSteps.InsertRange(0, ctx.ContextConfig.conntask.TaskSteps); 
+
                     ctx.SessionDriver.ChromeOptions.AddArgument("log-level=3");
+                    if (o.Headless)
+                        ctx.SessionDriver.ChromeOptions.AddArgument("headless");
                     ctx.SessionDriver.Create();
 
                     CommandProcessor processor = new CommandProcessor(ctx, logger);
-                    processor.Process(ctx.ContextConfig.conntask);
+                    processor.Process(task);
 
                     if (!o.KeepAlive) ctx.SessionDriver.Dispose();
                     return 0;
                 },
                 (ConfigOptions o) => {
 
-                    StringBuilder sb = new StringBuilder();
-                    //SetYamlPath(o.Path, configuration); 
+                    StringBuilder sb = new StringBuilder(); 
 
                     sb.AppendFormat("\n{0}contexts{0}", new string('-', 9));
                     var contexts = configuration.GetSection("contexts").GetChildren();
@@ -58,7 +60,7 @@ namespace BOM
                         logger.LogWarning("{o}", contexts);
                     else
                         foreach (var context in contexts)
-                            sb.AppendFormat("\n{0} \t{2} \n{1}", context["name"], context["conn"], context["root"]);
+                            sb.AppendFormat("\n{0} \t{2} \n{1}", context["name"], context["conntask"], context["root"]);
 
                     sb.AppendFormat("\n\n{0}vars{0}", new string('-', 9));
                     sb.AppendFormat("\n{0}", JsonConvert.SerializeObject(o));
@@ -81,17 +83,7 @@ namespace BOM
                 },
                 errs => 1);
             serviceProvider.Dispose();
-        }
-        private static void SetYamlPath(string Path, IConfiguration configuration) {
-            if (!string.IsNullOrEmpty(Path.ToString()))
-            {
-                if (!Path.Contains(":\\"))
-                    Path = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User).ToLower().Replace("bom.exe", Path);
-                if (!Path.EndsWith(".yaml"))
-                    Path += ".yaml";
-                configuration.GetSection("paths:yamltasks").Value = Path.ToString(); 
-            }
-        }
+        } 
         private static ServiceProvider RegisterServices(string[] args)
         {
             
@@ -143,7 +135,7 @@ namespace BOM
             }
              
             IConfiguration configuration = new ConfigurationBuilder()
-                  .SetBasePath(exeassmloc)
+                  .SetBasePath(bomloc)
                   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                   .AddEnvironmentVariables()
                   .AddCommandLine(args)
