@@ -27,6 +27,7 @@ namespace BOM
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             ISessionContext ctx;
             BTask task;
+           
 
             var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
                 .MapResult(
@@ -52,21 +53,12 @@ namespace BOM
                 },
                 (ConfigOptions o) => {
 
-                    StringBuilder sb = new StringBuilder(); 
-
-                    sb.AppendFormat("\n{0}contexts{0}", new string('-', 9));
-                    var contexts = configuration.GetSection("contexts").GetChildren();
-                    if (contexts == null)
-                        logger.LogWarning("{o}", contexts);
-                    else
-                        foreach (var context in contexts)
-                            sb.AppendFormat("\n{0} \t{2} \n{1}", context["name"], context["conntask"], context["root"]);
-
+                    StringBuilder sb = new StringBuilder();
+   
                     sb.AppendFormat("\n\n{0}vars{0}", new string('-', 9));
                     sb.AppendFormat("\n{0}", JsonConvert.SerializeObject(o));
                     sb.AppendFormat("\nEnVar: {0}", Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User));
-                    sb.AppendFormat("\nAssmLoc: {0}", Assembly.GetExecutingAssembly().Location);
-                    sb.AppendFormat("\nAppSetting: {0}", $"{Assembly.GetExecutingAssembly().Location}\\appsettings.json");
+                    sb.AppendFormat("\nAssmLoc: {0}", Assembly.GetExecutingAssembly().Location); 
                      
                     var paths = configuration.GetSection("paths");
                     if (paths == null)
@@ -78,6 +70,20 @@ namespace BOM
                     else 
                         sb.AppendFormat("\npaths:yamltasks : {0}", yamltasks.Value);
   
+                     
+                    var ConfigContexts = configuration.GetSection("contexts").Get<List<BomConfigContext>>();
+                    sb.AppendFormat("\n{0}contexts{0}", new string('-', 9));
+                    if (ConfigContexts == null)
+                        logger.LogWarning("{o}", ConfigContexts);
+                    else
+                        foreach (var context in ConfigContexts)
+                        {
+                            sb.AppendFormat("\n{0}context: {1}{0}", new string('-', 9), context.name);
+                            sb.AppendFormat("\n{0}root: ", context.root);
+                            sb.AppendFormat("\n{0}", JsonConvert.SerializeObject(context.conntask));
+                        }
+
+
                     logger.LogInformation("{0}", sb.ToString());
                     return 0;
                 },
@@ -120,27 +126,29 @@ namespace BOM
             }
 
             var exeassmloc = Assembly.GetExecutingAssembly().Location.ToLower().Replace("bom.dll", "");
-            var bomloc = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User)?.ToLower().Replace("bom.exe", ""); 
-            if (Regex.IsMatch(exeassmloc, @"\\appdata\\") && bomloc != null)
-            { 
-                try
-                {
-                    File.Delete($"{exeassmloc}appsettings.json");
-                    File.Copy($"{bomloc}appsettings.json", $"{exeassmloc}appsettings.json");
-                }
-                catch (Exception)
-                { 
-                    throw;
-                } 
-            }
-             
+            var bomloc = Environment.GetEnvironmentVariable("bom", EnvironmentVariableTarget.User)?.ToLower().Replace("bom.exe", "");
+
+            // if (Regex.IsMatch(exeassmloc, @"\\appdata\\") && bomloc != null)
+            // { 
+            //     try
+            //     {
+            //         File.Delete($"{exeassmloc}appsettings.json");
+            //         File.Copy($"{bomloc}appsettings.json", $"{exeassmloc}appsettings.json");
+            //     }
+            //     catch (Exception)
+            //     { 
+            //         throw;
+            //     } 
+            // }
+            Console.WriteLine($"SetBasePath: {bomloc}");
+
             IConfiguration configuration = new ConfigurationBuilder()
                   .SetBasePath(bomloc)
                   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                   .AddEnvironmentVariables()
                   .AddCommandLine(args)
-                  .Build();
-             
+                  .Build(); 
+
             var services = new ServiceCollection();
             services.AddLogging(cfg => cfg.AddConsole());
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());

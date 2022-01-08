@@ -31,5 +31,7 @@
     }  
     # explorer.exe d:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\bom
     explorer.exe C:\BOM  
+   
 } 
 Invoke-BOM-Workflow -with " release commit  " 
+bom config

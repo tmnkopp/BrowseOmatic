@@ -16,7 +16,6 @@ namespace BOM.CORE
         {
             foreach (string ele in element.Split(","))
             {
-                //ctx.SessionDriver.Pause(0);
                 ctx.SessionDriver.Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(ctx.SessionDriver.Timeout);
                 ctx.SessionDriver.Click(ele);
             } 
