@@ -24,11 +24,8 @@ namespace UnitTests
 
             var mockp = new Mock<ILogger<ContextProvider>>();
             ILogger<ContextProvider> loggerp = mockp.Object;
-
-  
-
-            var context = new ContextProvider(configuration,  loggerp)
-                .Items.Where((t) => t.Name.Contains("unittest")).FirstOrDefault();
+             
+            var context = new ContextProvider(configuration,  loggerp).Get("unittest");
 
             // task -c rtime 
             Assert.IsNotNull(context); 

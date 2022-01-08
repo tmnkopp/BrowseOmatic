@@ -17,7 +17,7 @@ namespace UnitTests
             var mock = new Mock<ILogger<ContextProvider>>();
             ILogger<ContextProvider> logger = mock.Object;
             ContextProvider contextProvider = new ContextProvider(config, logger);
-            SessionContext ctx = (from c in contextProvider.Items where c.Name == context select c).FirstOrDefault();
+            SessionContext ctx =  contextProvider.Get(context);
             //ctx.SessionDriver.Connect(ctx.configContext.conn);
             return ctx;
         }
