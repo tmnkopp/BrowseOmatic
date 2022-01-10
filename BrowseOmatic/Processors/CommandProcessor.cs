@@ -42,7 +42,7 @@ namespace BOM
                 Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}") ?? Type.GetType($"{typ.FullName}, BOM");
                 ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                 List<object> oparms = new List<object>();
-                int parmcnt = 0;
+                int parmcnt = 0; 
                 foreach (ParameterInfo parm in PI)
                 {
                     string value = null;
