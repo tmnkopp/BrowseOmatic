@@ -34,6 +34,4 @@
    
 } 
 Invoke-BOM-Workflow -with " release commit  " 
-cls;
-bom  config;
-bom run -t POAM -k  ;
+cls; bom config;
