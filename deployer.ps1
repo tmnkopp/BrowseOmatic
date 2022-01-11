@@ -30,8 +30,7 @@
         git add .; git commit -m $message; git push; 
     }  
     # explorer.exe d:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\bom
-    explorer.exe C:\BOM  
-   
+    explorer.exe C:\BOM   
 } 
 Invoke-BOM-Workflow -with " release commit  " 
 cls; bom config;
