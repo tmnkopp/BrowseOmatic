@@ -51,7 +51,7 @@ namespace BOM
                         value = taskstep.Args[parmcnt];
                         if (value.StartsWith("-p")) value = Prompt(parm);
                     }
-                    parmcnt++;
+                    parmcnt++; 
                     if (parm.ParameterType.Name.ToLower().Contains("int")) oparms.Add(Convert.ToInt32(value ?? "0"));
                     else if (parm.ParameterType.Name.ToLower().Contains("bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));
                     else if (parm.ParameterType.Name.ToLower().Contains("double")) oparms.Add(Convert.ToDouble(value ?? "0"));

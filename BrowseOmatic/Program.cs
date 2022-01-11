@@ -26,15 +26,15 @@ namespace BOM
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             ISessionContext ctx;
-            BTask task;
+            BTask task = new BTask();
             
             var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
                 .MapResult(
                 (RunOptions o) =>
                 {
                     logger.LogInformation("RunOptions: {o}", JsonConvert.SerializeObject(o));
-            
-                    task = serviceProvider.GetService<ISettingProvider<BTask>>().Get(o.Task);
+                    if (o.Task != null)
+                        task = serviceProvider.GetService<ISettingProvider<BTask>>().Get(o.Task);
                     ctx = serviceProvider.GetService<ISettingProvider<SessionContext>>().Get(o.Context ?? task.Context);
 
                     task.TaskSteps.InsertRange(0, ctx.ContextConfig.conntask.TaskSteps); 
