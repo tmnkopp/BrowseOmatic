@@ -76,30 +76,7 @@ namespace UnitTests
             var st = $"{vals[0]}{sb.ToString()}";
             Assert.IsNotNull(st);
         }
-
-        [TestMethod]
-        public void RadFormFill_Fills()
-        {
-            var config = new TestServices().Configuration; 
-            ILogger<ContextProvider> logger = new Mock<ILogger<ContextProvider>>().Object;
-            
-            ISessionDriver dvr = new SessionDriver( config , logger ); 
-            ISessionContext ctx = new SessionContext();
-            ctx.Name = "unittest";
-            ctx.SessionDriver = dvr;
-            ctx.ContextConfig = new BomConfigContext();
-            ctx.ContextConfig.root = "https://localhost/";
-            ctx.ContextConfig.conn = "driver:BOM.CORE.SessionDriver, BOM.CORE;https://localhost/login.aspx;s:UserName,Bill-D-Robertson;s:Password,P@ssword1;c:LoginButton;c:Accept;";
-
-            ctx.SessionDriver.Create(); 
-            new ClickByContent("li.rtsLI", ".*EINS.*", true).Execute(ctx); 
-            new Click("_Launch").Execute(ctx);
-            new Click("_AddNewRecordButton").Execute(ctx);
-            new RadFormFill(".rgEditRow").Execute(ctx);  
-
-            Assert.IsNotNull(ctx);
-
-        }
+         
         [TestMethod]
         public void OpenTab_Opens()
         {
