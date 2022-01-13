@@ -46,11 +46,22 @@ namespace UnitTests
             Assert.IsNotNull(instance);
 
         }
-
+        [TestMethod]
         public void AssemblyTest()
-        { 
-            StringBuilder sb = new StringBuilder(); 
-            Assert.IsNotNull(sb);
+        {
+            var args = new object[] { "str", 90 };
+            var mt = new MockTest();
+            mt.Method(args); 
+
+            Assert.IsNotNull(mt);
+        }
+    }
+
+    public class MockTest {
+        public void Method(object[] args) {
+            string a1 = (string)args[0];
+            string a2 = (string)Convert.ChangeType(args[1], typeof(string));
+ 
         }
     }
 } 
