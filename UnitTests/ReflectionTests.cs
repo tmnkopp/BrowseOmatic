@@ -59,8 +59,10 @@ namespace UnitTests
 
     public class MockTest {
         public void Method(object[] args) {
+
             string a1 = (string)Convert.ChangeType(args[0], typeof(string)); 
             int a2 = (int)Convert.ChangeType(args[1], typeof(int)); 
+
         }
     }
 } 
