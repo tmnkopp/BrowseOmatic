@@ -26,6 +26,7 @@ namespace BOM
             IConfiguration configuration = serviceProvider.GetService<IConfiguration>();
             ILogger logger = serviceProvider.GetService<ILogger<Program>>();
             ISessionContext ctx;
+        
             BTask task = new BTask();
             
             var exit = Parser.Default.ParseArguments<RunOptions, ConfigOptions>(args)
@@ -135,7 +136,11 @@ namespace BOM
                   .Build(); 
 
             var services = new ServiceCollection();
-            services.AddLogging(cfg => cfg.AddConsole());
+            services.AddLogging(
+                builder => {
+                    builder.AddConsole();
+                    //builder.AddSerilog(); 
+                });
             services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<Program>>());
             services.AddSingleton(configuration);
             services.AddTransient<ISettingProvider<SessionContext>, ContextProvider>();

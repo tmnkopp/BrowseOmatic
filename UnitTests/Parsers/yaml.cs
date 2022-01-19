@@ -9,6 +9,7 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using UnitTests;
 using Microsoft.Extensions.Configuration;
+using BOM.CORE;
 
 namespace CoreTests
 { 
@@ -83,12 +84,36 @@ namespace CoreTests
             ts1.AddRange(ts2);
 
             Assert.IsInstanceOfType(result, typeof(List<ConfigContext>));
-        }
+        } 
         public void WriteTask(Task task, string name)
         { 
             var options = new JsonSerializerOptions { WriteIndented = false };
             string ser = JsonSerializer.Serialize(task, options); 
             File.WriteAllText($"c:\\bom\\unittest\\{name}.json", ser, Encoding.ASCII); 
+        }
+        [TestMethod]
+        public void WriteStep( )
+        {
+            var lst = new List<BomStep>();
+            var step = new BomStep();
+            step.AddRange(new object[] { "//xpath[@id='unittest1']", "keys" });
+            lst.Add(step); 
+            step = new BomStep();
+            step.AddRange(new object[] { "//xpath[@id='unittest2']"});
+            lst.Add(step);
+
+            var options = new JsonSerializerOptions { WriteIndented = false };
+            string ser = JsonSerializer.Serialize(lst, options); 
+            File.WriteAllText($"c:\\bom\\unittest\\a_test.json", ser, Encoding.ASCII);
+
+            var deser = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+ 
+            var raw = File.ReadAllText("c:\\bom\\unittest\\a_test.json");
+            var t = deser.Deserialize<List<BomStep>>(raw);
+            var steps = t[0];
+
         }
     }
 
@@ -125,5 +150,12 @@ namespace CoreTests
         }
         public string Cmd { get; set; }
         public string[] Args { get; set; }
+    }
+    [Serializable]
+    public class BomStep : List<object>
+    {
+        public BomStep()
+        { 
+        }
     }
 }

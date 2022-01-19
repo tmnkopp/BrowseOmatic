@@ -35,8 +35,7 @@ namespace BOM
                     ctx.SessionDriver.SetWait(Convert.ToDouble(taskstep.Args[0] ?? "1")); continue;
                 }
 
-                var typ = Assm.GetTypes()
-                .Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand)
+                var typ = Assm.GetTypes().Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand)
                 .IsAssignableFrom(t)).FirstOrDefault();
 
                 Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}") ?? Type.GetType($"{typ.FullName}, BOM");
@@ -45,17 +44,12 @@ namespace BOM
                 int parmcnt = 0; 
                 foreach (ParameterInfo parm in PI)
                 {
-                    string value = null;
-                    if (taskstep.Args.Count() >= parmcnt)
-                    {
-                        value = taskstep.Args[parmcnt];
-                        if (value.StartsWith("-p")) value = Prompt(parm);
-                    }
+                    string value = (taskstep.Args.Count() >= parmcnt) ? taskstep.Args[parmcnt] : null; 
                     parmcnt++; 
                     if (parm.ParameterType.Name.ToLower().Contains("int")) oparms.Add(Convert.ToInt32(value ?? "0"));
                     else if (parm.ParameterType.Name.ToLower().Contains("bool")) oparms.Add(Convert.ToBoolean(value ?? "false"));
                     else if (parm.ParameterType.Name.ToLower().Contains("double")) oparms.Add(Convert.ToDouble(value ?? "0"));
-                    else oparms.Add(value ?? "");
+                    else oparms.Add(value);
                 }
                 try
                 {
@@ -70,11 +64,6 @@ namespace BOM
                 }
             }
             
-        }
-        private static string Prompt(ParameterInfo parm)
-        {
-            Console.Write($"\n{parm.Name} ({parm.ParameterType.Name}):");
-            return Console.ReadLine();
-        }
+        } 
     }
 }
