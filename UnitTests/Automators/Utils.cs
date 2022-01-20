@@ -1,8 +1,10 @@
 ﻿using BOM.CORE;
+using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using YamlDotNet.Serialization;
@@ -53,5 +55,6 @@ namespace UnitTests
             Console.WriteLine("ExitCode: {0}", process.ExitCode);
             process.Close();
         }
+       
     }
 }

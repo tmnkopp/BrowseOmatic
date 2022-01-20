@@ -3,12 +3,16 @@ using BOM.CORE;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -68,6 +72,92 @@ namespace UnitTests
             //task.TaskSteps.Add(new TaskStep("Script", new string[] { "document.getElementsByClassName('btn_green')[0].click();" }));  
             tasks.Add(task);  
             Utils.WriteTasks(tasks);
-        } 
+        }
+        [TestMethod]
+        public void Logger_Resolves()
+        {
+            string raw = File.ReadAllText(@"d:\logs\log202201191240.txt");
+            MatchCollection matches = Regex.Matches(raw, @"\[WRN\].*(\{.+invalid element state.+\})");
+            raw = $"[{ string.Join(",", (from System.Text.RegularExpressions.Match m in matches select m.Groups[1].Value).ToList()) }]";
+
+            string xpath = "//*[@id='ctl00_ContentPlaceHolder1_CBButtPanel1_btnEdit']";
+            dynamic json = JsonConvert.DeserializeObject(raw);
+            dynamic query = (from j in ((JArray)json)
+                             where j["xpath"].ToString() == xpath
+                             select j).FirstOrDefault();
+            var item = query.method.Value;
+        }
+       
+        [TestMethod]
+        public void bomdriver_Resolves()
+        {
+            var ctx = Session.Context("jira");
+            var dvr = ctx.SessionDriver.Driver; 
+            ctx.SessionDriver.Create();
+            WebDriverWait wait = new WebDriverWait(dvr, TimeSpan.FromSeconds(1));
+
+            var mtx = new List<object[]>();
+            mtx.Add(new object[] { "https://dayman.cyber-balance.com/jira/secure/Dashboard.jspa?selectPageId=12340" });
+            mtx.Add(new object[] { "//table[@class='issue-table']//td[@class='issuekey']/a" });
+            mtx.Add(new object[] { "//span[@class='dropdown-text']" });
+            mtx.Add(new object[] { "//span[contains(., 'Log')]" });
+            mtx.Add(new object[] { "//input[contains(@id, 'log-work-time-logged')]", "15m" });
+            mtx.Add(new object[] { "//input[contains(@id, 'log-work-submit')]" });
+            foreach (object[] obs in mtx)
+            {
+                string xpath = (string)obs[0];
+                if (xpath.StartsWith("http"))
+                {
+                    dvr.Navigate().GoToUrl(xpath);
+                    continue;
+                }
+                object[] args = (obs.Count() > 0) ? obs.Skip(1).ToArray() : null; 
+                var elm = (from e in wait.Until(drv => drv.FindElements(By.XPath($"{xpath}")))
+                           where !Regex.IsMatch(e.TagName, $@"(span|div|table|td|tr)")
+                           select e).FirstOrDefault();
+                try
+                {
+                    if (args.Count() == 0)
+                    {
+                        elm.Click();
+                    }
+                    else
+                    {
+                        elm.Clear();
+                        elm.SendKeys(xpath.ToString());
+                    }
+                }
+                catch (TargetInvocationException ex)
+                {
+                   // _logger.Warning($"{{@model}}", new
+                   // {
+                   //     element_tag = elm.TagName,
+                   //     element_id = elm.GetAttribute("id"),
+                   //     xpath = xpath,
+                   //     exception = ex.InnerException.Message
+                   // });
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                if (AlertPresent(dvr))
+                {
+                    dvr.SwitchTo().Alert().Accept();
+                }
+            }
+        }
+        public static bool AlertPresent(ChromeDriver d)
+        {
+            try
+            {
+                d.SwitchTo().Alert();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     } 
 }
