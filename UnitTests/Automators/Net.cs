@@ -113,9 +113,9 @@ namespace UnitTests
             var mtx = new List<object[]>();
             mtx.Add(new object[] { "https://dayman.cyber-balance.com/jira/secure/Dashboard.jspa?selectPageId=12340" });
             mtx.Add(new object[] { "//table[@class='issue-table']//td[@class='issuekey']/a" });
-            mtx.Add(new object[] { "//span[@class='dropdown-text']" });
+            mtx.Add(new object[] { "//a[@id='opsbar-operations_more']//span[contains(., 'More')]" });
             mtx.Add(new object[] { "//span[contains(., 'Log')]" });
-            mtx.Add(new object[] { "//input[contains(@id, 'log-work-time-logged')]", "15m" });
+            mtx.Add(new object[] { "//input[contains(@id, 'log-work-time-logged')]", "5m" });
             mtx.Add(new object[] { "//input[contains(@id, 'log-work-submit')]" });
             foreach (object[] obs in mtx)
             {
@@ -126,8 +126,7 @@ namespace UnitTests
                     continue;
                 }
                 object[] args = (obs.Count() > 0) ? obs.Skip(1).ToArray() : null; 
-                var elm = (from e in wait.Until(drv => drv.FindElements(By.XPath($"{xpath}")))
-                           where !Regex.IsMatch(e.TagName, $@"(span|div|table|td|tr)")
+                var elm = (from e in wait.Until(drv => drv.FindElements(By.XPath($"{xpath}"))) 
                            select e).FirstOrDefault();
                 try
                 {
@@ -138,7 +137,7 @@ namespace UnitTests
                     else
                     {
                         elm.Clear();
-                        elm.SendKeys(xpath.ToString());
+                        elm.SendKeys(args[0].ToString());
                     }
                 }
                 catch (TargetInvocationException ex)
