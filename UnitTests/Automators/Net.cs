@@ -105,18 +105,18 @@ namespace UnitTests
             var dvr = ctx.SessionDriver.Driver; 
             ctx.SessionDriver.Create();
             WebDriverWait wait = new WebDriverWait(dvr, TimeSpan.FromSeconds(1));
-
-            BTask task = ctx.ContextConfig.conntask;
+             
             CommandProcessor processor = new CommandProcessor(ctx, logger);
-            processor.Process(task);
+            processor.Process(ctx.ContextConfig.conntask);
 
             var mtx = new List<object[]>();
             mtx.Add(new object[] { "https://dayman.cyber-balance.com/jira/secure/Dashboard.jspa?selectPageId=12340" });
             mtx.Add(new object[] { "//table[@class='issue-table']//td[@class='issuekey']/a" });
             mtx.Add(new object[] { "//a[@id='opsbar-operations_more']//span[contains(., 'More')]" });
             mtx.Add(new object[] { "//span[contains(., 'Log')]" });
-            mtx.Add(new object[] { "//input[contains(@id, 'log-work-time-logged')]", "5m" });
+            mtx.Add(new object[] { "//input[contains(@id, 'log-work-time-logged')]", "15m" });
             mtx.Add(new object[] { "//input[contains(@id, 'log-work-submit')]" });
+  
             foreach (object[] obs in mtx)
             {
                 string xpath = (string)obs[0];
@@ -139,17 +139,7 @@ namespace UnitTests
                         elm.Clear();
                         elm.SendKeys(args[0].ToString());
                     }
-                }
-                catch (TargetInvocationException ex)
-                {
-                   // _logger.Warning($"{{@model}}", new
-                   // {
-                   //     element_tag = elm.TagName,
-                   //     element_id = elm.GetAttribute("id"),
-                   //     xpath = xpath,
-                   //     exception = ex.InnerException.Message
-                   // });
-                }
+                } 
                 catch (Exception)
                 {
                     throw;
