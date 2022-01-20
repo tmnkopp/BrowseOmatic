@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.Text.RegularExpressions; 
 using System.Xml;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -24,6 +24,16 @@ namespace UnitTests
     [TestClass]
     public class Net
     {
+        #region Fields
+        private ILogger<Net> logger; 
+        #endregion
+        public Net()
+        {
+            var mock = new Mock<ILogger<Net>>();
+            ILogger<Net> logger = mock.Object;
+        }
+
+
         List<BTask> tasks = new List<BTask>();
         [TestMethod]
         public void CL_Subs()
@@ -90,11 +100,15 @@ namespace UnitTests
        
         [TestMethod]
         public void bomdriver_Resolves()
-        {
+        {  
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver.Driver; 
             ctx.SessionDriver.Create();
             WebDriverWait wait = new WebDriverWait(dvr, TimeSpan.FromSeconds(1));
+
+            BTask task = ctx.ContextConfig.conntask;
+            CommandProcessor processor = new CommandProcessor(ctx, logger);
+            processor.Process(task);
 
             var mtx = new List<object[]>();
             mtx.Add(new object[] { "https://dayman.cyber-balance.com/jira/secure/Dashboard.jspa?selectPageId=12340" });
