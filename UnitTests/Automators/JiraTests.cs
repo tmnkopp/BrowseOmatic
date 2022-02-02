@@ -16,11 +16,11 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace UnitTests
-{
- 
+{ 
     [TestClass]
     public class JiraTests
     {
+        CommandProcessor processor; 
         List<BTask> tasks = new List<BTask>();
         [TestMethod]
         public void JiraIssue_TimeTaker()
@@ -74,8 +74,12 @@ namespace UnitTests
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver; 
-            ctx.SessionDriver.Create();// EINSTEIN
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*CIO.*");
+            ctx.SessionDriver.Create();
+
+            CommandProcessor processor = new CommandProcessor(ctx, new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(ctx.ContextConfig.conntask);
+
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-86']", ".*");
             urlProvider.Execute(ctx);
             BTask task = new BTask("taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
@@ -86,15 +90,12 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "log-work" }));
                 task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "15m" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" })); 
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "5500" })); 
                 tasks.Add(task); 
-            }
-            
-            CommandProcessor processor = new CommandProcessor(Session.Context(task.Context), new Mock<ILogger<ContextProvider>>().Object);
-            processor.Process(task);
+            } 
+             processor.Process(task);
             //Utils.WriteTasks(tasks);
-            // dvr.Dispose();
-
+             dvr.Dispose(); 
         }
         [TestMethod]
         public void JiraIssue_Closer()
