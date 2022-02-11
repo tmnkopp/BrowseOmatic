@@ -49,8 +49,4 @@
     <ProjectReference Include="..\TelerikCommands\TelerikCommands.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="powershell.exe  C:\Users\Tim\source\repos\BrowseOmatic\PostBuild.ps1 -ConfigurationName $(ConfigurationName)" />
-  </Target>
-
 </Project>
