@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -29,8 +30,11 @@ namespace BOM.CORE
         #endregion  
         #region Methods 
         public BTask Get(string ItemName)
-        { 
-            var taskfile = $"{configuration.GetSection("paths:yamltasks")?.Value}{ItemName}.yaml";  
+        {
+            string taskfile = (Regex.IsMatch(ItemName, $@"^\w:\\")) 
+                ? ItemName 
+                : $"{configuration.GetSection("paths:yamltasks")?.Value}{ItemName}.yaml";
+        
             string yamlraw = "";
             using (TextReader tr = File.OpenText(taskfile))
                 yamlraw = tr.ReadToEnd().Replace("tasks:", "");
