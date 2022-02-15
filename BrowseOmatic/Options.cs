@@ -20,7 +20,7 @@ namespace BOM
         public string Context { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
-        [Option('k', "KeepAlive", HelpText = "Dispose end of session.", Default = false)]
+        [Option('k', "KeepAlive", HelpText = "Prevent dispose end of session.", Default = false)]
         public bool KeepAlive { get; set; }
         [Option('h', "Headless", HelpText = "Headless session.", Default = false)]
         public bool Headless { get; set; }
@@ -29,9 +29,9 @@ namespace BOM
     [Verb("config", HelpText = "Config setter.")]
     public class ConfigOptions
     {
-        [Option('p', "Path", HelpText = "Sets task file path", Default="")]
+        [Option('p', "Path", HelpText = "Set task file path", Default="")]
         public string Path { get; set; }
-        [Option('t', "Task", HelpText = "ICommand")]
+        [Option('t', "Task", HelpText = "ICommand task runner")]
         public string Task { get; set; }
         [Option('v', "Verbose", HelpText = "Print details during execution.")]
         public bool Verbose { get; set; }
