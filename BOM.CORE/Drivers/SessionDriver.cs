@@ -77,7 +77,12 @@ namespace BOM.CORE
                 chromeDriverService.HideCommandPromptWindow = true;
                 chromeDriverService.SuppressInitialDiagnosticInformation = true;
 
-                ChromeOptions.AddArgument("log-level=3");
+                var chromeOptions = configuration.GetSection("ChromeOptions").Get<string[]>();
+                if (chromeOptions != null)
+                { 
+                    foreach (var option in chromeOptions) 
+                        ChromeOptions.AddArgument(option); 
+                } 
                 driver = new ChromeDriver(chromeDriverService, ChromeOptions);
             } 
         }
