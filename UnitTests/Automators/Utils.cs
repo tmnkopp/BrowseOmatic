@@ -20,7 +20,7 @@ namespace UnitTests
             var ser = serializer.Serialize(task);
             ser = Regex.Replace(ser, @"(&o0\r\n\s\s)|(- \*o0\r\n)", "");
             File.WriteAllText($"c:\\bom\\unittest\\{task.Context}_{task.Name}.yaml", ser, Encoding.ASCII);
-            File.WriteAllText($"c:\\bom\\unittest\\{task.Context}_{task.Name}.bat", $"bom run -t {task.Name} -k -p c:\\bom\\unittest\\{task.Context}_{task.Name}.yaml", Encoding.ASCII);
+            File.WriteAllText($"c:\\bom\\unittest\\{task.Context}_{task.Name}.bat", $"bom run -k -t c:\\bom\\unittest\\{task.Context}_{task.Name}.yaml", Encoding.ASCII);
         }
         public static void WriteTasks(List<BTask> tasks)
         {
