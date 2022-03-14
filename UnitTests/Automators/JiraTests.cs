@@ -98,7 +98,32 @@ namespace UnitTests
             //dvr.Dispose(); 
         }
         [TestMethod]
-        public void JiraIssue_Closer()
+        public void JiraIssue_Opener()
+        {
+            var ctx = Session.Context("jira");
+            var dvr = ctx.SessionDriver;
+            ctx.SessionDriver.Create();
+
+            CommandProcessor processor = new CommandProcessor(ctx, new Mock<ILogger<ContextProvider>>().Object);
+            processor.Process(ctx.ContextConfig.conntask);
+
+            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*Database Script.*");
+            urlProvider.Execute(ctx);
+            BTask task = new BTask("startprog_tickets", "jira");
+            foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
+            {
+                task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Start Progress']" })); 
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
+                tasks.Add(task);
+            }
+            processor.Process(task); 
+            //Utils.WriteTasks(tasks);
+            //dvr.Dispose();
+        }
+        [TestMethod]
+        public void JiraIssue_Resolver()
         {
             var ctx = Session.Context("jira");
             var dvr = ctx.SessionDriver;
@@ -113,17 +138,15 @@ namespace UnitTests
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
             { 
                 task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" }));
-                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Start Progress']" }));
-
-                //  task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Resolve']" }));
-                //  task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" })); 
-                //  task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Ready To Test']" }));
-                //  task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" }));  
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Resolve']" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" })); 
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Ready To Test']" }));
+                task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
                 tasks.Add(task);
             }
-            processor.Process(task);
+            // processor.Process(task);
 
             //Utils.WriteTasks(tasks);
             //dvr.Dispose();
