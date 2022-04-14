@@ -50,7 +50,8 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "15m" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "2500" }));  
-            } 
+            }
+            task.TaskSteps.Add(new TaskStep("SessionDispose", new string[] { "1" }));
             processor.Process(task);
             Utils.WriteTask(task);
             dvr.Dispose(); 
