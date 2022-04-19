@@ -26,8 +26,8 @@ namespace UnitTests
         List<BTask> tasks = new List<BTask>();
         public JiraTests()
         {
-            selector = ".issue-table tr .summary a[href*='browse/CS-88']"; 
-            matchPattern = ".*Annual IG.*";
+            selector = ".issue-table tr .summary a[href*='browse/CS-8']"; 
+            matchPattern = ".*Annual IG Section.*";
         }
         [TestMethod]
         public void JiraTime_Taker()
