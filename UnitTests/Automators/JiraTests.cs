@@ -54,7 +54,7 @@ namespace UnitTests
             task.TaskSteps.Add(new TaskStep("SessionDispose", new string[] { "1" }));
             processor.Process(task);
             Utils.WriteTask(task);
-            dvr.Dispose(); 
+            //dvr.Dispose(); 
         }
         [TestMethod]
         public void JiraIssue_Opener()
@@ -78,7 +78,7 @@ namespace UnitTests
                 tasks.Add(task);
             }
             processor.Process(task);
-            // Utils.WriteTask(task);
+            //Utils.WriteTask(task);
             //dvr.Dispose();
         }
         [TestMethod]
@@ -97,13 +97,13 @@ namespace UnitTests
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
             { 
                 task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" }));  
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));  
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Resolve']" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "a[title*='Ready To Test']" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id*='issue-workflow-transition-submit']" }));
-                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1200" }));
+                task.TaskSteps.Add(new TaskStep("Pause", new string[] { "1500" }));
                 tasks.Add(task);
             }
             processor.Process(task);
