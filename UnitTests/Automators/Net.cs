@@ -31,10 +31,19 @@ namespace UnitTests
         {
             var mock = new Mock<ILogger<Net>>();
             ILogger<Net> logger = mock.Object;
+        } 
+        List<BTask> tasks = new List<BTask>();
+        [TestMethod]
+        public void ebil_connects()
+        {
+            var ctx = Session.Context("ebil");
+            var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
+            ctx.SessionDriver.Create();
+            CommandProcessor processor = new CommandProcessor(ctx, logger);
+            processor.Process(ctx.ContextConfig.conntask);
+  
         }
 
-
-        List<BTask> tasks = new List<BTask>();
         [TestMethod]
         public void CL_Subs()
         { 
