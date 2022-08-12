@@ -26,8 +26,8 @@ namespace UnitTests
         List<BTask> tasks = new List<BTask>();
         public JiraTests()
         {
-            selector = ".issue-table tr .summary a[href*='browse/CS-90']"; 
-            matchPattern = ".*SAOP.*";
+            selector = ".issue-table tr .summary a[href*='browse/CS-91']"; 
+            matchPattern = ".*";
         }
         [TestMethod]
         public void JiraTime_Taker()
@@ -52,7 +52,7 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "2500" }));  
             }
             task.TaskSteps.Add(new TaskStep("SessionDispose", new string[] { "1" }));
-            processor.Process(task);
+            //processor.Process(task);
             Utils.WriteTask(task);
             dvr.Dispose(); 
         }
@@ -68,7 +68,7 @@ namespace UnitTests
 
             var urlProvider = new UrlProvider(selector, matchPattern);
             urlProvider.Execute(ctx);
-            BTask task = new BTask("startprog_tickets", "jira");
+            BTask task = new BTask("start_tickets", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
             {
                 task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
@@ -77,9 +77,9 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
                 tasks.Add(task);
             }
-            processor.Process(task);
-            //Utils.WriteTask(task);
-            dvr.Dispose();
+            //processor.Process(task);
+            Utils.WriteTask(task);
+            //dvr.Dispose();
         }
         [TestMethod]
         public void JiraIssue_Resolver()
@@ -93,7 +93,7 @@ namespace UnitTests
 
             var urlProvider = new UrlProvider(selector, matchPattern);
             urlProvider.Execute(ctx);
-            BTask task = new BTask("startprog_tickets", "jira");
+            BTask task = new BTask("resolve_tickets", "jira");
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
             { 
                 task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
@@ -107,8 +107,8 @@ namespace UnitTests
                 tasks.Add(task);
             }
             processor.Process(task);
-            //Utils.WriteTask(task);
-            //dvr.Dispose();
+            // Utils.WriteTask(task);
+            dvr.Dispose();
         }
         [TestMethod]
         public void JiraIssue_Scraper()
