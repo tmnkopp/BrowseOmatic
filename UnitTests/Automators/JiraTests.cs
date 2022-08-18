@@ -26,8 +26,8 @@ namespace UnitTests
         List<BTask> tasks = new List<BTask>();
         public JiraTests()
         {
-            selector = ".issue-table tr .summary a[href*='browse/CS-91']"; 
-            matchPattern = ".*";
+            selector = "//*[text()[contains(.,'Section')] and contains(@class, 'issue-link')]"; 
+            matchPattern = "Section";
         }
         [TestMethod]
         public void JiraTime_Taker()
@@ -38,7 +38,7 @@ namespace UnitTests
             CommandProcessor processor = new CommandProcessor(ctx, new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(ctx.ContextConfig.conntask);
 
-            var urlProvider = new UrlProvider(selector, matchPattern);
+            var urlProvider = new UrlProvider(selector);
             urlProvider.Execute(ctx);
             BTask task = new BTask("taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
@@ -66,7 +66,7 @@ namespace UnitTests
             CommandProcessor processor = new CommandProcessor(ctx, new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(ctx.ContextConfig.conntask);
 
-            var urlProvider = new UrlProvider(selector, matchPattern);
+            var urlProvider = new UrlProvider(selector);
             urlProvider.Execute(ctx);
             BTask task = new BTask("start_tickets", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
@@ -91,7 +91,7 @@ namespace UnitTests
             CommandProcessor processor = new CommandProcessor(ctx, new Mock<ILogger<ContextProvider>>().Object);
             processor.Process(ctx.ContextConfig.conntask);
 
-            var urlProvider = new UrlProvider(selector, matchPattern);
+            var urlProvider = new UrlProvider(selector);
             urlProvider.Execute(ctx);
             BTask task = new BTask("resolve_tickets", "jira");
             foreach (KeyValuePair<string,string> kvp in urlProvider.Items)

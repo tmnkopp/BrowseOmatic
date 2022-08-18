@@ -8,13 +8,11 @@ namespace BOM.CORE
 {
     public class UrlProvider 
     {
-        #region CTOR 
-        private string MatchPattern = "";
-        private string CssSelector = "";
-        public UrlProvider(string CssSelector, string MatchPattern)
+        #region CTOR  
+        private string XPath = "";
+        public UrlProvider(string XPath)
         {
-            this.CssSelector = CssSelector;
-            this.MatchPattern = MatchPattern;
+            this.XPath = XPath; 
         } 
         #endregion
 
@@ -30,18 +28,12 @@ namespace BOM.CORE
 
         public void Execute(ISessionContext ctx)
         {
-            IList<IWebElement> inputs =  ctx.SessionDriver.Driver.FindElements(By.CssSelector($"{CssSelector}"));
+            IList<IWebElement> inputs =  ctx.SessionDriver.Driver.FindElements(By.XPath($"{XPath}"));
             foreach (var input in inputs)
             {
                 var txt = input.Text;
                 var href = input.GetAttribute("href");
-                if (Regex.IsMatch($"{href}{txt}", MatchPattern))
-                {
-                    if (!items.ContainsKey(href))
-                    {
-                        items.Add(href, txt);
-                    }
-                }
+                items.Add(href, txt);
             }
         }
         #endregion

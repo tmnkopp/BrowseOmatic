@@ -27,18 +27,16 @@ namespace BOM
         }
 
         public void Process(BTask task)
-        {  
+        { 
             foreach (var taskstep in task.TaskSteps)
             {
                 if (taskstep.Cmd.ToLower() == "setwait")
                 {
                     ctx.SessionDriver.SetWait(Convert.ToDouble(taskstep.Args[0] ?? "1")); continue;
                 }
-
-                var typ = Assm.GetTypes().Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand)
-                .IsAssignableFrom(t)).FirstOrDefault();
-
-                Type tCmd = Type.GetType($"{typ.FullName}, {typ.Namespace}") ?? Type.GetType($"{typ.FullName}, BOM");
+ 
+                Type tCmd = Assm.GetTypes().Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand).IsAssignableFrom(t)).FirstOrDefault();
+  
                 ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                 List<object> oparms = new List<object>();
                 int parmcnt = 0; 
@@ -57,10 +55,8 @@ namespace BOM
                     obj.Execute(ctx);
                 }
                 catch (Exception ex)
-                {
-                    logger.LogWarning("ICommand:CreateInstance {c}\n", tCmd);
-                    logger.LogWarning("oparms: {o}", JsonConvert.SerializeObject(oparms));
-                    logger.LogError("\n{o}", ex.Message);
+                { 
+                    logger.LogError("{@ICommandError}", new{ tCmd, oparms, ex.Message } );
                 }
             }
             

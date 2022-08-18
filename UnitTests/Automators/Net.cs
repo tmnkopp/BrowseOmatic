@@ -60,26 +60,7 @@ namespace UnitTests
             //processor.Process(task);
 
             Utils.WriteTasks(tasks );
-        }        
-        [TestMethod]
-        public void JiraIssue_Action()
-        {
-            var ctx = Session.Context("jira");
-            var dvr = ctx.SessionDriver; //|.*Prepopulation.*  .*BOD.*Section.*[1-3].*|.*CSHELP-2899
-            ctx.SessionDriver.Create();
-            var urlProvider = new UrlProvider(".issue-table tr .summary a[href*='browse/CS-8']", ".*SAOP.*Section.*");
-            urlProvider.Execute(ctx); 
-            foreach (KeyValuePair<string,string> kvp in urlProvider.Items)
-            {
-                dvr.GetUrl(kvp.Key); 
-                ctx.SessionDriver.Timeout = 2; 
-                 dvr.Click("a[title*='Resolve']")
-                 .Pause(950).Click("input[id*='issue-workflow-transition-submit']")
-                 .Pause(950).Click("a[title*='Ready To Test']")
-                 .Pause(950).Click("input[id*='issue-workflow-transition-submit']"); 
-            }  
-            dvr.Dispose();
-        }
+        }      
         [TestMethod]
         public void ebil_writes()
         {
