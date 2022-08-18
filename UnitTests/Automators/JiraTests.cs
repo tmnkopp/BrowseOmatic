@@ -26,7 +26,7 @@ namespace UnitTests
         List<BTask> tasks = new List<BTask>();
         public JiraTests()
         {
-            selector = "//*[text()[contains(.,'Section')] and contains(@class, 'issue-link')]"; 
+            selector = "//*[text()[contains(.,'Q4')] and contains(@class, 'issue-link')]"; 
             matchPattern = "Section";
         }
         [TestMethod]

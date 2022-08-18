@@ -35,8 +35,10 @@ namespace BOM
                     ctx.SessionDriver.SetWait(Convert.ToDouble(taskstep.Args[0] ?? "1")); continue;
                 }
  
-                Type tCmd = Assm.GetTypes().Where(t => t.Name.Contains(taskstep.Cmd) && typeof(ICommand).IsAssignableFrom(t)).FirstOrDefault();
-  
+                Type tCmd = (from t in Assm.GetTypes() 
+                            where t.Name.Contains(taskstep.Cmd) && typeof(ICommand).IsAssignableFrom(t) 
+                            select t ).FirstOrDefault();
+
                 ParameterInfo[] PI = tCmd.GetConstructors()[0].GetParameters();
                 List<object> oparms = new List<object>();
                 int parmcnt = 0; 
