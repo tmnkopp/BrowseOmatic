@@ -41,8 +41,6 @@ function BOMInstaller {
     catch [System.Net.WebException],[System.IO.IOException] {
         "Unable to download bom.exe"
     }  
- 
-     
     if($WithUnitTest ){ 
         $exe = [System.Environment]::GetEnvironmentVariable('bom', 'User')  
         & $exe  cmd -t unittest -p config.yaml 

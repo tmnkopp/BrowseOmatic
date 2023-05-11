@@ -26,7 +26,7 @@ namespace UnitTests
         List<BTask> tasks = new List<BTask>();
         public JiraTests()
         {
-            selector = "//*[text()[contains(.,'Q4')] and contains(@class, 'issue-link')]"; 
+            selector = "//*[text()[contains(.,'CIO')] and contains(@class, 'issue-link') and not(contains(.,'Database'))]"; 
             matchPattern = "Section";
         }
         [TestMethod]
@@ -43,16 +43,16 @@ namespace UnitTests
             BTask task = new BTask("taketime", "jira");
             foreach (KeyValuePair<string, string> kvp in urlProvider.Items)
             { 
-                task.TaskSteps.Add(new TaskStep("OpenTab", new string[] { kvp.Key }));
+                task.TaskSteps.Add(new TaskStep("Url", new string[] { kvp.Key }));
                 task.TaskSteps.Add(new TaskStep("SetWait", new string[] { "1" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "opsbar-operations_more" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "log-work" }));
-                task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "25m" }));
+                task.TaskSteps.Add(new TaskStep("Key", new string[] { "input[id='log-work-time-logged']", "15m" }));
                 task.TaskSteps.Add(new TaskStep("Click", new string[] { "input[id='log-work-submit']" }));
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "2500" }));  
             }
-            task.TaskSteps.Add(new TaskStep("SessionDispose", new string[] { "1" }));
-            //processor.Process(task);
+            task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://dayman.cyber-balance.com/jira/" }));
+            processor.Process(task);
             Utils.WriteTask(task);
             dvr.Dispose(); 
         }
@@ -77,7 +77,7 @@ namespace UnitTests
                 task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
                 tasks.Add(task);
             }
-            //processor.Process(task);
+            processor.Process(task);
             Utils.WriteTask(task);
             //dvr.Dispose();
         }
