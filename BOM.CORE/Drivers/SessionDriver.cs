@@ -117,6 +117,14 @@ namespace BOM.CORE
         public IWebElement Select(string ElementSelector)
         { 
             IWebElement elm = null; 
+
+            if(ElementSelector.StartsWith("//"))
+            {
+                elm = Driver.FindElement(By.XPath($"{ElementSelector}"));
+                if (elm == null)
+                    Console.WriteLine($"{ElementSelector}: Not Found");
+                return elm;
+            }
             string[] selects = new string[] {
                 $"*[id$='{ElementSelector}']",
                 $"*[id*='{ElementSelector}']",
