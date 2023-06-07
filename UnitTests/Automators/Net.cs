@@ -1,3 +1,4 @@
+using AutoItX3Lib;
 using BOM;
 using BOM.CORE;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -64,14 +66,23 @@ namespace UnitTests
         [TestMethod]
         public void ebil_writes()
         {
-            BTask task = new BTask("ebil", "ebil");
-            task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://secure.ebillity.com/firm4.0/TimeExpense/WeeklyTimeSheet2.aspx" }));
-            task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
-            task.TaskSteps.Add(new TaskStep("Click", new string[] { "btnCopyTimeSheet" }));
-            task.TaskSteps.Add(new TaskStep("Pause", new string[] { "900" }));
+            AutoItX3 autoit = new AutoItX3();
+            var ctx = Session.Context("bomdriver");
+            var dvr = ctx.SessionDriver;
+            ctx.SessionDriver.Create(); 
+            ctx.SessionDriver.Driver.Navigate().GoToUrl("https://rtime.raytheon.com/?t");  
+            autoit.WinWait("Select a certificate", "", 5);
+            autoit.ControlClick("Cancel", "Cancel", "Cancel");
+           
+            Thread.Sleep(3000);
+             
+            //  BTask task = new BTask("rtime", "rtime");
+            //  task.TaskSteps.Add(new TaskStep("Url", new string[] { "https://secure.ebillity.com/firm4.0/TimeExpense/WeeklyTimeSheet2.aspx" }));
+            //  tasks.Add(task);
+            //  processor.Process(task);
+
             //task.TaskSteps.Add(new TaskStep("Script", new string[] { "document.getElementsByClassName('btn_green')[0].click();" }));  
-            tasks.Add(task);  
-            Utils.WriteTasks(tasks);
+             
         }
         [TestMethod]
         public void Logger_Resolves()

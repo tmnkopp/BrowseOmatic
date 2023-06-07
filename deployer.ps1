@@ -18,10 +18,9 @@
         dotnet build --configuration Debug;
         dotnet build --configuration Release;
         dotnet publish BrowseOmatic -p:PublishProfile=FolderProfile   
-        Copy-Item -Path C:\Users\timko\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination c:\bom\BOM.exe -Force 
-        # Copy-Item -Path C:\Users\timko\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\BOM.exe -Destination D:\dev\CyberScope\CyberScopeBranch\CSwebdev\test\bom\BOM.exe -Force 
- 
-        Remove-Item -Path C:\Users\timko\source\repos\BrowseOmatic\BrowseOmatic\bin\publish\*.pdb -Force 
+        Copy-Item -Path C:\Users\timko\source\repos\BrowseOmatic\BrowseOmatic\bin\Release\netcoreapp3.1\BOM.exe -Destination c:\bom\BOM.exe -Force 
+     
+        Remove-Item -Path C:\Users\timko\source\repos\BrowseOmatic\BrowseOmatic\bin\Release\netcoreapp3.1\*.pdb -Force 
     }
     if ($with -match ' commit ' ){
         $m = -join ((65..90) + (97..122) | Get-Random -Count 2 | % {[char]$_ +''+ $_ })
